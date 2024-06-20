@@ -20,8 +20,6 @@ public class NewEventRequestDto {
 
     private long category;
 
-    private long organizer;
-
     private boolean isOnline;
 
     private LocalDate startDate;

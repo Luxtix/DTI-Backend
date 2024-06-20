@@ -56,9 +56,6 @@ public class AuthController {
         cookie.setPath("/");
         HttpHeaders headers = new HttpHeaders();
         headers.add("Set-Cookie", cookie.getName() + "=" + cookie.getValue() + "; Path=/; HttpOnly");
-        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(Response.successfulResponse( "Login succesfull", response));
-//        return Response.successfulResponse("User logged in successfully", response);
-
-
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(Response.successfulResponse( "Login successfull", response));
     }
 }

@@ -15,6 +15,16 @@ import java.util.HashMap;
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandling {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public final ResponseEntity<Response<HashMap<String, String>>> handleValidationExceptions(MethodArgumentNotValidException ex){
+        log.error(ex.getMessage(), ex);
+        HashMap<String, String> errorsMap = new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error -> {
+            errorsMap.put(error.getField(), error.getDefaultMessage());
+        });
+        return Response.failedResponse(HttpStatus.BAD_REQUEST.value(), "Unable to process the request", errorsMap);
+    }
     @ExceptionHandler(org.hibernate.exception.ConstraintViolationException.class)
     public final ResponseEntity<Response<HashMap<String, String>>> handleConstraintValidation(MethodArgumentNotValidException ex){
         log.error(ex.getMessage(), ex);

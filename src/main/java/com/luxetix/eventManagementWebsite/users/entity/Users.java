@@ -82,8 +82,6 @@ public class Users {
     @Column(name = "deleted_at")
     private Instant deletedAt;
 
-    @OneToMany(mappedBy = "users",cascade = CascadeType.ALL)
-    private Set<Events> events = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "users",cascade = CascadeType.ALL)
     private Set<EventReviews> eventReviews = new LinkedHashSet<>();
