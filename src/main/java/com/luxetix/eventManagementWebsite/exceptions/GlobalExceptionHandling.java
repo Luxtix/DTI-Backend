@@ -39,8 +39,15 @@ public class GlobalExceptionHandling {
                 "We are unable to process your request at this time, please try again later.", ex.getMessage());
     }
 
-    @ExceptionHandler(DataNotFoundException.class)
-    public ResponseEntity<Response<Object>> handleInputException(DataNotFoundException ex) {
+    @ExceptionHandler(InputException.class)
+    public ResponseEntity<Response<Object>> handleInputException(InputException ex) {
         return Response.failedResponse(ex.getHttpStatus().value(), ex.getMessage());
     }
+
+    @ExceptionHandler(DataNotFoundException.class)
+    public ResponseEntity<Response<Object>> handleDataNotFoundException(DataNotFoundException ex) {
+        return Response.failedResponse(ex.getHttpStatus().value(), ex.getMessage());
+    }
+
+
 }

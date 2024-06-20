@@ -57,9 +57,6 @@ public class Events {
     @Column(name = "name")
     private String name;
 
-
-
-
     @NotBlank(message = "City is mandatory")
     @Column(name = "city")
     private String city;

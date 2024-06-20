@@ -2,6 +2,7 @@ package com.luxetix.eventManagementWebsite.users.service.impl;
 
 
 import com.luxetix.eventManagementWebsite.exceptions.DataNotFoundException;
+import com.luxetix.eventManagementWebsite.exceptions.InputException;
 import com.luxetix.eventManagementWebsite.pointHistory.PointHistory;
 import com.luxetix.eventManagementWebsite.pointHistory.repository.PointHistoryRepository;
 import com.luxetix.eventManagementWebsite.refferals.entity.Referrals;
