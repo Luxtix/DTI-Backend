@@ -23,10 +23,6 @@ public class Referrals {
     @Column(name = "code", length = 255)
     private String code;
 
-    @NotNull(message = "User id is required")
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private Users user;
 
     @OneToMany(mappedBy = "referrals",cascade = CascadeType.ALL)
     private Set<UserUsageReferrals> userUsageRefferals = new LinkedHashSet<>();

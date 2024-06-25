@@ -11,12 +11,12 @@ import java.time.Instant;
 
 @Entity
 @Data
-@Table(name = "userusagereferrals")
+@Table(name = "user_usage_referrals")
 public class UserUsageReferrals {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "userusagereferrals_id_gen")
-    @SequenceGenerator(name = "userusagereferrals_id_gen", sequenceName = "userusagereferrals_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_usage_referrals_id_gen")
+    @SequenceGenerator(name = "user_usage_referrals_id_gen", sequenceName = "user_usage_referrals_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private long id;
 

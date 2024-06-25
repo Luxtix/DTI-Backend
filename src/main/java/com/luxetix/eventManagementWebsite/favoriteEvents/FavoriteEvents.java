@@ -8,11 +8,11 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "favoriteEvents")
+@Table(name = "favorite_events")
 public class FavoriteEvents {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "favoriteEvents_id_gen")
-    @SequenceGenerator(name = "favoriteEvents_id_gen", sequenceName = "favoriteEvents_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "favorite_events_id_gen")
+    @SequenceGenerator(name = "favorite_events_id_gen", sequenceName = "favorite_events_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private long id;
 

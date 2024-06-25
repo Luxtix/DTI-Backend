@@ -1,6 +1,7 @@
 package com.luxetix.eventManagementWebsite.events.dto;
 
 
+import com.luxetix.eventManagementWebsite.city.Cities;
 import com.luxetix.eventManagementWebsite.events.entity.EventType;
 import com.luxetix.eventManagementWebsite.events.entity.Events;
 import com.luxetix.eventManagementWebsite.users.entity.Users;
@@ -8,6 +9,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,9 +28,9 @@ public class NewEventRequestDto {
 
     private LocalDate endDate;
 
-    private LocalDateTime startTime;
+    private LocalTime startTime;
 
-    private LocalDateTime endTime;
+    private LocalTime endTime;
 
     private String venue;
 
@@ -38,14 +40,14 @@ public class NewEventRequestDto {
 
     private String description;
 
-    private String image;
+    private MultipartFile image;
 
     @Enumerated(EnumType.STRING)
-    private Events.EventType type;
+    private EventType type;
 
     private String ticketName;
 
-    private int tickerPrice;
+    private int ticketPrice;
 
     private int ticketQty;
 
@@ -63,9 +65,11 @@ public class NewEventRequestDto {
         event.setEndTime(endTime);
         event.setVenueName(venue);
         event.setAddress(address);
-        event.setCity(city);
+        Cities newCity = new Cities();
+        newCity.setName(city);
+        event.setCities(newCity);
         event.setDescriptions(description);
-        event.setEventImage(image);
+//        event.setEventImage(image);
         event.setType(type);;
         return event;
     }

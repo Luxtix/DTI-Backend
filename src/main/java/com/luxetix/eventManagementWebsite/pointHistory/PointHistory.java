@@ -13,12 +13,12 @@ import java.time.LocalDate;
 
 @Entity
 @Data
-@Table(name = "pointshistory")
+@Table(name = "points_history")
 public class PointHistory {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pointshistory_id_gen")
-    @SequenceGenerator(name = "pointshistory_id_gen", sequenceName = "pointshistory_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "points_history_id_gen")
+    @SequenceGenerator(name = "points_history_id_gen", sequenceName = "points_history_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private long id;
 

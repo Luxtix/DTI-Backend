@@ -13,11 +13,11 @@ import java.time.Instant;
 
 @Entity
 @Data
-@Table(name = "eventReviews")
+@Table(name = "event_reviews")
 public class EventReviews {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "eventReviews_id_gen")
-    @SequenceGenerator(name = "eventReviews_id_gen", sequenceName = "eventReviews_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "event_reviews_id_gen")
+    @SequenceGenerator(name = "event_reviews_id_gen", sequenceName = "event_reviews_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private long id;
 

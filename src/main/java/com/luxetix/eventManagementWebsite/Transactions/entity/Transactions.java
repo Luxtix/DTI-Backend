@@ -46,8 +46,7 @@ public class Transactions {
     @Column(name = "deleted_at")
     private Instant deletedAt;
 
-    @OneToMany(mappedBy = "transactions",cascade = CascadeType.ALL)
-    private Set<TransactionList> transactionLists = new LinkedHashSet<>();
+
 
 
     @PrePersist

@@ -1,6 +1,7 @@
 package com.luxetix.eventManagementWebsite.vouchers;
 
 
+import com.luxetix.eventManagementWebsite.events.entity.Events;
 import com.luxetix.eventManagementWebsite.users.entity.Users;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
@@ -30,8 +31,11 @@ public class Vouchers {
     private BigDecimal rate;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private Users users;
+    @JoinColumn(name = "event_id", nullable = false)
+    private Events events;
+
+    @Column(name = "voucher_limit", nullable = false)
+    private int voucherLimit;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at")

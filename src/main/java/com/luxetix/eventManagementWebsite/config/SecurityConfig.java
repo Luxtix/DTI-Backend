@@ -12,6 +12,7 @@ import jakarta.servlet.http.Cookie;
 import lombok.extern.java.Log;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -72,6 +73,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/error/**").permitAll();
                     auth.requestMatchers("/api/auth/**").permitAll();
                     auth.requestMatchers("/api/users/register").permitAll();
+                    auth.requestMatchers(HttpMethod.POST,"/api/events") ;
 //              You can add specific role access limiter like this one below
 //              auth.requestMatchers("api/v1/wallet/admin/**").hasRole("ADMIN");
                     auth.anyRequest().authenticated();
@@ -83,7 +85,7 @@ public class SecurityConfig {
                         Cookie[] cookies = request.getCookies();
                         if (cookies != null) {
                             for (Cookie cookie : cookies) {
-                                if ("sid".equals(cookie.getName())) {
+                                if ("Sid".equals(cookie.getName())) {
                                     return cookie.getValue();
                                 }
                             }

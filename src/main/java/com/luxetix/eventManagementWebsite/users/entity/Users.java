@@ -7,6 +7,7 @@ import com.luxetix.eventManagementWebsite.events.entity.Events;
 import com.luxetix.eventManagementWebsite.favoriteEvents.FavoriteEvents;
 import com.luxetix.eventManagementWebsite.oganizer.entity.Organizers;
 import com.luxetix.eventManagementWebsite.pointHistory.PointHistory;
+import com.luxetix.eventManagementWebsite.refferals.entity.Referrals;
 import com.luxetix.eventManagementWebsite.userUsageRefferals.entity.UserUsageReferrals;
 import com.luxetix.eventManagementWebsite.vouchers.Vouchers;
 import jakarta.persistence.*;
@@ -64,9 +65,12 @@ public class Users {
     @Column(name = "total_points")
     private Long totalPoints;
 
+
+
+    @NotNull(message = "Referrals id is required")
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "organizer_id", referencedColumnName = "id")
-    private Organizers organizers;
+    @JoinColumn(name = "referral_id", referencedColumnName = "id")
+    private Referrals referrals;
 
 
     @ColumnDefault("CURRENT_TIMESTAMP")
@@ -92,8 +96,6 @@ public class Users {
     @OneToMany(mappedBy = "users",cascade = CascadeType.ALL)
     private Set<Transactions> transactions = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "users",cascade = CascadeType.ALL)
-    private Set<Vouchers> vouchers = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "users",cascade = CascadeType.ALL)
     private Set<FavoriteEvents> favoriteEvents = new LinkedHashSet<>();

@@ -19,6 +19,10 @@ public class Tickets {
     @Column(name = "id", nullable = false)
     private long id;
 
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "event_id", nullable = false)
+    private Events events;
+
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -39,9 +43,7 @@ public class Tickets {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "event_id", nullable = false)
-    private Events events;
+
 
     @PrePersist
     protected void onCreate(){
