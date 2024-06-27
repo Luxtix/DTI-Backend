@@ -24,7 +24,7 @@ public class NewEventRequestDto {
 
     private boolean isOnline;
 
-    private LocalDate startDate;
+    private LocalDate eventDate;
 
     private LocalDate endDate;
 
@@ -59,8 +59,7 @@ public class NewEventRequestDto {
 //        event.setCategories(category);
 //        event.setOrganizers(organizer);
         event.setOnline(isOnline);
-        event.setStartDate(startDate);
-        event.setEndDate(endDate);
+        event.setEventDate(eventDate);
         event.setStartTime(startTime);
         event.setEndTime(endTime);
         event.setVenueName(venue);
@@ -70,7 +69,6 @@ public class NewEventRequestDto {
         event.setCities(newCity);
         event.setDescriptions(description);
 //        event.setEventImage(image);
-        event.setType(type);;
         return event;
     }
 

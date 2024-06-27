@@ -2,14 +2,11 @@ package com.luxetix.eventManagementWebsite.users.entity;
 
 
 import com.luxetix.eventManagementWebsite.Transactions.entity.Transactions;
-import com.luxetix.eventManagementWebsite.eventReviews.entitiy.EventReviews;
-import com.luxetix.eventManagementWebsite.events.entity.Events;
+import com.luxetix.eventManagementWebsite.eventReviews.entitity.EventReviews;
 import com.luxetix.eventManagementWebsite.favoriteEvents.FavoriteEvents;
-import com.luxetix.eventManagementWebsite.oganizer.entity.Organizers;
 import com.luxetix.eventManagementWebsite.pointHistory.PointHistory;
 import com.luxetix.eventManagementWebsite.refferals.entity.Referrals;
 import com.luxetix.eventManagementWebsite.userUsageRefferals.entity.UserUsageReferrals;
-import com.luxetix.eventManagementWebsite.vouchers.Vouchers;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -41,16 +38,14 @@ public class Users {
     @Column(name = "email",unique = true)
     private String email;
 
-    @NotNull(message = "Username cannot be null")
-    @NotBlank(message = "Username cannot be blank")
-    @Column(name = "username")
-    private String username;
 
     @NotNull(message = "Password cannot be null")
     @NotBlank(message = "Password cannot be blank")
     @Column(name = "password")
     private String password;
 
+    @NotNull(message = "Fullname cannot be null")
+    @NotBlank(message = "Fullname cannot be blank")
     @Column(name = "fullname")
     private String fullname;
 

@@ -5,12 +5,14 @@ import com.luxetix.eventManagementWebsite.events.entity.Events;
 import com.luxetix.eventManagementWebsite.users.entity.Users;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -36,6 +38,20 @@ public class Vouchers {
 
     @Column(name = "voucher_limit", nullable = false)
     private int voucherLimit;
+
+
+    @Column(name = "refferal_only", nullable = false)
+    private Boolean referralOnly;
+
+
+    @FutureOrPresent(message = "Start date must be in the present or future")
+    @Column(name = "start_date")
+    private LocalDate startDate;
+
+    @FutureOrPresent(message = "End date must be in the present or future")
+    @Column(name = "end_date")
+    private LocalDate endDate;
+
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at")

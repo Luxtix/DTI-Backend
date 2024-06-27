@@ -6,8 +6,10 @@ import com.luxetix.eventManagementWebsite.users.entity.Users;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -28,6 +30,13 @@ public class UserUsageReferrals {
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "referral_id", nullable = false)
     private Referrals referrals;
+
+
+    @Column(name = "is_active")
+    private Boolean isActive = true;
+
+    @Column(name = "expiration_date")
+    private LocalDate expirationDate;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at")

@@ -12,7 +12,6 @@ public interface EventListDao {
 
     String getEventName();
     Integer getTicketPrice();
-    String getTicketName();
     String getPriceCategory();
     String getCategoryName();
     String getCityName();
@@ -24,8 +23,7 @@ public interface EventListDao {
     Boolean getIsOnline();
     int getFavoriteCount();
     Boolean getIsFavorite();
-    LocalDate getStartDate();
-    LocalDate getEndDate();
+    LocalDate getEventDate();
     LocalTime getStartTime();
     LocalTime getEndTime();
 

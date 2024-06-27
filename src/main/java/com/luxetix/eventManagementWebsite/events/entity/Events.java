@@ -3,24 +3,18 @@ package com.luxetix.eventManagementWebsite.events.entity;
 
 import com.luxetix.eventManagementWebsite.categories.Categories;
 import com.luxetix.eventManagementWebsite.city.Cities;
-import com.luxetix.eventManagementWebsite.eventReviews.entitiy.EventReviews;
+import com.luxetix.eventManagementWebsite.eventReviews.entitity.EventReviews;
 import com.luxetix.eventManagementWebsite.favoriteEvents.FavoriteEvents;
-import com.luxetix.eventManagementWebsite.oganizer.entity.Organizers;
-import com.luxetix.eventManagementWebsite.promotions.Promotions;
 import com.luxetix.eventManagementWebsite.tickets.entity.Tickets;
-import com.luxetix.eventManagementWebsite.transactionList.TransactionList;
 import com.luxetix.eventManagementWebsite.users.entity.Users;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -51,11 +45,6 @@ public class Events {
     @JoinColumn(name = "city_id", nullable = false)
     private Cities cities;
 
-
-    @Column(name = "type")
-    @Enumerated(EnumType.STRING)
-    private EventType type;
-
     @NotBlank(message = "Event name is mandatory")
     @Column(name = "name")
     private String name;
@@ -77,13 +66,9 @@ public class Events {
     @Column(name = "descriptions")
     private String descriptions;
 
-    @FutureOrPresent(message = "Start date must be in the present or future")
-    @Column(name = "start_date")
-    private LocalDate startDate;
-
-    @FutureOrPresent(message = "End date must be in the present or future")
-    @Column(name = "end_date")
-    private LocalDate endDate;
+    @FutureOrPresent(message = "Event date must be in the present or future")
+    @Column(name = "event_date")
+    private LocalDate eventDate;
 
     // Assuming start time and end time are meant to be in the future as well
     @FutureOrPresent(message = "Start time must be in the present or future")
@@ -98,6 +83,11 @@ public class Events {
     @ColumnDefault("false")
     @Column(name = "isonline")
     private boolean isOnline;
+
+
+    @ColumnDefault("true")
+    @Column(name = "ispaid")
+    private boolean isPaid;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at")

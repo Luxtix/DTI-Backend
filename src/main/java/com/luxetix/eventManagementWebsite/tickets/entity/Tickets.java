@@ -21,7 +21,7 @@ public class Tickets {
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "event_id", nullable = false)
-    private Events events;
+    private Events  events;
 
 
     @Column(name = "name", nullable = false)

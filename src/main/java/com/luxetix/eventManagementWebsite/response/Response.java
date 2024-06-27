@@ -1,6 +1,7 @@
 package com.luxetix.eventManagementWebsite.response;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -16,11 +17,18 @@ public class Response<T>{
     private String message;
     boolean success = false;
     private T data;
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    private int totalPages;
+
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    private long totalData;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer currentPage;
 
     public Response(int statCode, String statusDesc) {
         statusCode = statCode;
         message = statusDesc;
-
         if (statusCode == HttpStatus.OK.value()) {
             success = true;
         }
@@ -43,6 +51,7 @@ public class Response<T>{
         Response<T> response = new Response<>(statusCode, message);
         response.setSuccess(false);
         response.setData(data);
+
         return ResponseEntity.status(statusCode).body(response);
     }
 
@@ -58,6 +67,15 @@ public class Response<T>{
         Response<T> response = new Response<>(statusCode, message);
         response.setSuccess(true);
         response.setData(data);
+        return ResponseEntity.status(statusCode).body(response);
+    }
+    public static <T> ResponseEntity<Response<T>> successfulResponseWithPage(int statusCode, String message, T data,int totalPages, long totalData,int currentPage) {
+        Response<T> response = new Response<>(statusCode, message);
+        response.setSuccess(true);
+        response.setCurrentPage(currentPage);
+        response.setData(data);
+        response.setTotalData(totalData);
+        response.setTotalPages(totalPages);
         return ResponseEntity.status(statusCode).body(response);
     }
 }

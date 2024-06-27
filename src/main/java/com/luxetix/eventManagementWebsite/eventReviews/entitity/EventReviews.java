@@ -1,4 +1,4 @@
-package com.luxetix.eventManagementWebsite.eventReviews.entitiy;
+package com.luxetix.eventManagementWebsite.eventReviews.entitity;
 
 
 import com.luxetix.eventManagementWebsite.events.entity.Events;
@@ -30,13 +30,16 @@ public class EventReviews {
     @Column(name = "comment")
     private String comment;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private Users users;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "event_id", nullable = false)
     private Events events;
+
+    @Column(name = "review_category")
+    private String reviewCategory;
 
 
     @ColumnDefault("CURRENT_TIMESTAMP")

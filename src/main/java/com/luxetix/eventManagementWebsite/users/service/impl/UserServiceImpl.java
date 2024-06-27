@@ -95,8 +95,8 @@ public class UserServiceImpl implements UserService {
         if(profileRequestDto.getAvatar() != null){
             userData.setAvatar(cloudinaryService.uploadFile(profileRequestDto.getAvatar(),"folder_1"));
         }
-        if(profileRequestDto.getUsername() != null){
-            userData.setUsername(profileRequestDto.getUsername());
+        if(profileRequestDto.getFullname() != null){
+            userData.setFullname(profileRequestDto.getFullname());
         }
         if(profileRequestDto.getFullname() != null){
             userData.setFullname(profileRequestDto.getFullname());
@@ -108,7 +108,7 @@ public class UserServiceImpl implements UserService {
        userRepository.save(userData);
         ProfileResponseDto data = new ProfileResponseDto();
         data.setEmail(userData.getEmail());
-        data.setUsername(userData.getUsername());
+        data.setFullname(userData.getFullname());
         data.setAvatar(userData.getAvatar());
         data.setPhoneNumber(userData.getPhonenumber());
         data.setFullname(userData.getFullname());
@@ -123,7 +123,7 @@ public class UserServiceImpl implements UserService {
         var email = (String) claims.get("sub");
         Users userData = userRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("User not found"));
         ProfileResponseDto data = new ProfileResponseDto();
-        data.setUsername(userData.getUsername());
+        data.setFullname(userData.getFullname());
         data.setAvatar(userData.getAvatar());
         data.setPhoneNumber(userData.getPhonenumber());
         data.setFullname(userData.getFullname());

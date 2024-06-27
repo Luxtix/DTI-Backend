@@ -59,7 +59,7 @@ public class AuthServiceImpl implements AuthService {
                 .expiresAt(now.plus(10, ChronoUnit.HOURS))
                 .subject(authentication.getName())
                 .claim("scope", scope)
-                .claim("isRefferal",exist)
+                .claim("isReferral",exist)
                 .build();
 
         var jwt = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
