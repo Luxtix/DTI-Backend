@@ -24,7 +24,7 @@ public class EventDetailDtoResponse {
     private LocalTime startTime;
     private LocalTime endTime;
     private Boolean isOnline;
-    private Boolean isPaid;
+    private String priceCategory;
     private String organizerName;
     private String organizerAvatar;
     private Integer favoriteCounts;

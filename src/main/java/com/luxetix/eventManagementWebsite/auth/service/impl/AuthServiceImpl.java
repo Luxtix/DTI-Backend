@@ -60,6 +60,7 @@ public class AuthServiceImpl implements AuthService {
                 .subject(authentication.getName())
                 .claim("scope", scope)
                 .claim("isReferral",exist)
+                .claim("id",userRepository.findByEmail(authentication.getName()).get().getId())
                 .build();
 
         var jwt = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

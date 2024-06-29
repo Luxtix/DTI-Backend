@@ -23,7 +23,7 @@ public class GetEventListDtoResponse {
     private String categoryName;
     private String cityName;
     private boolean isOnline;
-    private int favoriteCounts;
+    private int favoriteCount;
     private boolean isFavorite;
     private LocalDate eventDate;
     private String eventDay;

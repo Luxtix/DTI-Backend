@@ -12,7 +12,7 @@ import lombok.Data;
 
 @Data
 public class UserRegisterRequestDto {
-    @NotBlank(message = "Username is required")
+    @NotBlank(message = "fullname is required")
     private String fullname;
 
     @NotBlank(message = "Email is required")

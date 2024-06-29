@@ -70,24 +70,23 @@ public class Events {
     @Column(name = "event_date")
     private LocalDate eventDate;
 
-    // Assuming start time and end time are meant to be in the future as well
-    @FutureOrPresent(message = "Start time must be in the present or future")
+
     @Column(name = "start_time")
     private LocalTime startTime;
 
-    @FutureOrPresent(message = "End time must be in the present or future")
+
     @Column(name = "end_time")
     private LocalTime endTime;
 
 
     @ColumnDefault("false")
     @Column(name = "isonline")
-    private boolean isOnline;
+    private Boolean isOnline;
 
 
     @ColumnDefault("true")
     @Column(name = "ispaid")
-    private boolean isPaid;
+    private Boolean isPaid;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at")

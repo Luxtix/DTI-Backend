@@ -6,7 +6,7 @@ public interface EventReviewsDao {
     int getRating();
     String getComment();
 
-    String getReviewsCategory();
+    String getReviewCategory();
 
     String getReviewerName();
 }

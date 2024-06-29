@@ -18,7 +18,7 @@ public interface EventReviewsRepository extends JpaRepository<Events,Long> {
 
 
 
-    public static final String eventReviewsDetailQuery = "SELECT er.id as id, er.reviewCategory as reviewsCategory, er.rating as rating, er.comment as comment, er.users.fullname as reviewerName from EventReviews er WHERE er.events.id = :eventId";
+    public static final String eventReviewsDetailQuery = "SELECT er.id as id, er.reviewCategory as reviewCategory, er.rating as rating, er.comment as comment, er.users.fullname as reviewerName from EventReviews er WHERE er.events.id = :eventId";
 
     @Query(value = eventReviewsDetailQuery)
     List<EventReviewsDao> getEventReviews(@Param("eventId") long eventId);

@@ -3,6 +3,8 @@ package com.luxetix.eventManagementWebsite.events.services.impl;
 import com.luxetix.eventManagementWebsite.auth.helpers.Claims;
 import com.luxetix.eventManagementWebsite.categories.Categories;
 import com.luxetix.eventManagementWebsite.categories.repository.CategoryRepository;
+import com.luxetix.eventManagementWebsite.city.Cities;
+import com.luxetix.eventManagementWebsite.city.repository.CityRepository;
 import com.luxetix.eventManagementWebsite.cloudinary.CloudinaryService;
 import com.luxetix.eventManagementWebsite.eventReviews.dao.EventReviewsDao;
 import com.luxetix.eventManagementWebsite.eventReviews.repository.EventReviewsRepository;
@@ -11,6 +13,7 @@ import com.luxetix.eventManagementWebsite.events.dao.EventListDao;
 import com.luxetix.eventManagementWebsite.events.dto.EventDetailDtoResponse;
 import com.luxetix.eventManagementWebsite.events.dto.GetEventListDtoResponse;
 import com.luxetix.eventManagementWebsite.events.dto.NewEventRequestDto;
+import com.luxetix.eventManagementWebsite.events.dto.UpdateEventRequestDto;
 import com.luxetix.eventManagementWebsite.events.entity.Events;
 import com.luxetix.eventManagementWebsite.events.repository.EventRepository;
 import com.luxetix.eventManagementWebsite.events.services.EventService;
@@ -23,6 +26,7 @@ import com.luxetix.eventManagementWebsite.tickets.entity.Tickets;
 import com.luxetix.eventManagementWebsite.tickets.repository.TicketRepository;
 import com.luxetix.eventManagementWebsite.users.entity.Users;
 import com.luxetix.eventManagementWebsite.users.repository.UserRepository;
+import com.luxetix.eventManagementWebsite.vouchers.Vouchers;
 import com.luxetix.eventManagementWebsite.vouchers.dao.VoucherDao;
 import com.luxetix.eventManagementWebsite.vouchers.dto.VoucherDto;
 import com.luxetix.eventManagementWebsite.vouchers.repository.VoucherRepository;
@@ -32,6 +36,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.DayOfWeek;
 import java.util.ArrayList;
@@ -43,24 +48,22 @@ import java.util.Locale;
 @Service
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
-
     private final CloudinaryService cloudinaryService;
-
-
     private final TicketRepository ticketRepository;
     private final UserRepository  userRepository;
     private final CategoryRepository categoryRepository;
+    private final CityRepository cityRepository;
 
     private final VoucherRepository voucherRepository;
-
     private final EventReviewsRepository eventReviewsRepository;
 
-    public EventServiceImpl(EventRepository eventRepository, OrganizerRepository organizerRepository, CloudinaryService cloudinaryService, TicketRepository ticketRepository, UserRepository userRepository, CategoryRepository categoryRepository, VoucherRepository voucherRepository, EventReviewsRepository eventReviewsRepository) {
+    public EventServiceImpl(EventRepository eventRepository, CloudinaryService cloudinaryService, TicketRepository ticketRepository, UserRepository userRepository, CategoryRepository categoryRepository, CityRepository cityRepository, VoucherRepository voucherRepository, EventReviewsRepository eventReviewsRepository) {
         this.eventRepository = eventRepository;
         this.cloudinaryService = cloudinaryService;
         this.ticketRepository = ticketRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
+        this.cityRepository = cityRepository;
         this.voucherRepository = voucherRepository;
         this.eventReviewsRepository = eventReviewsRepository;
     }
@@ -69,24 +72,38 @@ public class EventServiceImpl implements EventService {
 
     @Transactional
     @Override
-    public Events addNewEvent(NewEventRequestDto event) {
+    public Events addNewEvent(MultipartFile image, NewEventRequestDto event) {
         Categories category = categoryRepository.findById(event.getCategory()).orElseThrow(() -> new DataNotFoundException("Category with ID " + event.getCategory() + " is not found"));
+        Cities city = cityRepository.findById(event.getCity()).orElseThrow(() -> new DataNotFoundException("City with ID " + event.getCity() + " is not found"));
+        Events newEvent = event.toEntity();
         var claims = Claims.getClaimsFromJwt();
         var email = (String) claims.get("sub");
         Users userData = userRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("You are not logged in yet"));
-
-        Events newEvent = event.toEntity();
-        newEvent.setEventImage(cloudinaryService.uploadFile(event.getImage(),"folder_1"));
+        newEvent.setUsers(userData);
+        newEvent.setEventImage(cloudinaryService.uploadFile(image,"folder_1"));
         if(newEvent.getEventImage() == null) {
             throw new InputException("Image Event can not be uploaded");
         }
-        newEvent.setUsers(userData);
-        newEvent.setCategories(category);
-        Tickets newTicket = new Tickets();
-        newTicket.setQty(event.getTicketQty());
-        newTicket.setPrice(event.getTicketPrice());
-        newTicket.setName(event.getTicketName());
-        ticketRepository.save(newTicket);
+        eventRepository.save(newEvent);
+        for(NewEventRequestDto.TicketEventDto ticketData : event.getTickets()){
+            Tickets newTicket = new Tickets();
+            newTicket.setEvents(newEvent);
+            newTicket.setName(ticketData.getName());
+            newTicket.setPrice(ticketData.getPrice());
+            newTicket.setQty(ticketData.getQty());
+            ticketRepository.save(newTicket);
+        }
+        for(NewEventRequestDto.VoucherEventDto voucherData : event.getVouchers()){
+            Vouchers newVoucher = new Vouchers();
+            newVoucher.setEvents(newEvent);
+            newVoucher.setName(voucherData.getName());
+            newVoucher.setRate(voucherData.getRate());
+            newVoucher.setVoucherLimit(voucherData.getQty());
+            newVoucher.setStartDate(voucherData.getStartDate());
+            newVoucher.setEndDate(voucherData.getEndDate());
+            newVoucher.setReferralOnly(voucherData.getReferralOnly());
+            voucherRepository.save(newVoucher);
+        }
         return newEvent;
     }
 
@@ -117,7 +134,7 @@ public class EventServiceImpl implements EventService {
             eventData.setCategoryName(allEventData.getCategoryName());
             eventData.setOnline(allEventData.getIsOnline());
             eventData.setFavorite(allEventData.getIsFavorite());
-            eventData.setFavoriteCounts(allEventData.getFavoriteCount());
+            eventData.setFavoriteCount(allEventData.getFavoriteCount());
             DayOfWeek day = allEventData.getEventDate().getDayOfWeek();
             String dayOfWeekString = day.getDisplayName(
                     java.time.format.TextStyle.FULL,
@@ -153,7 +170,7 @@ public class EventServiceImpl implements EventService {
         eventDetail.setCityName(data.getCityName());
         eventDetail.setIsOnline(data.getIsOnline());
         eventDetail.setIsFavorite(data.getIsFavorite());
-        eventDetail.setIsPaid(data.getIsPaid());
+        eventDetail.setPriceCategory(data.getPriceCategory());
         eventDetail.setEventImage(data.getEventImage());
         eventDetail.setVenueName(data.getVenueName());
         eventDetail.setStartTime(data.getStartTime());
@@ -173,16 +190,103 @@ public class EventServiceImpl implements EventService {
 
         for(VoucherDao voucher : voucherData){
             VoucherDto newVoucher = new VoucherDto();
-            newVoucher.setVoucherId(voucher.getVoucherId());
+            newVoucher.setId(voucher.getVoucherId());
             newVoucher.setVoucherName(voucher.getVoucherName());
             newVoucher.setVoucherRate(voucher.getVoucherRate());
             newVoucher.setStartDate(voucher.getStartDate());
             newVoucher.setEndDate(voucher.getEndDate());
             newVoucher.setVoucherLimit(voucher.getVoucherLimit());
+            newVoucher.setReferralOnly(voucher.getReferralOnly());
             voucherList.add(newVoucher);
         }
         eventDetail.setVouchers(voucherList);
         eventDetail.setReviews(reviewsData);
         return eventDetail;
+    }
+
+    @Override
+    public void deleteEventById(long id) {
+        eventRepository.deleteById(id);
+    }
+
+
+    @Transactional
+    @Override
+    public Events updateEvent(long id, MultipartFile image, UpdateEventRequestDto data) {
+        Events eventData = eventRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Event with id " + id + " is not found"));
+        if(!data.getName().isEmpty()){
+            eventData.setName(data.getName());
+        }
+        if(data.getCategory() != 0){
+            Categories categories = new Categories();
+            categories.setId(data.getCategory());
+            eventData.setCategories(categories);
+        }
+        if(data.getIsOnline() != null){
+            eventData.setIsOnline(data.getIsOnline());
+        }
+        if(data.getEventDate() != null){
+            eventData.setEventDate(data.getEventDate());
+        }
+        if(data.getStartTime() != null){
+            eventData.setStartTime(data.getStartTime());
+        }
+        if(data.getEndTime() != null){
+            eventData.setEndTime(data.getEndTime());
+        }
+        if(data.getVenue().isEmpty()){
+            eventData.setVenueName(data.getVenue());
+        }
+        if(data.getAddress().isEmpty()){
+            eventData.setAddress(data.getAddress());
+        }
+        if(data.getIsPaid() != null){
+            eventData.setIsPaid(data.getIsPaid());
+        }
+        if(data.getCity() != 0){
+            Cities city = new Cities();
+            city.setId(data.getCity());
+            eventData.setCities(city);
+        }
+        if(data.getDescription().isEmpty()){
+            eventData.setDescriptions(data.getDescription());
+        }
+        if(!image.isEmpty()){
+            eventData.setEventImage(cloudinaryService.uploadFile(image,"folder_1"));
+        }
+        eventRepository.save(eventData);
+        for(UpdateEventRequestDto.TicketEventUpdateDto ticketData : data.getTickets()){
+            Tickets ticket = ticketRepository.findById(ticketData.getId()).orElseThrow(() -> new DataNotFoundException("Ticket with id " + ticketData.getId() + " is not found"));
+            if(!ticketData.getName().isEmpty()){
+                ticket.setName(ticketData.getName());
+            }
+            ticket.setPrice(ticketData.getPrice());
+            ticket.setQty(ticketData.getQty());
+            ticketRepository.save(ticket);
+        }
+        for(UpdateEventRequestDto.VoucherEventUpdateDto voucherData : data.getVouchers()){
+            System.out.println(voucherData.getId());
+            Vouchers voucher = voucherRepository.findById(voucherData.getId()).orElseThrow(() -> new DataNotFoundException("Voucher with id " + voucherData.getId() + " is not found"));
+            if(voucherData.getName() == null){
+                voucher.setName(voucherData.getName());
+            }
+            if(voucherData.getQty() != 0){
+                voucher.setVoucherLimit(voucherData.getQty());
+            }
+            voucher.setRate(voucherData.getRate());
+            if(voucherData.getStartDate() != null){
+                voucher.setStartDate(voucherData.getStartDate());
+            }
+            if(voucherData.getEndDate() != null){
+                voucher.setEndDate(voucherData.getEndDate());
+            }
+
+            if(voucherData.getReferralOnly() != null){
+                voucher.setReferralOnly(voucherData.getReferralOnly());
+            }
+
+            voucherRepository.save(voucher);
+        }
+        return eventData;
     }
 }

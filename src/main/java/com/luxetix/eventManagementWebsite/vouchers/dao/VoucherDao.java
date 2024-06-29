@@ -15,4 +15,6 @@ public interface VoucherDao {
     LocalDate getEndDate();
 
     int getVoucherLimit();
+
+    boolean getReferralOnly();
 }

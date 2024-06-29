@@ -32,11 +32,9 @@ public class UserUsageReferrals {
     private Referrals referrals;
 
 
-    @Column(name = "is_active")
-    private Boolean isActive = true;
+    @Column(name = "benefit_claim")
+    private Boolean benefitClaim = false;
 
-    @Column(name = "expiration_date")
-    private LocalDate expirationDate;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at")

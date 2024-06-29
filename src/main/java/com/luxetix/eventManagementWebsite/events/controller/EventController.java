@@ -1,12 +1,17 @@
 package com.luxetix.eventManagementWebsite.events.controller;
 
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.luxetix.eventManagementWebsite.LocalDateTypeAdapter.LocalDateTypeAdapter;
 import com.luxetix.eventManagementWebsite.events.dao.EventListDao;
 import com.luxetix.eventManagementWebsite.events.dto.EventDetailDtoResponse;
 import com.luxetix.eventManagementWebsite.events.dto.GetEventListDtoResponse;
 import com.luxetix.eventManagementWebsite.events.dto.NewEventRequestDto;
+import com.luxetix.eventManagementWebsite.events.dto.UpdateEventRequestDto;
 import com.luxetix.eventManagementWebsite.events.entity.Events;
 import com.luxetix.eventManagementWebsite.events.services.EventService;
+import com.luxetix.eventManagementWebsite.localtimetypeadapter.LocalTimeTypeAdapter;
 import com.luxetix.eventManagementWebsite.response.Response;
 import lombok.extern.java.Log;
 import org.springframework.data.domain.Page;
@@ -14,7 +19,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -30,8 +38,16 @@ public class EventController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Response<Events>> addNewEvent(@ModelAttribute NewEventRequestDto newEventRequestDto) {
-        return Response.successfulResponse("Event registered successfully", eventService.addNewEvent(newEventRequestDto));
+    public ResponseEntity<Response<Events>> addNewEvent(@RequestParam("image") MultipartFile image,  @RequestParam("eventData") String eventData) {
+
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter());
+        gsonBuilder.registerTypeAdapter(LocalTime.class, new LocalTimeTypeAdapter());
+        Gson gson = gsonBuilder.create();
+
+        NewEventRequestDto data = gson.fromJson(eventData, NewEventRequestDto.class);
+        log.info(data.toString());
+        return Response.successfulResponse("Event registered successfully",eventService.addNewEvent(image,data));
     }
 
     @GetMapping("")
@@ -44,5 +60,22 @@ public class EventController {
     @GetMapping("/{id}")
     public ResponseEntity<Response<EventDetailDtoResponse>> getEventById(@PathVariable("id") long id){
         return Response.successfulResponse("Event has been fetched succesfully", eventService.getEventById(id));
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Response<Events>> deleteEventById(@PathVariable("id") long id){
+        eventService.deleteEventById(id);
+        return Response.successfulResponse("Event has been delete successfully");
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Response<Events>> updateEventById(@PathVariable("id") long id,@RequestParam("image") MultipartFile image,  @RequestParam("eventData") String eventData){
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter());
+        gsonBuilder.registerTypeAdapter(LocalTime.class, new LocalTimeTypeAdapter());
+        Gson gson = gsonBuilder.create();
+        UpdateEventRequestDto data = gson.fromJson(eventData, UpdateEventRequestDto.class);
+        return Response.successfulResponse("Event has been update successfully", eventService.updateEvent(id, image, data));
     }
 }

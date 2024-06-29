@@ -15,7 +15,7 @@ public interface EventDetailDao {
     LocalTime getStartTime();
     LocalTime getEndTime();
     Boolean getIsOnline();
-    Boolean getIsPaid();
+    String getPriceCategory();
     String getOrganizerName();
     String getOrganizerAvatar();
     Integer getFavoriteCounts();
