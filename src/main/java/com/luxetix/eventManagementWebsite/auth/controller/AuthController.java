@@ -52,10 +52,20 @@ public class AuthController {
         response.setToken(token);
 
         Cookie cookie = new Cookie("Sid", token);
-        cookie.setMaxAge(6000); // Cookie will expire in 1 hour
+        cookie.setMaxAge(6000);
         cookie.setPath("/");
         HttpHeaders headers = new HttpHeaders();
         headers.add("Set-Cookie", cookie.getName() + "=" + cookie.getValue() + "; Path=/; HttpOnly");
-        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(Response.successfulResponse( "Login successfull", response));
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(Response.successfulResponse( "Login successfully", response));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(){
+        authService.logout();
+        Cookie cookie = new Cookie("Sid", "");
+        cookie.setMaxAge(0);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Set-Cookie", cookie.getName() + "=" + cookie.getValue() + "; Path=/; HttpOnly");
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(Response.successfulResponse("Logout successfully"));
     }
 }
