@@ -3,7 +3,10 @@ package com.luxetix.eventManagementWebsite.events.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.luxetix.eventManagementWebsite.LocalDateTypeAdapter.LocalDateTypeAdapter;
+import com.luxetix.eventManagementWebsite.adapter.LocalDateTypeAdapter;
+import com.luxetix.eventManagementWebsite.eventReviews.dto.ReviewEventRequestDto;
+import com.luxetix.eventManagementWebsite.eventReviews.dto.ReviewEventResponseDto;
+import com.luxetix.eventManagementWebsite.eventReviews.entitity.EventReviews;
 import com.luxetix.eventManagementWebsite.events.dao.EventListDao;
 import com.luxetix.eventManagementWebsite.events.dto.EventDetailDtoResponse;
 import com.luxetix.eventManagementWebsite.events.dto.GetEventListDtoResponse;
@@ -11,9 +14,11 @@ import com.luxetix.eventManagementWebsite.events.dto.NewEventRequestDto;
 import com.luxetix.eventManagementWebsite.events.dto.UpdateEventRequestDto;
 import com.luxetix.eventManagementWebsite.events.entity.Events;
 import com.luxetix.eventManagementWebsite.events.services.EventService;
-import com.luxetix.eventManagementWebsite.localtimetypeadapter.LocalTimeTypeAdapter;
+import com.luxetix.eventManagementWebsite.adapter.LocalTimeTypeAdapter;
 import com.luxetix.eventManagementWebsite.response.Response;
+import jakarta.annotation.security.RolesAllowed;
 import lombok.extern.java.Log;
+import org.springframework.context.annotation.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,6 +69,7 @@ public class EventController {
 
 
     @DeleteMapping("/{id}")
+    @RolesAllowed({"USER"})
     public ResponseEntity<Response<Events>> deleteEventById(@PathVariable("id") long id){
         eventService.deleteEventById(id);
         return Response.successfulResponse("Event has been delete successfully");
@@ -78,4 +84,7 @@ public class EventController {
         UpdateEventRequestDto data = gson.fromJson(eventData, UpdateEventRequestDto.class);
         return Response.successfulResponse("Event has been update successfully", eventService.updateEvent(id, image, data));
     }
+
+
+
 }

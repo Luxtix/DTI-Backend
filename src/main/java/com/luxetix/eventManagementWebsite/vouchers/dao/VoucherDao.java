@@ -16,5 +16,7 @@ public interface VoucherDao {
 
     int getVoucherLimit();
 
+    int getRemainingVoucherLimit();
+
     boolean getReferralOnly();
 }

@@ -1,5 +1,8 @@
 package com.luxetix.eventManagementWebsite.events.services;
 
+import com.luxetix.eventManagementWebsite.eventReviews.dto.ReviewEventRequestDto;
+import com.luxetix.eventManagementWebsite.eventReviews.dto.ReviewEventResponseDto;
+import com.luxetix.eventManagementWebsite.eventReviews.entitity.EventReviews;
 import com.luxetix.eventManagementWebsite.events.dao.EventListDao;
 import com.luxetix.eventManagementWebsite.events.dto.EventDetailDtoResponse;
 import com.luxetix.eventManagementWebsite.events.dto.GetEventListDtoResponse;
@@ -23,4 +26,6 @@ public interface EventService {
 
 
     Events updateEvent(long id, MultipartFile image, UpdateEventRequestDto data);
+
+    ReviewEventResponseDto addReview(ReviewEventRequestDto data);
 }

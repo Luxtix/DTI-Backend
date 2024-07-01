@@ -21,7 +21,8 @@ public class UserRegisterRequestDto {
     @NotBlank(message = "Password is required")
     private String password;
 
-    private String refferal;
+    @NotBlank(message = "Referral is required")
+    private String referral;
 
 
     @Enumerated(EnumType.STRING)

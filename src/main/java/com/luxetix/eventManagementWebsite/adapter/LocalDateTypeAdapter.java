@@ -1,4 +1,4 @@
-package com.luxetix.eventManagementWebsite.LocalDateTypeAdapter;
+package com.luxetix.eventManagementWebsite.adapter;
 
 import com.google.gson.*;
 

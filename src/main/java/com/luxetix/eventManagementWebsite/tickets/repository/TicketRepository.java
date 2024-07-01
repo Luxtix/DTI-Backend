@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface TicketRepository extends JpaRepository<Tickets,Long> {
-    public static final String eventTicketQuery = "SELECT t.id as ticketId, t.name as ticketName, t.price as ticketPrice, t.qty as ticketQuantity  from Tickets t left join Events e on t.events.id = e.id   where e.id = :eventId";
+    public static final String eventTicketQuery = "SELECT t.id as ticketId, t.name as ticketName, t.price as ticketPrice, t.qty as ticketQuantity, t.qty - COALESCE(SUM(tl.qty),0) as remainingQty from Tickets t left join Events e on t.events.id = e.id left join TransactionList tl on t.id = tl.tickets.id where e.id = :eventId GROUP BY t.id";
 
 
     @Query(value = eventTicketQuery)

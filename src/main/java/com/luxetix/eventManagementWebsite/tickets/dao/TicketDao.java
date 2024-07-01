@@ -5,4 +5,7 @@ public interface TicketDao {
     String getTicketName();
     int getTicketPrice();
     int getTicketQuantity();
+
+    int getRemainingQty();
+
 }

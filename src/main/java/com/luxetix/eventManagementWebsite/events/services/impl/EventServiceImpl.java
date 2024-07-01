@@ -7,6 +7,9 @@ import com.luxetix.eventManagementWebsite.city.Cities;
 import com.luxetix.eventManagementWebsite.city.repository.CityRepository;
 import com.luxetix.eventManagementWebsite.cloudinary.CloudinaryService;
 import com.luxetix.eventManagementWebsite.eventReviews.dao.EventReviewsDao;
+import com.luxetix.eventManagementWebsite.eventReviews.dto.ReviewEventRequestDto;
+import com.luxetix.eventManagementWebsite.eventReviews.dto.ReviewEventResponseDto;
+import com.luxetix.eventManagementWebsite.eventReviews.entitity.EventReviews;
 import com.luxetix.eventManagementWebsite.eventReviews.repository.EventReviewsRepository;
 import com.luxetix.eventManagementWebsite.events.dao.EventDetailDao;
 import com.luxetix.eventManagementWebsite.events.dao.EventListDao;
@@ -19,7 +22,6 @@ import com.luxetix.eventManagementWebsite.events.repository.EventRepository;
 import com.luxetix.eventManagementWebsite.events.services.EventService;
 import com.luxetix.eventManagementWebsite.exceptions.DataNotFoundException;
 import com.luxetix.eventManagementWebsite.exceptions.InputException;
-import com.luxetix.eventManagementWebsite.oganizer.repository.OrganizerRepository;
 import com.luxetix.eventManagementWebsite.tickets.dao.TicketDao;
 import com.luxetix.eventManagementWebsite.tickets.dto.TicketDto;
 import com.luxetix.eventManagementWebsite.tickets.entity.Tickets;
@@ -80,7 +82,7 @@ public class EventServiceImpl implements EventService {
         var email = (String) claims.get("sub");
         Users userData = userRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("You are not logged in yet"));
         newEvent.setUsers(userData);
-        newEvent.setEventImage(cloudinaryService.uploadFile(image,"folder_1"));
+        newEvent.setEventImage(cloudinaryService.uploadFile(image,"folder_luxtix"));
         if(newEvent.getEventImage() == null) {
             throw new InputException("Image Event can not be uploaded");
         }
@@ -184,6 +186,7 @@ public class EventServiceImpl implements EventService {
             newTicket.setName(ticket.getTicketName());
             newTicket.setPrice(ticket.getTicketPrice());
             newTicket.setQty(ticket.getTicketQuantity());
+            newTicket.setRemainingQty(ticket.getRemainingQty());
             ticketList.add(newTicket);
         }
         eventDetail.setTickets(ticketList);
@@ -196,6 +199,7 @@ public class EventServiceImpl implements EventService {
             newVoucher.setStartDate(voucher.getStartDate());
             newVoucher.setEndDate(voucher.getEndDate());
             newVoucher.setVoucherLimit(voucher.getVoucherLimit());
+            newVoucher.setRemainingVoucherLimit(voucher.getRemainingVoucherLimit());
             newVoucher.setReferralOnly(voucher.getReferralOnly());
             voucherList.add(newVoucher);
         }
@@ -288,5 +292,28 @@ public class EventServiceImpl implements EventService {
             voucherRepository.save(voucher);
         }
         return eventData;
+    }
+
+    @Override
+    public ReviewEventResponseDto addReview(ReviewEventRequestDto data) {
+        var claims = Claims.getClaimsFromJwt();
+        var email = (String) claims.get("sub");
+        Users userData = userRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("You are not logged in yet"));
+        EventReviews reviewData = new EventReviews();
+        Events eventData = new Events();
+        eventData.setId(data.getEventId());
+        reviewData.setEvents(eventData);
+        reviewData.setRating(data.getRating());
+        reviewData.setUsers(userData);
+        reviewData.setReviewCategory(data.getType());
+        reviewData.setComment(data.getComments());
+        eventReviewsRepository.save(reviewData);
+        ReviewEventResponseDto resp = new ReviewEventResponseDto();
+        resp.setId(reviewData.getId());
+        resp.setComment(reviewData.getComment());
+        resp.setType(reviewData.getReviewCategory());
+        resp.setRating(reviewData.getRating());
+        resp.setName(reviewData.getUsers().getFullname());
+        return resp;
     }
 }

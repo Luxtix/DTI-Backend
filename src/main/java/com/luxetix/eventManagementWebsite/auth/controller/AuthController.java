@@ -62,10 +62,11 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout(){
         authService.logout();
-        Cookie cookie = new Cookie("Sid", "");
-        cookie.setMaxAge(0);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Set-Cookie", cookie.getName() + "=" + cookie.getValue() + "; Path=/; HttpOnly");
-        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(Response.successfulResponse("Logout successfully"));
+        headers.add("Set-Cookie", "Sid=; Path=/; Max-Age=0; HttpOnly");
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .headers(headers)
+                .body(Response.successfulResponse("Logout successfully"));
     }
 }

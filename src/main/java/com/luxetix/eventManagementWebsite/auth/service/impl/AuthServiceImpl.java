@@ -27,15 +27,13 @@ public class AuthServiceImpl implements AuthService {
 
     private final JwtEncoder jwtEncoder;
 
-    private final PasswordEncoder passwordEncoder;
     private final AuthRedisRepository authRedisRepository;
 
     private final UserUsageReferralsRepository userUsageReferralsRepository;
     private final UserRepository userRepository;
 
-    public AuthServiceImpl(JwtEncoder jwtEncoder, PasswordEncoder passwordEncoder, AuthRedisRepository authRedisRepository, UserUsageReferralsRepository userUsageReferralsRepository, UserRepository userRepository) {
+    public AuthServiceImpl(JwtEncoder jwtEncoder, AuthRedisRepository authRedisRepository, UserUsageReferralsRepository userUsageReferralsRepository, UserRepository userRepository) {
         this.jwtEncoder = jwtEncoder;
-        this.passwordEncoder = passwordEncoder;
         this.authRedisRepository = authRedisRepository;
         this.userUsageReferralsRepository = userUsageReferralsRepository;
         this.userRepository = userRepository;
@@ -44,9 +42,9 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public String generateToken(Authentication authentication) {
         long userId = userRepository.findByEmail(authentication.getName()).get().getId();
-        boolean exist = userUsageReferralsRepository.findAll().stream().anyMatch(data -> data.getUsers().getId() == userId);
+        Instant expiredDate = Instant.now().minus(90, ChronoUnit.DAYS);
+        boolean exist = userUsageReferralsRepository.checkUserIsReferralAndValid(userId,expiredDate);
         Instant now = Instant.now();
-
         String scope = authentication.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)

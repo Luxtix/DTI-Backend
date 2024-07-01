@@ -31,9 +31,6 @@ public class PointHistory {
     private int totalPoint;
 
 
-    @Column(name = "expiration_date")
-    private LocalDate expirationDate;
-
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at")
     private Instant createdAt;

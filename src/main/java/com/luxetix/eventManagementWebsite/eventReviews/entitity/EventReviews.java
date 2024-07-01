@@ -30,16 +30,17 @@ public class EventReviews {
     @Column(name = "comment")
     private String comment;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private Users users;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "event_id", nullable = false)
     private Events events;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "review_category")
-    private String reviewCategory;
+    private EventReviewType reviewCategory;
 
 
     @ColumnDefault("CURRENT_TIMESTAMP")

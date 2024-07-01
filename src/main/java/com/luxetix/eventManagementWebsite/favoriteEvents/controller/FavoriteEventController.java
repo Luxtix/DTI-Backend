@@ -1,4 +1,5 @@
 package com.luxetix.eventManagementWebsite.favoriteEvents.controller;
+import com.luxetix.eventManagementWebsite.auth.helpers.Claims;
 import com.luxetix.eventManagementWebsite.favoriteEvents.dto.EventToggleDtoResponse;
 import com.luxetix.eventManagementWebsite.favoriteEvents.service.FavoriteEventService;
 import com.luxetix.eventManagementWebsite.response.Response;
@@ -18,6 +19,8 @@ public class FavoriteEventController {
 
     @PostMapping("toggle/{id}")
     public ResponseEntity<Response<EventToggleDtoResponse>> toggleEvent(@PathVariable long id) {
-        return Response.successfulResponse("Event toggle successfully", favoriteEventService.toggleEvent(id));
+        var claims = Claims.getClaimsFromJwt();
+        var userId = (long) claims.get("id");
+        return Response.successfulResponse("Event toggle successfully", favoriteEventService.toggleEvent(id,userId));
     }
 }

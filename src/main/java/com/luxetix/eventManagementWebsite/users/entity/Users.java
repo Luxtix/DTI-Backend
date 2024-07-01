@@ -54,11 +54,7 @@ public class Users {
     private String avatar;
 
     @Column(name = "phonenumber")
-    private String phonenumber;
-
-
-    @Column(name = "total_points")
-    private Long totalPoints;
+    private String phoneNumber;
 
 
 

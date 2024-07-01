@@ -21,9 +21,7 @@ public class FavoriteEventServiceImpl implements FavoriteEventService {
     }
 
     @Override
-    public EventToggleDtoResponse toggleEvent(long eventId) {
-        var claims = Claims.getClaimsFromJwt();
-        var userId = (long) claims.get("id");
+    public EventToggleDtoResponse toggleEvent(long eventId, long userId) {
         Optional<FavoriteEvents> favoriteEventData = favoriteEventRepository.getFavoriteEventByUserIdAndEventId(userId,eventId);
         FavoriteEvents favoriteData = favoriteEventData.orElse(null);
         if(favoriteEventData.isEmpty()){

@@ -13,5 +13,6 @@ public class VoucherDto {
     private LocalDate startDate;
     private LocalDate endDate;
     private int voucherLimit;
+    private int remainingVoucherLimit;
     private boolean referralOnly;
 }

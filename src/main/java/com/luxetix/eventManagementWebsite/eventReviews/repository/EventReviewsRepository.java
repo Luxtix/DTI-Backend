@@ -1,6 +1,7 @@
 package com.luxetix.eventManagementWebsite.eventReviews.repository;
 
 import com.luxetix.eventManagementWebsite.eventReviews.dao.EventReviewsDao;
+import com.luxetix.eventManagementWebsite.eventReviews.entitity.EventReviews;
 import com.luxetix.eventManagementWebsite.events.dao.EventListDao;
 import com.luxetix.eventManagementWebsite.events.entity.Events;
 import org.springframework.data.domain.Page;
@@ -14,7 +15,7 @@ import java.util.List;
 
 
 @Repository
-public interface EventReviewsRepository extends JpaRepository<Events,Long> {
+public interface EventReviewsRepository extends JpaRepository<EventReviews,Long> {
 
 
 
