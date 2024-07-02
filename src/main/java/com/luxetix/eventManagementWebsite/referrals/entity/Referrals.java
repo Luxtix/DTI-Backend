@@ -1,11 +1,9 @@
-package com.luxetix.eventManagementWebsite.refferals.entity;
+package com.luxetix.eventManagementWebsite.referrals.entity;
 
 
 import com.luxetix.eventManagementWebsite.userUsageRefferals.entity.UserUsageReferrals;
-import com.luxetix.eventManagementWebsite.users.entity.Users;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.util.LinkedHashSet;

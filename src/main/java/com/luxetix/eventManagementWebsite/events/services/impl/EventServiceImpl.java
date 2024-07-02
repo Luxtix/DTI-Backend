@@ -2,15 +2,13 @@ package com.luxetix.eventManagementWebsite.events.services.impl;
 
 import com.luxetix.eventManagementWebsite.auth.helpers.Claims;
 import com.luxetix.eventManagementWebsite.categories.Categories;
-import com.luxetix.eventManagementWebsite.categories.repository.CategoryRepository;
 import com.luxetix.eventManagementWebsite.city.Cities;
-import com.luxetix.eventManagementWebsite.city.repository.CityRepository;
 import com.luxetix.eventManagementWebsite.cloudinary.CloudinaryService;
 import com.luxetix.eventManagementWebsite.eventReviews.dao.EventReviewsDao;
 import com.luxetix.eventManagementWebsite.eventReviews.dto.ReviewEventRequestDto;
 import com.luxetix.eventManagementWebsite.eventReviews.dto.ReviewEventResponseDto;
 import com.luxetix.eventManagementWebsite.eventReviews.entity.EventReviews;
-import com.luxetix.eventManagementWebsite.eventReviews.repository.EventReviewsRepository;
+import com.luxetix.eventManagementWebsite.eventReviews.service.EventReviewService;
 import com.luxetix.eventManagementWebsite.events.dao.EventDetailDao;
 import com.luxetix.eventManagementWebsite.events.dao.EventListDao;
 import com.luxetix.eventManagementWebsite.events.dto.EventDetailDtoResponse;
@@ -25,13 +23,13 @@ import com.luxetix.eventManagementWebsite.exceptions.InputException;
 import com.luxetix.eventManagementWebsite.tickets.dao.TicketDao;
 import com.luxetix.eventManagementWebsite.tickets.dto.TicketDto;
 import com.luxetix.eventManagementWebsite.tickets.entity.Tickets;
-import com.luxetix.eventManagementWebsite.tickets.repository.TicketRepository;
+import com.luxetix.eventManagementWebsite.tickets.service.TicketService;
 import com.luxetix.eventManagementWebsite.users.entity.Users;
-import com.luxetix.eventManagementWebsite.users.repository.UserRepository;
+import com.luxetix.eventManagementWebsite.users.service.UserService;
 import com.luxetix.eventManagementWebsite.vouchers.entity.Vouchers;
 import com.luxetix.eventManagementWebsite.vouchers.dao.VoucherDao;
 import com.luxetix.eventManagementWebsite.vouchers.dto.VoucherDto;
-import com.luxetix.eventManagementWebsite.vouchers.repository.VoucherRepository;
+import com.luxetix.eventManagementWebsite.vouchers.service.VoucherService;
 import jakarta.transaction.Transactional;
 import lombok.extern.java.Log;
 import org.springframework.data.domain.Page;
@@ -51,36 +49,27 @@ import java.util.Locale;
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final CloudinaryService cloudinaryService;
-    private final TicketRepository ticketRepository;
-    private final UserRepository  userRepository;
-    private final CategoryRepository categoryRepository;
-    private final CityRepository cityRepository;
+    private final TicketService ticketService;
+    private final UserService userService;
+    private final VoucherService voucherService;
+    private final EventReviewService eventReviewService;
 
-    private final VoucherRepository voucherRepository;
-    private final EventReviewsRepository eventReviewsRepository;
-
-    public EventServiceImpl(EventRepository eventRepository, CloudinaryService cloudinaryService, TicketRepository ticketRepository, UserRepository userRepository, CategoryRepository categoryRepository, CityRepository cityRepository, VoucherRepository voucherRepository, EventReviewsRepository eventReviewsRepository) {
+    public EventServiceImpl(EventRepository eventRepository, CloudinaryService cloudinaryService, TicketService ticketService, UserService userService, VoucherService voucherService, EventReviewService eventReviewService) {
         this.eventRepository = eventRepository;
         this.cloudinaryService = cloudinaryService;
-        this.ticketRepository = ticketRepository;
-        this.userRepository = userRepository;
-        this.categoryRepository = categoryRepository;
-        this.cityRepository = cityRepository;
-        this.voucherRepository = voucherRepository;
-        this.eventReviewsRepository = eventReviewsRepository;
+        this.ticketService = ticketService;
+        this.userService = userService;
+        this.voucherService = voucherService;
+        this.eventReviewService = eventReviewService;
     }
 
 
 
     @Transactional
     @Override
-    public Events addNewEvent(MultipartFile image, NewEventRequestDto event) {
-        Categories category = categoryRepository.findById(event.getCategory()).orElseThrow(() -> new DataNotFoundException("Category with ID " + event.getCategory() + " is not found"));
-        Cities city = cityRepository.findById(event.getCity()).orElseThrow(() -> new DataNotFoundException("City with ID " + event.getCity() + " is not found"));
+    public Events addNewEvent(MultipartFile image, NewEventRequestDto event,String email) {
         Events newEvent = event.toEntity();
-        var claims = Claims.getClaimsFromJwt();
-        var email = (String) claims.get("sub");
-        Users userData = userRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("You are not logged in yet"));
+        Users userData = userService.getUserByEmail(email);
         newEvent.setUsers(userData);
         newEvent.setEventImage(cloudinaryService.uploadFile(image,"folder_luxtix"));
         if(newEvent.getEventImage() == null) {
@@ -93,7 +82,7 @@ public class EventServiceImpl implements EventService {
             newTicket.setName(ticketData.getName());
             newTicket.setPrice(ticketData.getPrice());
             newTicket.setQty(ticketData.getQty());
-            ticketRepository.save(newTicket);
+            ticketService.addNewTicket(newTicket);
         }
         for(NewEventRequestDto.VoucherEventDto voucherData : event.getVouchers()){
             Vouchers newVoucher = new Vouchers();
@@ -104,7 +93,7 @@ public class EventServiceImpl implements EventService {
             newVoucher.setStartDate(voucherData.getStartDate());
             newVoucher.setEndDate(voucherData.getEndDate());
             newVoucher.setReferralOnly(voucherData.getReferralOnly());
-            voucherRepository.save(newVoucher);
+            voucherService.addNewVoucher(newVoucher);
         }
         return newEvent;
     }
@@ -112,7 +101,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public Page<EventListDao> getAllEvent(String email, String categoryName, String cityName, String eventName, Boolean eventType, Boolean isOnline, Boolean isFavorite,int page, int page_size) {
         Pageable pageable = PageRequest.of(page, page_size);
-        Users userData = userRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("You are not logged in yet"));
+        Users userData = userService.getUserByEmail(email);
         return eventRepository.getAllEventWithFilter(userData.getId(),categoryName,eventName,cityName, eventType, isOnline, isFavorite,pageable);
     }
 
@@ -156,11 +145,11 @@ public class EventServiceImpl implements EventService {
         var isReferrals = (Boolean) claims.get("isReferral");
         List<TicketDto> ticketList = new ArrayList<>();
         List<VoucherDto> voucherList = new ArrayList<>();
-        Users userData = userRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("You are not logged in yet"));
+        Users userData = userService.getUserByEmail(email);
         EventDetailDao data =  eventRepository.getEventById(userData.getId(),id);
-        List<TicketDao> ticketData = ticketRepository.getEventTicket(id);
-        List<VoucherDao> voucherData = voucherRepository.getEventVoucher(id,isReferrals);
-        List<EventReviewsDao> reviewsData = eventReviewsRepository.getEventReviews(id);
+        List<TicketDao> ticketData = ticketService.getEventTicket(id);
+        List<VoucherDao> voucherData = voucherService.getEventVoucher(id,isReferrals);
+        List<EventReviewsDao> reviewsData = eventReviewService.getEventReviews(id);
         EventDetailDtoResponse eventDetail = new EventDetailDtoResponse();
         eventDetail.setId(data.getEventId());
         eventDetail.setDescription(data.getDescription());
@@ -175,6 +164,7 @@ public class EventServiceImpl implements EventService {
         eventDetail.setVenueName(data.getVenueName());
         eventDetail.setStartTime(data.getStartTime());
         eventDetail.setEndTime(data.getEndTime());
+        eventDetail.setIsDone(data.getIsDone());
         eventDetail.setOrganizerName(data.getOrganizerName());
         eventDetail.setOrganizerAvatar(data.getOrganizerAvatar());
         eventDetail.setFavoriteCounts(data.getFavoriteCounts());
@@ -258,17 +248,17 @@ public class EventServiceImpl implements EventService {
         }
         eventRepository.save(eventData);
         for(UpdateEventRequestDto.TicketEventUpdateDto ticketData : data.getTickets()){
-            Tickets ticket = ticketRepository.findById(ticketData.getId()).orElseThrow(() -> new DataNotFoundException("Ticket with id " + ticketData.getId() + " is not found"));
+            Tickets ticket = ticketService.getEventTicketById(ticketData.getId());
             if(!ticketData.getName().isEmpty()){
                 ticket.setName(ticketData.getName());
             }
             ticket.setPrice(ticketData.getPrice());
             ticket.setQty(ticketData.getQty());
-            ticketRepository.save(ticket);
+            ticketService.addNewTicket(ticket);
         }
         for(UpdateEventRequestDto.VoucherEventUpdateDto voucherData : data.getVouchers()){
             System.out.println(voucherData.getId());
-            Vouchers voucher = voucherRepository.findById(voucherData.getId()).orElseThrow(() -> new DataNotFoundException("Voucher with id " + voucherData.getId() + " is not found"));
+            Vouchers voucher = voucherService.getVoucherById(voucherData.getId());
             if(voucherData.getName() == null){
                 voucher.setName(voucherData.getName());
             }
@@ -287,14 +277,14 @@ public class EventServiceImpl implements EventService {
                 voucher.setReferralOnly(voucherData.getReferralOnly());
             }
 
-            voucherRepository.save(voucher);
+            voucherService.addNewVoucher(voucher);
         }
         return eventData;
     }
 
     @Override
     public ReviewEventResponseDto addReview(String email, ReviewEventRequestDto data) {
-        Users userData = userRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("You are not logged in yet"));
+        Users userData = userService.getUserByEmail(email);
         EventReviews reviewData = new EventReviews();
         Events eventData = eventRepository.findById(data.getEventId()).orElseThrow(() -> new DataNotFoundException("Event id not found"));
         reviewData.setEvents(eventData);
@@ -302,7 +292,7 @@ public class EventServiceImpl implements EventService {
         reviewData.setUsers(userData);
         reviewData.setReviewCategory(data.getType());
         reviewData.setComment(data.getComments());
-        eventReviewsRepository.save(reviewData);
+        eventReviewService.addNewReview(reviewData);
         ReviewEventResponseDto resp = new ReviewEventResponseDto();
         resp.setId(reviewData.getId());
         resp.setComment(reviewData.getComment());

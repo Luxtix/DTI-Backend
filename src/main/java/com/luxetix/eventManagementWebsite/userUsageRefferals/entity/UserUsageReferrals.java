@@ -1,15 +1,13 @@
 package com.luxetix.eventManagementWebsite.userUsageRefferals.entity;
 
 
-import com.luxetix.eventManagementWebsite.refferals.entity.Referrals;
+import com.luxetix.eventManagementWebsite.referrals.entity.Referrals;
 import com.luxetix.eventManagementWebsite.users.entity.Users;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.Instant;
-import java.time.LocalDate;
 
 @Entity
 @Data
