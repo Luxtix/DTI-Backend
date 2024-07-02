@@ -5,8 +5,10 @@ import com.luxetix.eventManagementWebsite.auth.repository.AuthRedisRepository;
 import com.luxetix.eventManagementWebsite.auth.service.AuthService;
 import com.luxetix.eventManagementWebsite.exceptions.InputException;
 import com.luxetix.eventManagementWebsite.userUsageRefferals.repository.UserUsageReferralsRepository;
+import com.luxetix.eventManagementWebsite.userUsageRefferals.service.UserUsageReferralsService;
 import com.luxetix.eventManagementWebsite.users.entity.Users;
 import com.luxetix.eventManagementWebsite.users.repository.UserRepository;
+import com.luxetix.eventManagementWebsite.users.service.UserService;
 import lombok.extern.java.Log;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,21 +31,21 @@ public class AuthServiceImpl implements AuthService {
 
     private final AuthRedisRepository authRedisRepository;
 
-    private final UserUsageReferralsRepository userUsageReferralsRepository;
-    private final UserRepository userRepository;
+    private final UserUsageReferralsService userUsageReferralsService;
+    private final UserService userService;
 
-    public AuthServiceImpl(JwtEncoder jwtEncoder, AuthRedisRepository authRedisRepository, UserUsageReferralsRepository userUsageReferralsRepository, UserRepository userRepository) {
+    public AuthServiceImpl(JwtEncoder jwtEncoder, AuthRedisRepository authRedisRepository, UserUsageReferralsService userUsageReferralsService, UserService userService) {
         this.jwtEncoder = jwtEncoder;
         this.authRedisRepository = authRedisRepository;
-        this.userUsageReferralsRepository = userUsageReferralsRepository;
-        this.userRepository = userRepository;
+        this.userUsageReferralsService = userUsageReferralsService;
+        this.userService = userService;
     }
 
     @Override
     public String generateToken(Authentication authentication) {
-        long userId = userRepository.findByEmail(authentication.getName()).get().getId();
+        long userId = userService.getUserByEmail(authentication.getName()).getId();
         Instant expiredDate = Instant.now().minus(90, ChronoUnit.DAYS);
-        boolean exist = userUsageReferralsRepository.checkUserIsReferralAndValid(userId,expiredDate);
+        boolean exist = userUsageReferralsService.checkUserIsReferralAndValid(userId,expiredDate);
         Instant now = Instant.now();
         String scope = authentication.getAuthorities()
                 .stream()
@@ -63,7 +65,7 @@ public class AuthServiceImpl implements AuthService {
                 .subject(authentication.getName())
                 .claim("scope", scope)
                 .claim("isReferral",exist)
-                .claim("id",userRepository.findByEmail(authentication.getName()).get().getId())
+                .claim("id",userService.getUserByEmail(authentication.getName()).getId())
                 .build();
 
         var jwt = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

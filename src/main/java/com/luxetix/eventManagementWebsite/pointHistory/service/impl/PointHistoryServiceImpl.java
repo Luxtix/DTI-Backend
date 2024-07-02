@@ -5,6 +5,7 @@ import com.luxetix.eventManagementWebsite.auth.helpers.Claims;
 import com.luxetix.eventManagementWebsite.exceptions.DataNotFoundException;
 import com.luxetix.eventManagementWebsite.pointHistory.dao.PointHistoryDao;
 import com.luxetix.eventManagementWebsite.pointHistory.dto.PointHistoryResponseDto;
+import com.luxetix.eventManagementWebsite.pointHistory.entity.PointHistory;
 import com.luxetix.eventManagementWebsite.pointHistory.repository.PointHistoryRepository;
 import com.luxetix.eventManagementWebsite.pointHistory.service.PointHistoryService;
 import com.luxetix.eventManagementWebsite.users.entity.Users;
@@ -40,5 +41,10 @@ public class PointHistoryServiceImpl implements PointHistoryService {
         }
 
         return points;
+    }
+
+    @Override
+    public void addPointHistory(PointHistory pointHistory) {
+        pointHistoryRepository.save(pointHistory);
     }
 }

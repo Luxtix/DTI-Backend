@@ -20,4 +20,6 @@ public interface EventDetailDao {
     String getOrganizerAvatar();
     Integer getFavoriteCounts();
     Boolean getIsFavorite();
+
+    Boolean getIsDone();
 }

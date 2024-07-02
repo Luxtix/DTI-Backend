@@ -12,4 +12,6 @@ public interface UserService {
     ProfileResponseDto getProfileData(String email);
 
     ChangePasswordResponseDto changePassword(ChangePasswordRequestDto data,String email);
+
+    Users getUserByEmail(String email);
 }

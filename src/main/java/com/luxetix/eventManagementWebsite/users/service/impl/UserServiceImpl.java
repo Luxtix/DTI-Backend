@@ -5,16 +5,16 @@ import com.luxetix.eventManagementWebsite.cloudinary.CloudinaryService;
 import com.luxetix.eventManagementWebsite.exceptions.DataNotFoundException;
 import com.luxetix.eventManagementWebsite.exceptions.InputException;
 import com.luxetix.eventManagementWebsite.pointHistory.entity.PointHistory;
-import com.luxetix.eventManagementWebsite.pointHistory.repository.PointHistoryRepository;
-import com.luxetix.eventManagementWebsite.refferals.entity.Referrals;
-import com.luxetix.eventManagementWebsite.refferals.repository.RefferalRepository;
+import com.luxetix.eventManagementWebsite.pointHistory.service.PointHistoryService;
+import com.luxetix.eventManagementWebsite.referrals.entity.Referrals;
+import com.luxetix.eventManagementWebsite.referrals.repository.ReferralRepository;
+import com.luxetix.eventManagementWebsite.referrals.service.ReferralService;
 import com.luxetix.eventManagementWebsite.userUsageRefferals.entity.UserUsageReferrals;
-import com.luxetix.eventManagementWebsite.userUsageRefferals.repository.UserUsageReferralsRepository;
+import com.luxetix.eventManagementWebsite.userUsageRefferals.service.UserUsageReferralsService;
 import com.luxetix.eventManagementWebsite.users.dto.*;
 import com.luxetix.eventManagementWebsite.users.entity.Users;
 import com.luxetix.eventManagementWebsite.users.repository.UserRepository;
 import com.luxetix.eventManagementWebsite.users.service.UserService;
-import com.luxetix.eventManagementWebsite.vouchers.repository.VoucherRepository;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
@@ -29,24 +29,24 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    private final UserUsageReferralsRepository userUsageReferralsRepository;
+    private final UserUsageReferralsService userUsageReferralsService;
 
     private final CloudinaryService cloudinaryService;
 
-    private final RefferalRepository refferalRepository;
+    private final ReferralService referralService;
 
-    private final PointHistoryRepository pointHistoryRepository;
+    private final PointHistoryService pointHistoryService;
     private final PasswordEncoder passwordEncoder;
 
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final int LENGTH = 12;
 
-    public UserServiceImpl(UserRepository userRepository, UserUsageReferralsRepository userUsageReferralsRepository, VoucherRepository voucherRepository, CloudinaryService cloudinaryService, RefferalRepository refferalRepository, PointHistoryRepository pointHistoryRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, UserUsageReferralsService userUsageReferralsService, CloudinaryService cloudinaryService, ReferralService referralService, PointHistoryService pointHistoryService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.userUsageReferralsRepository = userUsageReferralsRepository;
+        this.userUsageReferralsService = userUsageReferralsService;
         this.cloudinaryService = cloudinaryService;
-        this.refferalRepository = refferalRepository;
-        this.pointHistoryRepository = pointHistoryRepository;
+        this.referralService = referralService;
+        this.pointHistoryService = pointHistoryService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -74,7 +74,7 @@ public class UserServiceImpl implements UserService {
         Referrals newReferral = new Referrals();
         String uniqueReferral = generateUniqueId();
         newReferral.setCode(uniqueReferral);
-        Referrals data = refferalRepository.save(newReferral);
+        Referrals data = referralService.addNewReferralCode(newReferral);
         Users newUser = user.toEntity();
         newUser.setReferrals(data);
         userRepository.save(newUser);
@@ -82,15 +82,15 @@ public class UserServiceImpl implements UserService {
         newUser.setPassword(password);
 
         if(!user.getReferral().equals("")){
-            Referrals refferalsData = refferalRepository.findByCode(user.getReferral()).orElseThrow(() -> new DataNotFoundException(HttpStatus.NOT_FOUND,"Referral code with number " + user.getReferral() + " is not found"));
+            Referrals refferalsData = referralService.findByReferralCode(user.getReferral());
             UserUsageReferrals userRefferalHistoryData = new UserUsageReferrals();
             userRefferalHistoryData.setUsers(newUser);
             userRefferalHistoryData.setReferrals(refferalsData);
-            userUsageReferralsRepository.save(userRefferalHistoryData);
+            userUsageReferralsService.addNewUserUsageReferralData(userRefferalHistoryData);
             PointHistory newPointHistory = new PointHistory();
             newPointHistory.setUsers(newUser);
             newPointHistory.setTotalPoint(10000);
-            pointHistoryRepository.save(newPointHistory);
+            pointHistoryService.addPointHistory(newPointHistory);
         }
         return newUser;
     }
@@ -150,5 +150,10 @@ public class UserServiceImpl implements UserService {
         resp.setEmail(email);
         resp.setPassword(password);
         return resp;
+    }
+
+    @Override
+    public Users getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("User not found"));
     }
 }

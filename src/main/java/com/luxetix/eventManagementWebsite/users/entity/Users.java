@@ -5,7 +5,7 @@ import com.luxetix.eventManagementWebsite.Transactions.entity.Transactions;
 import com.luxetix.eventManagementWebsite.eventReviews.entity.EventReviews;
 import com.luxetix.eventManagementWebsite.favoriteEvents.entity.FavoriteEvents;
 import com.luxetix.eventManagementWebsite.pointHistory.entity.PointHistory;
-import com.luxetix.eventManagementWebsite.refferals.entity.Referrals;
+import com.luxetix.eventManagementWebsite.referrals.entity.Referrals;
 import com.luxetix.eventManagementWebsite.userUsageRefferals.entity.UserUsageReferrals;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

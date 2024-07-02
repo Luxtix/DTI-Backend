@@ -44,7 +44,8 @@ public class EventController {
     @PostMapping("")
     @RolesAllowed({"ORGANIZER"})
     public ResponseEntity<Response<Events>> addNewEvent(@RequestParam("image") MultipartFile image,  @RequestParam("eventData") String eventData) {
-
+        var claims = Claims.getClaimsFromJwt();
+        var email = (String) claims.get("sub");
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter());
         gsonBuilder.registerTypeAdapter(LocalTime.class, new LocalTimeTypeAdapter());
@@ -52,7 +53,7 @@ public class EventController {
 
         NewEventRequestDto data = gson.fromJson(eventData, NewEventRequestDto.class);
         log.info(data.toString());
-        return Response.successfulResponse("Event registered successfully",eventService.addNewEvent(image,data));
+        return Response.successfulResponse("Event registered successfully",eventService.addNewEvent(image,data,email));
     }
 
     @GetMapping("")
