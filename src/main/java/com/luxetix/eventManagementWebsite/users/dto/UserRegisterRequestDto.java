@@ -12,8 +12,8 @@ import lombok.Data;
 
 @Data
 public class UserRegisterRequestDto {
-    @NotBlank(message = "Username is required")
-    private String username;
+    @NotBlank(message = "fullname is required")
+    private String fullname;
 
     @NotBlank(message = "Email is required")
     private String email;
@@ -21,7 +21,8 @@ public class UserRegisterRequestDto {
     @NotBlank(message = "Password is required")
     private String password;
 
-    private String refferal;
+    @NotBlank(message = "Referral is required")
+    private String referral;
 
 
     @Enumerated(EnumType.STRING)
@@ -31,7 +32,7 @@ public class UserRegisterRequestDto {
         user.setRole(role);
         user.setEmail(email);
         user.setPassword(password);
-        user.setUsername(username);
+        user.setFullname(fullname);
         return user;
     }
 }

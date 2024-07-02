@@ -2,13 +2,11 @@ package com.luxetix.eventManagementWebsite.users.entity;
 
 
 import com.luxetix.eventManagementWebsite.Transactions.entity.Transactions;
-import com.luxetix.eventManagementWebsite.eventReviews.entitiy.EventReviews;
-import com.luxetix.eventManagementWebsite.events.entity.Events;
-import com.luxetix.eventManagementWebsite.favoriteEvents.FavoriteEvents;
-import com.luxetix.eventManagementWebsite.oganizer.entity.Organizers;
-import com.luxetix.eventManagementWebsite.pointHistory.PointHistory;
+import com.luxetix.eventManagementWebsite.eventReviews.entity.EventReviews;
+import com.luxetix.eventManagementWebsite.favoriteEvents.entity.FavoriteEvents;
+import com.luxetix.eventManagementWebsite.pointHistory.entity.PointHistory;
+import com.luxetix.eventManagementWebsite.refferals.entity.Referrals;
 import com.luxetix.eventManagementWebsite.userUsageRefferals.entity.UserUsageReferrals;
-import com.luxetix.eventManagementWebsite.vouchers.Vouchers;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -40,33 +38,30 @@ public class Users {
     @Column(name = "email",unique = true)
     private String email;
 
-    @NotNull(message = "Username cannot be null")
-    @NotBlank(message = "Username cannot be blank")
-    @Column(name = "username")
-    private String username;
 
     @NotNull(message = "Password cannot be null")
     @NotBlank(message = "Password cannot be blank")
     @Column(name = "password")
     private String password;
 
+    @NotNull(message = "Fullname cannot be null")
+    @NotBlank(message = "Fullname cannot be blank")
     @Column(name = "fullname")
     private String fullname;
 
 
-    @Column(name = "avatar", nullable = true)
+    @Column(name = "avatar")
     private String avatar;
 
     @Column(name = "phonenumber")
-    private String phonenumber;
+    private String phoneNumber;
 
 
-    @Column(name = "total_points")
-    private Long totalPoints;
 
+    @NotNull(message = "Referrals id is required")
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "organizer_id", referencedColumnName = "id")
-    private Organizers organizers;
+    @JoinColumn(name = "referral_id", referencedColumnName = "id")
+    private Referrals referrals;
 
 
     @ColumnDefault("CURRENT_TIMESTAMP")
@@ -82,8 +77,6 @@ public class Users {
     @Column(name = "deleted_at")
     private Instant deletedAt;
 
-    @OneToMany(mappedBy = "users",cascade = CascadeType.ALL)
-    private Set<Events> events = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "users",cascade = CascadeType.ALL)
     private Set<EventReviews> eventReviews = new LinkedHashSet<>();
@@ -94,8 +87,6 @@ public class Users {
     @OneToMany(mappedBy = "users",cascade = CascadeType.ALL)
     private Set<Transactions> transactions = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "users",cascade = CascadeType.ALL)
-    private Set<Vouchers> vouchers = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "users",cascade = CascadeType.ALL)
     private Set<FavoriteEvents> favoriteEvents = new LinkedHashSet<>();

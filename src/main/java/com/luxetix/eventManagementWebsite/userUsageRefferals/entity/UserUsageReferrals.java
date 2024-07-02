@@ -6,17 +6,19 @@ import com.luxetix.eventManagementWebsite.users.entity.Users;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Entity
 @Data
-@Table(name = "userusagereferrals")
+@Table(name = "user_usage_referrals")
 public class UserUsageReferrals {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "userusagereferrals_id_gen")
-    @SequenceGenerator(name = "userusagereferrals_id_gen", sequenceName = "userusagereferrals_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_usage_referrals_id_gen")
+    @SequenceGenerator(name = "user_usage_referrals_id_gen", sequenceName = "user_usage_referrals_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private long id;
 
@@ -28,6 +30,12 @@ public class UserUsageReferrals {
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "referral_id", nullable = false)
     private Referrals referrals;
+
+
+    @Column(name = "benefit_claim")
+    @ColumnDefault("false")
+    private Boolean benefitClaim;
+
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at")

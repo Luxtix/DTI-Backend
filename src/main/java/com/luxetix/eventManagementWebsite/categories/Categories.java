@@ -1,7 +1,6 @@
 package com.luxetix.eventManagementWebsite.categories;
 
 
-import com.luxetix.eventManagementWebsite.oganizer.entity.Organizers;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

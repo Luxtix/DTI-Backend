@@ -6,10 +6,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 
 @EnableConfigurationProperties(RsaConfigProperties.class)
 @SpringBootApplication
 @Log
+@EnableCaching
 public class EventManagementWebsiteApplication implements CommandLineRunner {
 
 	public static void main(String[] args) {
