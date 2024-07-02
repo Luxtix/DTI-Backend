@@ -1,12 +1,10 @@
 package com.luxetix.eventManagementWebsite.users.service.impl;
 
 
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import com.luxetix.eventManagementWebsite.auth.helpers.Claims;
 import com.luxetix.eventManagementWebsite.cloudinary.CloudinaryService;
 import com.luxetix.eventManagementWebsite.exceptions.DataNotFoundException;
 import com.luxetix.eventManagementWebsite.exceptions.InputException;
-import com.luxetix.eventManagementWebsite.pointHistory.PointHistory;
+import com.luxetix.eventManagementWebsite.pointHistory.entity.PointHistory;
 import com.luxetix.eventManagementWebsite.pointHistory.repository.PointHistoryRepository;
 import com.luxetix.eventManagementWebsite.refferals.entity.Referrals;
 import com.luxetix.eventManagementWebsite.refferals.repository.RefferalRepository;
@@ -25,9 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
-import java.time.LocalDate;
-import java.time.Period;
-import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {

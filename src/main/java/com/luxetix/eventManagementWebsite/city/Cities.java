@@ -20,7 +20,7 @@ public class Cities {
     private long id;
 
     @NotBlank(message = "City name is mandatory")
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
     @ColumnDefault("CURRENT_TIMESTAMP")

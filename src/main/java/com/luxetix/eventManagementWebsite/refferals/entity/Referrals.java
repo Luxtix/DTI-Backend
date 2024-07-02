@@ -4,6 +4,7 @@ package com.luxetix.eventManagementWebsite.refferals.entity;
 import com.luxetix.eventManagementWebsite.userUsageRefferals.entity.UserUsageReferrals;
 import com.luxetix.eventManagementWebsite.users.entity.Users;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -20,7 +21,11 @@ public class Referrals {
     @Column(name = "id", nullable = false)
     private long id;
 
-    @Column(name = "code", length = 255)
+
+
+    @NotBlank
+    @NotBlank(message = "Referral code cannot be blank")
+    @Column(name = "code", length = 255,nullable = false)
     private String code;
 
 

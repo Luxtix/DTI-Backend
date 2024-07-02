@@ -2,9 +2,9 @@ package com.luxetix.eventManagementWebsite.users.entity;
 
 
 import com.luxetix.eventManagementWebsite.Transactions.entity.Transactions;
-import com.luxetix.eventManagementWebsite.eventReviews.entitity.EventReviews;
-import com.luxetix.eventManagementWebsite.favoriteEvents.FavoriteEvents;
-import com.luxetix.eventManagementWebsite.pointHistory.PointHistory;
+import com.luxetix.eventManagementWebsite.eventReviews.entity.EventReviews;
+import com.luxetix.eventManagementWebsite.favoriteEvents.entity.FavoriteEvents;
+import com.luxetix.eventManagementWebsite.pointHistory.entity.PointHistory;
 import com.luxetix.eventManagementWebsite.refferals.entity.Referrals;
 import com.luxetix.eventManagementWebsite.userUsageRefferals.entity.UserUsageReferrals;
 import jakarta.persistence.*;
@@ -50,7 +50,7 @@ public class Users {
     private String fullname;
 
 
-    @Column(name = "avatar", nullable = true)
+    @Column(name = "avatar")
     private String avatar;
 
     @Column(name = "phonenumber")

@@ -1,4 +1,4 @@
-package com.luxetix.eventManagementWebsite.eventReviews.entitity;
+package com.luxetix.eventManagementWebsite.eventReviews.entity;
 
 public enum EventReviewType {
     Overall,

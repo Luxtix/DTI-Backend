@@ -1,8 +1,6 @@
 package com.luxetix.eventManagementWebsite.vouchers.repository;
 
-import com.luxetix.eventManagementWebsite.tickets.dao.TicketDao;
-import com.luxetix.eventManagementWebsite.users.entity.Users;
-import com.luxetix.eventManagementWebsite.vouchers.Vouchers;
+import com.luxetix.eventManagementWebsite.vouchers.entity.Vouchers;
 import com.luxetix.eventManagementWebsite.vouchers.dao.VoucherDao;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

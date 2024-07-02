@@ -1,11 +1,7 @@
 package com.luxetix.eventManagementWebsite.eventReviews.repository;
 
 import com.luxetix.eventManagementWebsite.eventReviews.dao.EventReviewsDao;
-import com.luxetix.eventManagementWebsite.eventReviews.entitity.EventReviews;
-import com.luxetix.eventManagementWebsite.events.dao.EventListDao;
-import com.luxetix.eventManagementWebsite.events.entity.Events;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.luxetix.eventManagementWebsite.eventReviews.entity.EventReviews;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

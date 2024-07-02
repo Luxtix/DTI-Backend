@@ -2,7 +2,6 @@ package com.luxetix.eventManagementWebsite.events.services;
 
 import com.luxetix.eventManagementWebsite.eventReviews.dto.ReviewEventRequestDto;
 import com.luxetix.eventManagementWebsite.eventReviews.dto.ReviewEventResponseDto;
-import com.luxetix.eventManagementWebsite.eventReviews.entitity.EventReviews;
 import com.luxetix.eventManagementWebsite.events.dao.EventListDao;
 import com.luxetix.eventManagementWebsite.events.dto.EventDetailDtoResponse;
 import com.luxetix.eventManagementWebsite.events.dto.GetEventListDtoResponse;
@@ -17,7 +16,7 @@ import java.util.List;
 public interface EventService {
     Events addNewEvent(MultipartFile image, NewEventRequestDto newEventRequestDto);
 
-    Page<EventListDao> getAllEvent(String categoryName, String cityName, String eventName, Boolean eventType, Boolean isOnline, Boolean isFavorite, int page, int page_size);
+    Page<EventListDao> getAllEvent(String email, String categoryName, String cityName, String eventName, Boolean eventType, Boolean isOnline, Boolean isFavorite, int page, int page_size);
     List<GetEventListDtoResponse> convertAllEventToDto(Page<EventListDao> data);
 
     EventDetailDtoResponse getEventById(long id);
@@ -27,5 +26,5 @@ public interface EventService {
 
     Events updateEvent(long id, MultipartFile image, UpdateEventRequestDto data);
 
-    ReviewEventResponseDto addReview(ReviewEventRequestDto data);
+    ReviewEventResponseDto addReview(String email, ReviewEventRequestDto data);
 }

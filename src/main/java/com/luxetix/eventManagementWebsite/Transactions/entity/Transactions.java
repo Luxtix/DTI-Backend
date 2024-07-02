@@ -4,7 +4,7 @@ package com.luxetix.eventManagementWebsite.Transactions.entity;
 import com.luxetix.eventManagementWebsite.events.entity.Events;
 import com.luxetix.eventManagementWebsite.transactionList.entity.TransactionList;
 import com.luxetix.eventManagementWebsite.users.entity.Users;
-import com.luxetix.eventManagementWebsite.vouchers.Vouchers;
+import com.luxetix.eventManagementWebsite.vouchers.entity.Vouchers;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;

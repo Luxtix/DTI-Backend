@@ -1,8 +1,7 @@
 package com.luxetix.eventManagementWebsite.favoriteEvents.service.impl;
 
-import com.luxetix.eventManagementWebsite.auth.helpers.Claims;
 import com.luxetix.eventManagementWebsite.events.entity.Events;
-import com.luxetix.eventManagementWebsite.favoriteEvents.FavoriteEvents;
+import com.luxetix.eventManagementWebsite.favoriteEvents.entity.FavoriteEvents;
 import com.luxetix.eventManagementWebsite.favoriteEvents.dto.EventToggleDtoResponse;
 import com.luxetix.eventManagementWebsite.favoriteEvents.repository.FavoriteEventRepository;
 import com.luxetix.eventManagementWebsite.favoriteEvents.service.FavoriteEventService;

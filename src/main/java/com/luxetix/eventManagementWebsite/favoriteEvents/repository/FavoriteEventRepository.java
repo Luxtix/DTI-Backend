@@ -1,8 +1,6 @@
 package com.luxetix.eventManagementWebsite.favoriteEvents.repository;
 
-import com.luxetix.eventManagementWebsite.events.dao.EventDetailDao;
-import com.luxetix.eventManagementWebsite.events.entity.Events;
-import com.luxetix.eventManagementWebsite.favoriteEvents.FavoriteEvents;
+import com.luxetix.eventManagementWebsite.favoriteEvents.entity.FavoriteEvents;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

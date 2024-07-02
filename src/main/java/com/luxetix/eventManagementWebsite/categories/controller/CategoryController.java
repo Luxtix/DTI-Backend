@@ -3,7 +3,6 @@ package com.luxetix.eventManagementWebsite.categories.controller;
 
 import com.luxetix.eventManagementWebsite.categories.Categories;
 import com.luxetix.eventManagementWebsite.categories.service.CategoryService;
-import com.luxetix.eventManagementWebsite.city.Cities;
 import com.luxetix.eventManagementWebsite.response.Response;
 import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;

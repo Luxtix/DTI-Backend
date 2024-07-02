@@ -6,7 +6,7 @@ import com.luxetix.eventManagementWebsite.Transactions.repository.TransactionRep
 import com.luxetix.eventManagementWebsite.Transactions.service.TransactionService;
 import com.luxetix.eventManagementWebsite.events.entity.Events;
 import com.luxetix.eventManagementWebsite.exceptions.DataNotFoundException;
-import com.luxetix.eventManagementWebsite.pointHistory.PointHistory;
+import com.luxetix.eventManagementWebsite.pointHistory.entity.PointHistory;
 import com.luxetix.eventManagementWebsite.pointHistory.repository.PointHistoryRepository;
 import com.luxetix.eventManagementWebsite.tickets.entity.Tickets;
 import com.luxetix.eventManagementWebsite.transactionList.entity.TransactionList;
@@ -15,7 +15,7 @@ import com.luxetix.eventManagementWebsite.userUsageRefferals.entity.UserUsageRef
 import com.luxetix.eventManagementWebsite.userUsageRefferals.repository.UserUsageReferralsRepository;
 import com.luxetix.eventManagementWebsite.users.entity.Users;
 import com.luxetix.eventManagementWebsite.users.repository.UserRepository;
-import com.luxetix.eventManagementWebsite.vouchers.Vouchers;
+import com.luxetix.eventManagementWebsite.vouchers.entity.Vouchers;
 import com.luxetix.eventManagementWebsite.vouchers.repository.VoucherRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;

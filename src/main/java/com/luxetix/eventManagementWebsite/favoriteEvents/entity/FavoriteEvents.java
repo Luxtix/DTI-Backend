@@ -1,4 +1,4 @@
-package com.luxetix.eventManagementWebsite.favoriteEvents;
+package com.luxetix.eventManagementWebsite.favoriteEvents.entity;
 
 
 import com.luxetix.eventManagementWebsite.events.entity.Events;

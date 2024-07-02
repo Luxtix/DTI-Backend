@@ -9,7 +9,7 @@ import com.luxetix.eventManagementWebsite.cloudinary.CloudinaryService;
 import com.luxetix.eventManagementWebsite.eventReviews.dao.EventReviewsDao;
 import com.luxetix.eventManagementWebsite.eventReviews.dto.ReviewEventRequestDto;
 import com.luxetix.eventManagementWebsite.eventReviews.dto.ReviewEventResponseDto;
-import com.luxetix.eventManagementWebsite.eventReviews.entitity.EventReviews;
+import com.luxetix.eventManagementWebsite.eventReviews.entity.EventReviews;
 import com.luxetix.eventManagementWebsite.eventReviews.repository.EventReviewsRepository;
 import com.luxetix.eventManagementWebsite.events.dao.EventDetailDao;
 import com.luxetix.eventManagementWebsite.events.dao.EventListDao;
@@ -28,7 +28,7 @@ import com.luxetix.eventManagementWebsite.tickets.entity.Tickets;
 import com.luxetix.eventManagementWebsite.tickets.repository.TicketRepository;
 import com.luxetix.eventManagementWebsite.users.entity.Users;
 import com.luxetix.eventManagementWebsite.users.repository.UserRepository;
-import com.luxetix.eventManagementWebsite.vouchers.Vouchers;
+import com.luxetix.eventManagementWebsite.vouchers.entity.Vouchers;
 import com.luxetix.eventManagementWebsite.vouchers.dao.VoucherDao;
 import com.luxetix.eventManagementWebsite.vouchers.dto.VoucherDto;
 import com.luxetix.eventManagementWebsite.vouchers.repository.VoucherRepository;
@@ -110,9 +110,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Page<EventListDao> getAllEvent(String categoryName, String cityName, String eventName, Boolean eventType, Boolean isOnline, Boolean isFavorite,int page, int page_size) {
-        var claims = Claims.getClaimsFromJwt();
-        var email = (String) claims.get("sub");
+    public Page<EventListDao> getAllEvent(String email, String categoryName, String cityName, String eventName, Boolean eventType, Boolean isOnline, Boolean isFavorite,int page, int page_size) {
         Pageable pageable = PageRequest.of(page, page_size);
         Users userData = userRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("You are not logged in yet"));
         return eventRepository.getAllEventWithFilter(userData.getId(),categoryName,eventName,cityName, eventType, isOnline, isFavorite,pageable);
@@ -295,13 +293,10 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public ReviewEventResponseDto addReview(ReviewEventRequestDto data) {
-        var claims = Claims.getClaimsFromJwt();
-        var email = (String) claims.get("sub");
+    public ReviewEventResponseDto addReview(String email, ReviewEventRequestDto data) {
         Users userData = userRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("You are not logged in yet"));
         EventReviews reviewData = new EventReviews();
-        Events eventData = new Events();
-        eventData.setId(data.getEventId());
+        Events eventData = eventRepository.findById(data.getEventId()).orElseThrow(() -> new DataNotFoundException("Event id not found"));
         reviewData.setEvents(eventData);
         reviewData.setRating(data.getRating());
         reviewData.setUsers(userData);

@@ -1,4 +1,4 @@
-package com.luxetix.eventManagementWebsite.vouchers;
+package com.luxetix.eventManagementWebsite.vouchers.entity;
 
 
 import com.luxetix.eventManagementWebsite.events.entity.Events;
@@ -6,6 +6,7 @@ import com.luxetix.eventManagementWebsite.users.entity.Users;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
@@ -36,11 +37,13 @@ public class Vouchers {
     @JoinColumn(name = "event_id", nullable = false)
     private Events events;
 
+
+    @Min(1)
     @Column(name = "voucher_limit", nullable = false)
     private int voucherLimit;
 
 
-    @Column(name = "refferal_only", nullable = false)
+    @Column(name = "referral_only", nullable = false)
     private Boolean referralOnly;
 
 

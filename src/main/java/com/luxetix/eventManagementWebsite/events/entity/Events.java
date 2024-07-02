@@ -3,8 +3,8 @@ package com.luxetix.eventManagementWebsite.events.entity;
 
 import com.luxetix.eventManagementWebsite.categories.Categories;
 import com.luxetix.eventManagementWebsite.city.Cities;
-import com.luxetix.eventManagementWebsite.eventReviews.entitity.EventReviews;
-import com.luxetix.eventManagementWebsite.favoriteEvents.FavoriteEvents;
+import com.luxetix.eventManagementWebsite.eventReviews.entity.EventReviews;
+import com.luxetix.eventManagementWebsite.favoriteEvents.entity.FavoriteEvents;
 import com.luxetix.eventManagementWebsite.tickets.entity.Tickets;
 import com.luxetix.eventManagementWebsite.users.entity.Users;
 import jakarta.persistence.*;

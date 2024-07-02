@@ -4,6 +4,7 @@ package com.luxetix.eventManagementWebsite.tickets.entity;
 import com.luxetix.eventManagementWebsite.categories.Categories;
 import com.luxetix.eventManagementWebsite.events.entity.Events;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -31,6 +32,8 @@ public class Tickets {
     @Column(name = "price", nullable = false)
     private int price;
 
+
+    @Min(1)
     @Column(name = "qty", nullable = false)
     private int qty;
 

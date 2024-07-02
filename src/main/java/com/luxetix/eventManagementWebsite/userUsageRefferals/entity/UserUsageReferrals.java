@@ -33,7 +33,8 @@ public class UserUsageReferrals {
 
 
     @Column(name = "benefit_claim")
-    private Boolean benefitClaim = false;
+    @ColumnDefault("false")
+    private Boolean benefitClaim;
 
 
     @ColumnDefault("CURRENT_TIMESTAMP")

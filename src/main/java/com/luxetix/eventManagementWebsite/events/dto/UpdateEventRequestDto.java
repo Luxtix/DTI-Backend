@@ -1,8 +1,5 @@
 package com.luxetix.eventManagementWebsite.events.dto;
 
-import com.luxetix.eventManagementWebsite.categories.Categories;
-import com.luxetix.eventManagementWebsite.city.Cities;
-import com.luxetix.eventManagementWebsite.events.entity.Events;
 import lombok.Data;
 
 import java.math.BigDecimal;

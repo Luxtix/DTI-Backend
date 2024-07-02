@@ -17,8 +17,8 @@ import java.time.Instant;
 @Table(name = "transaction_list")
 public class TransactionList {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transactionlist_id_gen")
-    @SequenceGenerator(name = "transactionlist_id_gen", sequenceName = "transactionlist_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_list_id_gen")
+    @SequenceGenerator(name = "transaction_list_id_gen", sequenceName = "transaction_list_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private long id;
 

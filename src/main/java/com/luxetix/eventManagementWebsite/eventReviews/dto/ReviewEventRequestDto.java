@@ -1,6 +1,6 @@
 package com.luxetix.eventManagementWebsite.eventReviews.dto;
 
-import com.luxetix.eventManagementWebsite.eventReviews.entitity.EventReviewType;
+import com.luxetix.eventManagementWebsite.eventReviews.entity.EventReviewType;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Data;

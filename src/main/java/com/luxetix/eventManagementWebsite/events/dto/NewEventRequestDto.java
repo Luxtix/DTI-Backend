@@ -3,18 +3,11 @@ package com.luxetix.eventManagementWebsite.events.dto;
 
 import com.luxetix.eventManagementWebsite.categories.Categories;
 import com.luxetix.eventManagementWebsite.city.Cities;
-import com.luxetix.eventManagementWebsite.events.entity.EventType;
 import com.luxetix.eventManagementWebsite.events.entity.Events;
-import com.luxetix.eventManagementWebsite.users.entity.Users;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 

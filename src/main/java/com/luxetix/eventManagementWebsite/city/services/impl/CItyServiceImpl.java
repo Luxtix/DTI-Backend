@@ -1,5 +1,4 @@
 package com.luxetix.eventManagementWebsite.city.services.impl;
-
 import com.luxetix.eventManagementWebsite.city.Cities;
 import com.luxetix.eventManagementWebsite.city.dto.AddNewCityDto;
 import com.luxetix.eventManagementWebsite.city.repository.CityRepository;

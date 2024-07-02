@@ -1,4 +1,4 @@
-package com.luxetix.eventManagementWebsite.eventReviews.entitity;
+package com.luxetix.eventManagementWebsite.eventReviews.entity;
 
 
 import com.luxetix.eventManagementWebsite.events.entity.Events;
@@ -35,7 +35,7 @@ public class EventReviews {
     private Users users;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "event_id", nullable = false)
+    @JoinColumn(name = "event_id")
     private Events events;
 
     @Enumerated(EnumType.STRING)
