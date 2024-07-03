@@ -1,6 +1,7 @@
 package com.luxetix.eventManagementWebsite.pointHistory.controller;
 
 
+import com.luxetix.eventManagementWebsite.auth.helpers.Claims;
 import com.luxetix.eventManagementWebsite.pointHistory.dto.PointHistoryResponseDto;
 import com.luxetix.eventManagementWebsite.pointHistory.service.PointHistoryService;
 import com.luxetix.eventManagementWebsite.response.Response;
@@ -26,6 +27,8 @@ public class PointHistoryController {
 
     @GetMapping
     public ResponseEntity<Response<PointHistoryResponseDto>> register() {
-        return Response.successfulResponse("User point fetched successfully", pointHistoryService.getUserPoint());
+        var claims = Claims.getClaimsFromJwt();
+        var email = (String) claims.get("sub");
+        return Response.successfulResponse("User point fetched successfully", pointHistoryService.getUserPoint(email));
     }
 }

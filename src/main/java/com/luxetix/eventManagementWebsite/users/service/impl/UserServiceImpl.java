@@ -7,7 +7,6 @@ import com.luxetix.eventManagementWebsite.exceptions.InputException;
 import com.luxetix.eventManagementWebsite.pointHistory.entity.PointHistory;
 import com.luxetix.eventManagementWebsite.pointHistory.service.PointHistoryService;
 import com.luxetix.eventManagementWebsite.referrals.entity.Referrals;
-import com.luxetix.eventManagementWebsite.referrals.repository.ReferralRepository;
 import com.luxetix.eventManagementWebsite.referrals.service.ReferralService;
 import com.luxetix.eventManagementWebsite.userUsageRefferals.entity.UserUsageReferrals;
 import com.luxetix.eventManagementWebsite.userUsageRefferals.service.UserUsageReferralsService;
@@ -17,7 +16,7 @@ import com.luxetix.eventManagementWebsite.users.repository.UserRepository;
 import com.luxetix.eventManagementWebsite.users.service.UserService;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpStatus;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +40,7 @@ public class UserServiceImpl implements UserService {
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final int LENGTH = 12;
 
-    public UserServiceImpl(UserRepository userRepository, UserUsageReferralsService userUsageReferralsService, CloudinaryService cloudinaryService, ReferralService referralService, PointHistoryService pointHistoryService, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, UserUsageReferralsService userUsageReferralsService, CloudinaryService cloudinaryService, ReferralService referralService, @Lazy PointHistoryService pointHistoryService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userUsageReferralsService = userUsageReferralsService;
         this.cloudinaryService = cloudinaryService;
@@ -49,6 +48,7 @@ public class UserServiceImpl implements UserService {
         this.pointHistoryService = pointHistoryService;
         this.passwordEncoder = passwordEncoder;
     }
+
 
     public static String generateUniqueId() {
         SecureRandom random = new SecureRandom();
@@ -64,6 +64,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Transactional
+    @Override
     public Users register(UserRegisterRequestDto user) {
         boolean exists = userRepository.findAll()
                 .stream()
@@ -82,15 +83,15 @@ public class UserServiceImpl implements UserService {
         newUser.setPassword(password);
 
         if(!user.getReferral().equals("")){
-            Referrals refferalsData = referralService.findByReferralCode(user.getReferral());
-            UserUsageReferrals userRefferalHistoryData = new UserUsageReferrals();
-            userRefferalHistoryData.setUsers(newUser);
-            userRefferalHistoryData.setReferrals(refferalsData);
-            userUsageReferralsService.addNewUserUsageReferralData(userRefferalHistoryData);
+            Referrals referralsData = referralService.findByReferralCode(user.getReferral());
+            UserUsageReferrals userReferralHistoryData = new UserUsageReferrals();
+            userReferralHistoryData.setUsers(newUser);
+            userReferralHistoryData.setReferrals(referralsData);
+            userUsageReferralsService.addNewUserUsageReferralData(userReferralHistoryData);
             PointHistory newPointHistory = new PointHistory();
             newPointHistory.setUsers(newUser);
             newPointHistory.setTotalPoint(10000);
-            pointHistoryService.addPointHistory(newPointHistory);
+            pointHistoryService.addNewPointHistory(newPointHistory);
         }
         return newUser;
     }

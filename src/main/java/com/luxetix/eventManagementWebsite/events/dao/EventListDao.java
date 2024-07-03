@@ -2,9 +2,12 @@ package com.luxetix.eventManagementWebsite.events.dao;
 
 import com.luxetix.eventManagementWebsite.events.entity.EventType;
 import com.luxetix.eventManagementWebsite.events.entity.Events;
+import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+
+
 
 public interface EventListDao {
 

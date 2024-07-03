@@ -1,5 +1,6 @@
 package com.luxetix.eventManagementWebsite.Transactions.service.impl;
 
+import com.luxetix.eventManagementWebsite.Transactions.dto.GetTransactionResponseDto;
 import com.luxetix.eventManagementWebsite.Transactions.dto.TransactionRequestDto;
 import com.luxetix.eventManagementWebsite.Transactions.entity.Transactions;
 import com.luxetix.eventManagementWebsite.Transactions.repository.TransactionRepository;
@@ -25,6 +26,7 @@ import com.luxetix.eventManagementWebsite.vouchers.service.VoucherService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -73,7 +75,7 @@ public class TransactionServiceImpl implements TransactionService {
             PointHistory newPoint = new PointHistory();
             newPoint.setUsers(userData);
             newPoint.setTotalPoint(data.getUsePoint());
-            pointHistoryService.addPointHistory(newPoint);
+            pointHistoryService.addNewPointHistory(newPoint);
         }
         for(TransactionRequestDto.TransactionTicketDto ticketData: data.getTickets()){
             TransactionList transactionTicketData = new TransactionList();
@@ -89,7 +91,19 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
 
-    public List<Transactions> getAllTransactions(long userId){
-        return transactionRepository.findByUsersId(userId);
+    public List<GetTransactionResponseDto> getAllTransactions(long userId){
+//        GetTransactionResponseDto resp = new GetTransactionResponseDto();
+        List<GetTransactionResponseDto> respList = new ArrayList<>();
+        List<Transactions> transactions =  transactionRepository.findByUsersId(userId);
+        for(Transactions data : transactions){
+            GetTransactionResponseDto resp = new GetTransactionResponseDto();
+            resp.setId(data.getId());
+            resp.setEventName(data.getEvents().getName());
+            resp.setEventDate(data.getEvents().getEventDate());
+            resp.setDescriptions(data.getEvents().getDescriptions());
+            respList.add(resp);
+        }
+        return respList;
+
     }
 }

@@ -5,6 +5,7 @@ import com.luxetix.eventManagementWebsite.categories.Categories;
 import com.luxetix.eventManagementWebsite.city.Cities;
 import com.luxetix.eventManagementWebsite.cloudinary.CloudinaryService;
 import com.luxetix.eventManagementWebsite.eventReviews.dao.EventReviewsDao;
+import com.luxetix.eventManagementWebsite.eventReviews.dto.EventReviewsDto;
 import com.luxetix.eventManagementWebsite.eventReviews.dto.ReviewEventRequestDto;
 import com.luxetix.eventManagementWebsite.eventReviews.dto.ReviewEventResponseDto;
 import com.luxetix.eventManagementWebsite.eventReviews.entity.EventReviews;
@@ -40,6 +41,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.DayOfWeek;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -50,6 +52,7 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final CloudinaryService cloudinaryService;
     private final TicketService ticketService;
+    private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "svg", "webp");
     private final UserService userService;
     private final VoucherService voucherService;
     private final EventReviewService eventReviewService;
@@ -71,10 +74,12 @@ public class EventServiceImpl implements EventService {
         Events newEvent = event.toEntity();
         Users userData = userService.getUserByEmail(email);
         newEvent.setUsers(userData);
-        newEvent.setEventImage(cloudinaryService.uploadFile(image,"folder_luxtix"));
-        if(newEvent.getEventImage() == null) {
-            throw new InputException("Image Event can not be uploaded");
+        if(image == null || image.isEmpty()) {
+            throw new InputException("Image file is null or empty");
         }
+        var imageUrl = cloudinaryService.uploadFile(image,"folder_luxtix");
+        newEvent.setEventImage(imageUrl);
+
         eventRepository.save(newEvent);
         for(NewEventRequestDto.TicketEventDto ticketData : event.getTickets()){
             Tickets newTicket = new Tickets();
@@ -145,6 +150,7 @@ public class EventServiceImpl implements EventService {
         var isReferrals = (Boolean) claims.get("isReferral");
         List<TicketDto> ticketList = new ArrayList<>();
         List<VoucherDto> voucherList = new ArrayList<>();
+        List<EventReviewsDto> reviewList = new ArrayList<>();
         Users userData = userService.getUserByEmail(email);
         EventDetailDao data =  eventRepository.getEventById(userData.getId(),id);
         List<TicketDao> ticketData = ticketService.getEventTicket(id);
@@ -192,7 +198,17 @@ public class EventServiceImpl implements EventService {
             voucherList.add(newVoucher);
         }
         eventDetail.setVouchers(voucherList);
-        eventDetail.setReviews(reviewsData);
+
+        for(EventReviewsDao reviewData : reviewsData){
+            EventReviewsDto newReview = new EventReviewsDto();
+            newReview.setId(reviewData.getId());
+            newReview.setType(reviewData.getReviewCategory());
+            newReview.setReviewerName(reviewData.getReviewerName());
+            newReview.setRating(reviewData.getRating());
+            newReview.setComments(reviewData.getComment());
+            reviewList.add(newReview);
+        }
+        eventDetail.setReviews(reviewList);
         return eventDetail;
     }
 
@@ -244,7 +260,7 @@ public class EventServiceImpl implements EventService {
             eventData.setDescriptions(data.getDescription());
         }
         if(!image.isEmpty()){
-            eventData.setEventImage(cloudinaryService.uploadFile(image,"folder_1"));
+            eventData.setEventImage(cloudinaryService.uploadFile(image,"folder_luxtix"));
         }
         eventRepository.save(eventData);
         for(UpdateEventRequestDto.TicketEventUpdateDto ticketData : data.getTickets()){
@@ -300,5 +316,19 @@ public class EventServiceImpl implements EventService {
         resp.setRating(reviewData.getRating());
         resp.setName(reviewData.getUsers().getFullname());
         return resp;
+    }
+
+
+    public boolean isValidImageExtension(String fileName) {
+        String extension = getFileExtension(fileName).toLowerCase();
+        return ALLOWED_EXTENSIONS.contains(extension);
+    }
+
+    public String getFileExtension(String fileName) {
+        int dotIndex = fileName.lastIndexOf(".");
+        if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
+            return fileName.substring(dotIndex + 1);
+        }
+        return "";
     }
 }

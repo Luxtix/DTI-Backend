@@ -1,6 +1,7 @@
 package com.luxetix.eventManagementWebsite.Transactions.controller;
 
 
+import com.luxetix.eventManagementWebsite.Transactions.dto.GetTransactionResponseDto;
 import com.luxetix.eventManagementWebsite.Transactions.dto.TransactionRequestDto;
 import com.luxetix.eventManagementWebsite.Transactions.entity.Transactions;
 import com.luxetix.eventManagementWebsite.Transactions.service.TransactionService;
@@ -33,7 +34,7 @@ public class TransactionController {
     }
 
     @GetMapping
-    public ResponseEntity<Response<List<Transactions>>> getAllTransaction(){
+    public ResponseEntity<Response<List<GetTransactionResponseDto>>> getAllTransaction(){
         var claims = Claims.getClaimsFromJwt();
         var userId = (long) claims.get("id");
         return Response.successfulResponse("All transactions fetched successfully", transactionService.getAllTransactions(userId));

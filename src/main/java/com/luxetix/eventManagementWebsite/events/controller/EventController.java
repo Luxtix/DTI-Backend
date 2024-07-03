@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -36,6 +37,7 @@ import java.util.List;
 public class EventController {
 
     private final EventService eventService;
+
 
     public EventController(EventService eventService) {
         this.eventService = eventService;
@@ -50,9 +52,14 @@ public class EventController {
         gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter());
         gsonBuilder.registerTypeAdapter(LocalTime.class, new LocalTimeTypeAdapter());
         Gson gson = gsonBuilder.create();
-
         NewEventRequestDto data = gson.fromJson(eventData, NewEventRequestDto.class);
-        log.info(data.toString());
+        if(image.isEmpty()){
+            return Response.failedResponse(HttpStatus.BAD_REQUEST.value(),"Image is empty");
+        }
+        String fileName = image.getOriginalFilename();
+        if(!eventService.isValidImageExtension(fileName)){
+            return Response.failedResponse(HttpStatus.BAD_REQUEST.value(),"Invalid image type");
+        }
         return Response.successfulResponse("Event registered successfully",eventService.addNewEvent(image,data,email));
     }
 

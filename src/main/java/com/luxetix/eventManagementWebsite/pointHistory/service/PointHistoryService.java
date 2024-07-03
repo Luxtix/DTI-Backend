@@ -4,7 +4,7 @@ import com.luxetix.eventManagementWebsite.pointHistory.dto.PointHistoryResponseD
 import com.luxetix.eventManagementWebsite.pointHistory.entity.PointHistory;
 
 public interface PointHistoryService {
-    PointHistoryResponseDto getUserPoint();
+    PointHistoryResponseDto getUserPoint(String email);
 
-    void addPointHistory(PointHistory pointHistory);
+    void addNewPointHistory(PointHistory pointHistory);
 }

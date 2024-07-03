@@ -28,4 +28,8 @@ public interface EventService {
 
     ReviewEventResponseDto addReview(String email, ReviewEventRequestDto data);
 
+    String getFileExtension(String fileName);
+
+    boolean isValidImageExtension(String fileName);
+
 }
