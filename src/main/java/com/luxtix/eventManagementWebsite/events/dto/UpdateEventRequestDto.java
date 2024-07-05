@@ -12,8 +12,8 @@ import java.util.List;
 @Data
 public class UpdateEventRequestDto {
     private String name;
-    private long category;
-    private long city;
+    private Long category;
+    private Long city;
     private Boolean isOnline;
     private LocalDate eventDate;
     private String venue;
@@ -29,15 +29,15 @@ public class UpdateEventRequestDto {
 
     @Data
     public static class TicketEventUpdateDto{
-        private long id;
+        private Long id;
         private String name;
-        private int price;
-        private int qty;
+        private Integer price;
+        private Integer qty;
     }
 
     @Data
     public static class VoucherEventUpdateDto{
-        private long id;
+        private Long id;
         private String name;
         private int qty;
         private BigDecimal rate;

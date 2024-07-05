@@ -3,6 +3,7 @@ package com.luxtix.eventManagementWebsite.events.services;
 import com.luxtix.eventManagementWebsite.eventReviews.dto.ReviewEventRequestDto;
 import com.luxtix.eventManagementWebsite.eventReviews.dto.ReviewEventResponseDto;
 import com.luxtix.eventManagementWebsite.events.dao.EventListDao;
+import com.luxtix.eventManagementWebsite.events.dao.EventSummaryDao;
 import com.luxtix.eventManagementWebsite.events.dto.EventDetailDtoResponse;
 import com.luxtix.eventManagementWebsite.events.dto.GetEventListDtoResponse;
 import com.luxtix.eventManagementWebsite.events.dto.NewEventRequestDto;
@@ -31,5 +32,7 @@ public interface EventService {
     String getFileExtension(String fileName);
 
     boolean isValidImageExtension(String fileName);
+
+    public EventSummaryDao getEventSummaryData(long eventId);
 
 }

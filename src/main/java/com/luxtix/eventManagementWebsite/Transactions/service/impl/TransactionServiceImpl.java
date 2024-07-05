@@ -8,7 +8,9 @@ import com.luxtix.eventManagementWebsite.Transactions.service.TransactionService
 import com.luxtix.eventManagementWebsite.events.entity.Events;
 import com.luxtix.eventManagementWebsite.pointHistory.entity.PointHistory;
 import com.luxtix.eventManagementWebsite.pointHistory.service.PointHistoryService;
+import com.luxtix.eventManagementWebsite.tickets.dao.TicketSummaryDao;
 import com.luxtix.eventManagementWebsite.tickets.entity.Tickets;
+import com.luxtix.eventManagementWebsite.tickets.service.TicketService;
 import com.luxtix.eventManagementWebsite.transactionList.entity.TransactionList;
 import com.luxtix.eventManagementWebsite.transactionList.service.TransactionListService;
 import com.luxtix.eventManagementWebsite.userUsageRefferals.entity.UserUsageReferrals;
@@ -32,13 +34,16 @@ public class TransactionServiceImpl implements TransactionService {
     private final UserUsageReferralsService userUsageReferralsService;
     private final VoucherService voucherService;
 
+    private final TicketService ticketService;
+
     private final PointHistoryService pointHistoryService;
-    public TransactionServiceImpl(UserService userService, TransactionRepository transactionRepository, TransactionListService transactionListService, UserUsageReferralsService userUsageReferralsService, VoucherService voucherService, PointHistoryService pointHistoryService) {
+    public TransactionServiceImpl(UserService userService, TransactionRepository transactionRepository, TransactionListService transactionListService, UserUsageReferralsService userUsageReferralsService, VoucherService voucherService, TicketService ticketService, PointHistoryService pointHistoryService) {
         this.userService = userService;
         this.transactionRepository = transactionRepository;
         this.transactionListService = transactionListService;
         this.userUsageReferralsService = userUsageReferralsService;
         this.voucherService = voucherService;
+        this.ticketService = ticketService;
         this.pointHistoryService = pointHistoryService;
     }
 

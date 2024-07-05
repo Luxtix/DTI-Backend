@@ -7,7 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 
 @Repository
@@ -17,8 +19,8 @@ public interface EventReviewsRepository extends JpaRepository<EventReviews,Long>
 
     public static final String eventReviewsDetailQuery = "SELECT er.id as id, er.reviewCategory as reviewCategory, er.rating as rating, er.comment as comment, er.users.fullname as reviewerName from EventReviews er WHERE er.events.id = :eventId";
 
-    @Query(value = eventReviewsDetailQuery)
-    List<EventReviewsDao> getEventReviews(@Param("eventId") long eventId);
+//    @Query(value = eventReviewsDetailQuery)
+    Optional<List<EventReviews>> findByEventsId(long eventId);
 
 
 }

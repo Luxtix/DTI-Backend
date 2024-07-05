@@ -3,6 +3,7 @@ package com.luxtix.eventManagementWebsite.events.repository;
 
 import com.luxtix.eventManagementWebsite.events.dao.EventDetailDao;
 import com.luxtix.eventManagementWebsite.events.dao.EventListDao;
+import com.luxtix.eventManagementWebsite.events.dao.EventSummaryDao;
 import com.luxtix.eventManagementWebsite.events.entity.Events;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,10 +21,16 @@ public interface EventRepository extends JpaRepository<Events,Long> {
 
     public static final String eventDetailsQuery = "SELECT e.id AS eventId, e.name AS eventName, e.cities.name AS cityName, e.categories.name as categoryName, e.address AS address, e.eventImage AS eventImage, e.venueName AS venueName, e.descriptions AS description, e.eventDate AS eventDate, e.startTime AS startTime, e.endTime AS endTime, e.isOnline AS isOnline, CASE WHEN e.isPaid THEN 'Paid' ELSE 'Free' END AS priceCategory, u.fullname AS organizerName, u.avatar AS organizerAvatar, (SELECT COUNT(fe.id) FROM FavoriteEvents fe WHERE fe.events.id = e.id) AS favoriteCounts, (CASE WHEN EXISTS (SELECT 1 FROM FavoriteEvents fe2 WHERE fe2.events.id = e.id AND fe2.users.id = :userId) THEN TRUE ELSE FALSE END) AS isFavorite, CASE WHEN e.eventDate < CURRENT_DATE() THEN TRUE ELSE FALSE END AS isDone FROM Events e JOIN e.users u  WHERE e.id = :eventId GROUP BY e.id, u.id,e.categories.name, e.cities.name";
 
+    public static final String eventSummaryQuery = "SELECT e.id as id, e.name as name, e.venueName as venue, e.address as address, e.cities.name as cityName, e.eventDate as eventDate, e.startTime as startTime, e.endTime as endTime, COALESCE(SUM(t.qty), 0) AS ticketQty, (SELECT COALESCE(SUM(tr.totalQty), 0) FROM Transactions tr WHERE tr.events.id = e.id) AS remainingTicket, (SELECT COALESCE(SUM(tr.totalPrice), 0) FROM Transactions tr WHERE tr.events.id = e.id) AS revenue, (SELECT COALESCE(AVG(r.rating), 0) FROM EventReviews r WHERE r.events.id = e.id) AS averageRating FROM Tickets t LEFT JOIN Events e ON e.id = t.events.id WHERE e.id = :eventId GROUP BY e.id,e.cities.name ORDER BY e.id";
+
     @Query(value = eventWithFilterCategoryAndDateAndTypeAndCityAndNameQuery)
     Page<EventListDao> getAllEventWithFilter(@Param("userId") Long id, @Param("categoryName") String categoryName, @Param("eventName") String eventName, @Param("cityName") String cityName, @Param("eventType") Boolean eventType, @Param("isOnline") Boolean isOnline, @Param("isFavorite") Boolean isFavorite, Pageable pageable);
 
 
     @Query(value = eventDetailsQuery)
     EventDetailDao getEventById(@Param("userId") Long userId, @Param("eventId") Long eventId);
+
+
+    @Query(value = eventSummaryQuery)
+    EventSummaryDao getEventDataSummary(@Param("eventId") long eventId);
 }

@@ -73,7 +73,7 @@ public class EventController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Response<EventDetailDtoResponse>> getEventById(@PathVariable("id") long id){
-        return Response.successfulResponse("Event has been fetched succesfully", eventService.getEventById(id));
+        return Response.successfulResponse("Event has been fetched successfully", eventService.getEventById(id));
     }
 
 
@@ -81,7 +81,7 @@ public class EventController {
     @RolesAllowed({"ORGANIZER"})
     public ResponseEntity<Response<Events>> deleteEventById(@PathVariable("id") long id){
         eventService.deleteEventById(id);
-        return Response.successfulResponse("Event has been delete successfully");
+        return Response.successfulResponse("Event has been deleted successfully");
     }
 
     @PutMapping("/{id}")

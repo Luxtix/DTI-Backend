@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 public class ReviewEventRequestDto {
-    private long eventId;
+    private long id;
     private int rating;
     private String comments;
 

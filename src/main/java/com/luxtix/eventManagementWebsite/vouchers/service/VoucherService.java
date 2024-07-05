@@ -12,4 +12,6 @@ public interface VoucherService {
     Vouchers getVoucherById(long id);
 
     void addNewVoucher(Vouchers vouchers);
+
+    void deleteVoucherById(long id);
 }

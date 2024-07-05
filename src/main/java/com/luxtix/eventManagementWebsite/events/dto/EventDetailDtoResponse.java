@@ -31,5 +31,5 @@ public class EventDetailDtoResponse {
     private Boolean isFavorite;
     private List<TicketDto> tickets;
     private List<VoucherDto> vouchers;
-    private List<EventReviewsDto> reviews;
+//    private List<EventReviewsDto> reviews;
 }

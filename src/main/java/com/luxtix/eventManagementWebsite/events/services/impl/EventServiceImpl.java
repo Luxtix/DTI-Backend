@@ -12,6 +12,7 @@ import com.luxtix.eventManagementWebsite.eventReviews.entity.EventReviews;
 import com.luxtix.eventManagementWebsite.eventReviews.service.EventReviewService;
 import com.luxtix.eventManagementWebsite.events.dao.EventDetailDao;
 import com.luxtix.eventManagementWebsite.events.dao.EventListDao;
+import com.luxtix.eventManagementWebsite.events.dao.EventSummaryDao;
 import com.luxtix.eventManagementWebsite.events.dto.EventDetailDtoResponse;
 import com.luxtix.eventManagementWebsite.events.dto.GetEventListDtoResponse;
 import com.luxtix.eventManagementWebsite.events.dto.NewEventRequestDto;
@@ -150,12 +151,10 @@ public class EventServiceImpl implements EventService {
         var isReferrals = (Boolean) claims.get("isReferral");
         List<TicketDto> ticketList = new ArrayList<>();
         List<VoucherDto> voucherList = new ArrayList<>();
-        List<EventReviewsDto> reviewList = new ArrayList<>();
         Users userData = userService.getUserByEmail(email);
         EventDetailDao data =  eventRepository.getEventById(userData.getId(),id);
         List<TicketDao> ticketData = ticketService.getEventTicket(id);
         List<VoucherDao> voucherData = voucherService.getEventVoucher(id,isReferrals);
-        List<EventReviewsDao> reviewsData = eventReviewService.getEventReviews(id);
         EventDetailDtoResponse eventDetail = new EventDetailDtoResponse();
         eventDetail.setId(data.getEventId());
         eventDetail.setDescription(data.getDescription());
@@ -198,17 +197,6 @@ public class EventServiceImpl implements EventService {
             voucherList.add(newVoucher);
         }
         eventDetail.setVouchers(voucherList);
-
-        for(EventReviewsDao reviewData : reviewsData){
-            EventReviewsDto newReview = new EventReviewsDto();
-            newReview.setId(reviewData.getId());
-            newReview.setType(reviewData.getReviewCategory());
-            newReview.setReviewerName(reviewData.getReviewerName());
-            newReview.setRating(reviewData.getRating());
-            newReview.setComments(reviewData.getComment());
-            reviewList.add(newReview);
-        }
-        eventDetail.setReviews(reviewList);
         return eventDetail;
     }
 
@@ -225,7 +213,7 @@ public class EventServiceImpl implements EventService {
         if(!data.getName().isEmpty()){
             eventData.setName(data.getName());
         }
-        if(data.getCategory() != 0){
+        if(data.getCategory() != null){
             Categories categories = new Categories();
             categories.setId(data.getCategory());
             eventData.setCategories(categories);
@@ -251,7 +239,7 @@ public class EventServiceImpl implements EventService {
         if(data.getIsPaid() != null){
             eventData.setIsPaid(data.getIsPaid());
         }
-        if(data.getCity() != 0){
+        if(data.getCity() != null){
             Cities city = new Cities();
             city.setId(data.getCity());
             eventData.setCities(city);
@@ -264,36 +252,65 @@ public class EventServiceImpl implements EventService {
         }
         eventRepository.save(eventData);
         for(UpdateEventRequestDto.TicketEventUpdateDto ticketData : data.getTickets()){
-            Tickets ticket = ticketService.getEventTicketById(ticketData.getId());
-            if(!ticketData.getName().isEmpty()){
+            if(ticketData.getId() == null){
+                Tickets ticket = new Tickets();
                 ticket.setName(ticketData.getName());
+                ticket.setPrice(ticketData.getPrice());
+                ticket.setQty(ticketData.getQty());
+                ticketService.addNewTicket(ticket);
+            }else{
+                Tickets ticket = ticketService.getEventTicketById(ticketData.getId());
+                if(!ticketData.getName().isEmpty()){
+                    ticket.setName(ticketData.getName());
+                }
+                if(ticketData.getPrice() != null) {
+                ticket.setPrice(ticketData.getPrice());
+                }
+                if(ticketData.getQty() != null) {
+                    ticket.setQty(ticketData.getQty());
+                }
+                ticketService.addNewTicket(ticket);
             }
-            ticket.setPrice(ticketData.getPrice());
-            ticket.setQty(ticketData.getQty());
-            ticketService.addNewTicket(ticket);
+
         }
         for(UpdateEventRequestDto.VoucherEventUpdateDto voucherData : data.getVouchers()){
-            System.out.println(voucherData.getId());
-            Vouchers voucher = voucherService.getVoucherById(voucherData.getId());
-            if(voucherData.getName() == null){
-                voucher.setName(voucherData.getName());
-            }
-            if(voucherData.getQty() != 0){
-                voucher.setVoucherLimit(voucherData.getQty());
-            }
-            voucher.setRate(voucherData.getRate());
-            if(voucherData.getStartDate() != null){
-                voucher.setStartDate(voucherData.getStartDate());
-            }
-            if(voucherData.getEndDate() != null){
-                voucher.setEndDate(voucherData.getEndDate());
-            }
+            if(voucherData.getId() == null){
+                Vouchers vouchers = new Vouchers();
+                vouchers.setName(voucherData.getName());
+                vouchers.setVoucherLimit(voucherData.getQty());
+                vouchers.setEvents(eventData);
+                vouchers.setRate(voucherData.getRate());
+                if(voucherData.getStartDate() != null){
+                    vouchers.setStartDate(voucherData.getStartDate());
+                }
+                if(voucherData.getEndDate() != null) {
+                    vouchers.setEndDate(voucherData.getEndDate());
+                }
+                vouchers.setReferralOnly(voucherData.getReferralOnly());
+                voucherService.addNewVoucher(vouchers);
+            }else{
+                    Vouchers vouchers = voucherService.getVoucherById(voucherData.getId());
+                if(voucherData.getName() != null){
+                    vouchers.setName(voucherData.getName());
+                }
+                if(voucherData.getQty() != 0){
+                    vouchers.setVoucherLimit(voucherData.getQty());
+                }
+                if(voucherData.getRate() != null){
+                    vouchers.setRate(voucherData.getRate());
+                }
+                if(voucherData.getStartDate() != null){
+                    vouchers.setStartDate(voucherData.getStartDate());
+                }
+                if(voucherData.getEndDate() != null){
+                    vouchers.setEndDate(voucherData.getEndDate());
+                }
 
-            if(voucherData.getReferralOnly() != null){
-                voucher.setReferralOnly(voucherData.getReferralOnly());
+                if(voucherData.getReferralOnly() != null){
+                    vouchers.setReferralOnly(voucherData.getReferralOnly());
+                }
+                voucherService.addNewVoucher(vouchers);
             }
-
-            voucherService.addNewVoucher(voucher);
         }
         return eventData;
     }
@@ -302,7 +319,7 @@ public class EventServiceImpl implements EventService {
     public ReviewEventResponseDto addReview(String email, ReviewEventRequestDto data) {
         Users userData = userService.getUserByEmail(email);
         EventReviews reviewData = new EventReviews();
-        Events eventData = eventRepository.findById(data.getEventId()).orElseThrow(() -> new DataNotFoundException("Event id not found"));
+        Events eventData = eventRepository.findById(data.getId()).orElseThrow(() -> new DataNotFoundException("Event id not found"));
         reviewData.setEvents(eventData);
         reviewData.setRating(data.getRating());
         reviewData.setUsers(userData);
@@ -330,5 +347,9 @@ public class EventServiceImpl implements EventService {
             return fileName.substring(dotIndex + 1);
         }
         return "";
+    }
+
+    public EventSummaryDao getEventSummaryData(long eventId){
+        return eventRepository.getEventDataSummary(eventId);
     }
 }
