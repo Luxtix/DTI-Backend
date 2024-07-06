@@ -32,4 +32,12 @@ public class VoucherServiceImpl implements VoucherService {
     public void addNewVoucher(Vouchers vouchers) {
         voucherRepository.save(vouchers);
     }
+
+    @Override
+    public void deleteVoucherById(long id) {
+        if(!voucherRepository.existsById(id)){
+            throw new DataNotFoundException("Voucher with id " + id + " is not found");
+        }
+        voucherRepository.deleteById(id);
+    }
 }
