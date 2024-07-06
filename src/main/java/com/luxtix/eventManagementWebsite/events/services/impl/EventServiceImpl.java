@@ -315,27 +315,6 @@ public class EventServiceImpl implements EventService {
         return eventData;
     }
 
-    @Override
-    public ReviewEventResponseDto addReview(String email, ReviewEventRequestDto data) {
-        Users userData = userService.getUserByEmail(email);
-        EventReviews reviewData = new EventReviews();
-        Events eventData = eventRepository.findById(data.getId()).orElseThrow(() -> new DataNotFoundException("Event id not found"));
-        reviewData.setEvents(eventData);
-        reviewData.setRating(data.getRating());
-        reviewData.setUsers(userData);
-        reviewData.setReviewCategory(data.getType());
-        reviewData.setComment(data.getComments());
-        eventReviewService.addNewReview(reviewData);
-        ReviewEventResponseDto resp = new ReviewEventResponseDto();
-        resp.setId(reviewData.getId());
-        resp.setComment(reviewData.getComment());
-        resp.setType(reviewData.getReviewCategory());
-        resp.setRating(reviewData.getRating());
-        resp.setName(reviewData.getUsers().getFullname());
-        return resp;
-    }
-
-
     public boolean isValidImageExtension(String fileName) {
         String extension = getFileExtension(fileName).toLowerCase();
         return ALLOWED_EXTENSIONS.contains(extension);
@@ -351,5 +330,15 @@ public class EventServiceImpl implements EventService {
 
     public EventSummaryDao getEventSummaryData(long eventId){
         return eventRepository.getEventDataSummary(eventId);
+    }
+
+    @Override
+    public Events getEventData(long eventId) {
+        return eventRepository.findById(eventId).orElseThrow(() -> new DataNotFoundException("Event with id " + eventId + " not found"));
+    }
+
+
+    public List<Events> getOrganizerEvent(long userId){
+        return eventRepository.findByUsersId(userId).orElseThrow(() -> new DataNotFoundException("Event list is empty"));
     }
 }

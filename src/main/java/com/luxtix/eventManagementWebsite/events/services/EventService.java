@@ -27,12 +27,16 @@ public interface EventService {
 
     Events updateEvent(long id, MultipartFile image, UpdateEventRequestDto data);
 
-    ReviewEventResponseDto addReview(String email, ReviewEventRequestDto data);
 
     String getFileExtension(String fileName);
 
     boolean isValidImageExtension(String fileName);
 
-    public EventSummaryDao getEventSummaryData(long eventId);
+    EventSummaryDao getEventSummaryData(long eventId);
+
+
+    Events getEventData(long eventId);
+
+    List<Events> getOrganizerEvent(long userId);
 
 }

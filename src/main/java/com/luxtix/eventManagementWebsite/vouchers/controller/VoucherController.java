@@ -6,6 +6,7 @@ import com.luxtix.eventManagementWebsite.users.dto.UserRegisterRequestDto;
 import com.luxtix.eventManagementWebsite.users.entity.Users;
 import com.luxtix.eventManagementWebsite.vouchers.entity.Vouchers;
 import com.luxtix.eventManagementWebsite.vouchers.service.VoucherService;
+import jakarta.annotation.security.RolesAllowed;
 import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -22,6 +23,9 @@ public class VoucherController {
         this.voucherService = voucherService;
     }
 
+
+
+    @RolesAllowed({"ORGANIZER"})
     @DeleteMapping("/{id}")
     public ResponseEntity<Response<Vouchers>> deleteVoucher(@PathVariable("id") Long id) {
         voucherService.deleteVoucherById(id);

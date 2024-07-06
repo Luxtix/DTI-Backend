@@ -1,11 +1,13 @@
 package com.luxtix.eventManagementWebsite.Transactions.service.impl;
 
+import com.luxtix.eventManagementWebsite.Transactions.dao.getAllTransactionResponseDao;
 import com.luxtix.eventManagementWebsite.Transactions.dto.GetTransactionResponseDto;
 import com.luxtix.eventManagementWebsite.Transactions.dto.TransactionRequestDto;
 import com.luxtix.eventManagementWebsite.Transactions.entity.Transactions;
 import com.luxtix.eventManagementWebsite.Transactions.repository.TransactionRepository;
 import com.luxtix.eventManagementWebsite.Transactions.service.TransactionService;
 import com.luxtix.eventManagementWebsite.events.entity.Events;
+import com.luxtix.eventManagementWebsite.exceptions.DataNotFoundException;
 import com.luxtix.eventManagementWebsite.pointHistory.entity.PointHistory;
 import com.luxtix.eventManagementWebsite.pointHistory.service.PointHistoryService;
 import com.luxtix.eventManagementWebsite.tickets.dao.TicketSummaryDao;
@@ -22,8 +24,10 @@ import com.luxtix.eventManagementWebsite.vouchers.service.VoucherService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 @Service
@@ -93,13 +97,24 @@ public class TransactionServiceImpl implements TransactionService {
     public List<GetTransactionResponseDto> getAllTransactions(long userId){
 //        GetTransactionResponseDto resp = new GetTransactionResponseDto();
         List<GetTransactionResponseDto> respList = new ArrayList<>();
-        List<Transactions> transactions =  transactionRepository.findByUsersId(userId);
-        for(Transactions data : transactions){
+        List<getAllTransactionResponseDao> transactions =  transactionRepository.getAllUserTransactions(userId).orElseThrow(() -> new DataNotFoundException("Transaction is null"));
+        for(getAllTransactionResponseDao data : transactions){
             GetTransactionResponseDto resp = new GetTransactionResponseDto();
             resp.setId(data.getId());
-            resp.setEventName(data.getEvents().getName());
-            resp.setEventDate(data.getEvents().getEventDate());
-            resp.setDescriptions(data.getEvents().getDescriptions());
+            resp.setEventName(data.getEventName());
+            resp.setVenue(data.getVenue());
+            resp.setOnline(data.getIsOnline());
+            resp.setStartTime(data.getStartTime());
+            resp.setEndTime(data.getEndTime());
+            resp.setTicketQty(data.getTicketQty());
+            resp.setCityName(data.getCityName());
+            resp.setTicketName(data.getTicketName());
+            DayOfWeek day = data.getEventDate().getDayOfWeek();
+            String eventDay = day.getDisplayName(
+                    java.time.format.TextStyle.FULL,
+                    Locale.ENGLISH
+            );
+            resp.setEventDay(eventDay);
             respList.add(resp);
         }
         return respList;

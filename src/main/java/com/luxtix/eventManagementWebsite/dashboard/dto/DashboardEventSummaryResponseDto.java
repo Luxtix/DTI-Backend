@@ -16,6 +16,7 @@ public class DashboardEventSummaryResponseDto {
     private String address;
     private String city;
     private LocalDate eventDate;
+    private String eventDay;
     private LocalTime startTime;
     private LocalTime endTime;
     private int ticketQty;

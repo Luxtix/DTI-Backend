@@ -63,6 +63,7 @@ public class EventController {
     }
 
     @GetMapping("")
+    @RolesAllowed({"USER"})
     public ResponseEntity<Response<List<GetEventListDtoResponse>>> getAllEvent(@RequestParam(value = "category",required = false) String category, @RequestParam(value ="city", required = false) String city, @RequestParam(value = "isPaid", required = false) Boolean isPaid, @RequestParam(value = "eventName",required = false) String eventName, @RequestParam(value = "isOnline",required = false) Boolean isOnline,@RequestParam(value = "isFavorite",required = false) Boolean isFavorite, @RequestParam(defaultValue = "0",required = false) int page, @RequestParam(defaultValue = "10",required = false) int size) {
         var claims = Claims.getClaimsFromJwt();
         var email = (String) claims.get("sub");
@@ -72,6 +73,7 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
+    @RolesAllowed({"USER"})
     public ResponseEntity<Response<EventDetailDtoResponse>> getEventById(@PathVariable("id") long id){
         return Response.successfulResponse("Event has been fetched successfully", eventService.getEventById(id));
     }
@@ -94,15 +96,4 @@ public class EventController {
         UpdateEventRequestDto data = gson.fromJson(eventData, UpdateEventRequestDto.class);
         return Response.successfulResponse("Event has been update successfully", eventService.updateEvent(id, image, data));
     }
-
-    @PostMapping("/review")
-    @RolesAllowed({"USER"})
-    public ResponseEntity<Response<ReviewEventResponseDto>> addNewReview(@RequestBody ReviewEventRequestDto data) {
-        var claims = Claims.getClaimsFromJwt();
-        var email = (String) claims.get("sub");
-        return Response.successfulResponse("Event registered successfully",eventService.addReview(email,data));
-    }
-
-
-
 }

@@ -6,6 +6,7 @@ import com.luxtix.eventManagementWebsite.response.Response;
 import com.luxtix.eventManagementWebsite.users.dto.*;
 import com.luxtix.eventManagementWebsite.users.entity.Users;
 import com.luxtix.eventManagementWebsite.users.service.UserService;
+import jakarta.annotation.security.RolesAllowed;
 import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -28,6 +29,8 @@ public class UserController {
     }
 
 
+
+    @RolesAllowed({"ORGANIZER","USER"})
     @PutMapping("/profile")
     public ResponseEntity<Response<ProfileResponseDto>> updateProfile(@ModelAttribute ProfileRequestDto profileRequestDto) {
         var claims = Claims.getClaimsFromJwt();
@@ -36,6 +39,7 @@ public class UserController {
     }
 
 
+    @RolesAllowed({"ORGANIZER","USER"})
     @GetMapping("/profile")
     public ResponseEntity<Response<ProfileResponseDto>> getProfileData(){
         var claims = Claims.getClaimsFromJwt();
@@ -43,6 +47,7 @@ public class UserController {
         return Response.successfulResponse("Profile data has been fetched",userService.getProfileData(email));
     }
 
+    @RolesAllowed({"ORGANIZER","USER"})
     @PostMapping("/change-password")
     public ResponseEntity<Response<ChangePasswordResponseDto>> changePassword(@RequestBody ChangePasswordRequestDto data){
         var claims = Claims.getClaimsFromJwt();

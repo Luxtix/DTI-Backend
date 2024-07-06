@@ -4,6 +4,7 @@ package com.luxtix.eventManagementWebsite.categories.controller;
 import com.luxtix.eventManagementWebsite.categories.Categories;
 import com.luxtix.eventManagementWebsite.categories.service.CategoryService;
 import com.luxtix.eventManagementWebsite.response.Response;
+import jakarta.annotation.security.RolesAllowed;
 import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -25,6 +26,8 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+
+    @RolesAllowed({"ORGANIZER","USER"})
     @GetMapping("")
     public ResponseEntity<Response<List<Categories>>> getAllCategory() {
         return Response.successfulResponse("All city has been fetched successfully", categoryService.getAllCategory());

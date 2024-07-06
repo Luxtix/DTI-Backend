@@ -5,6 +5,7 @@ import com.luxtix.eventManagementWebsite.auth.helpers.Claims;
 import com.luxtix.eventManagementWebsite.pointHistory.dto.PointHistoryResponseDto;
 import com.luxtix.eventManagementWebsite.pointHistory.service.PointHistoryService;
 import com.luxtix.eventManagementWebsite.response.Response;
+import jakarta.annotation.security.RolesAllowed;
 import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -24,6 +25,7 @@ public class PointHistoryController {
 
 
     @GetMapping
+    @RolesAllowed({"USER"})
     public ResponseEntity<Response<PointHistoryResponseDto>> register() {
         var claims = Claims.getClaimsFromJwt();
         var email = (String) claims.get("sub");
