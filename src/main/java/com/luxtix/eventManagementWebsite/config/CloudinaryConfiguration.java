@@ -8,13 +8,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 @Configuration
 public class CloudinaryConfiguration {
-    @Value("dv9bbdl6i")
+    @Value("${CLOUDINARY_NAME}")
     private String cloudName;
 
-    @Value("298575313282357")
+    @Value("${CLOUDINARY_API_KEY}")
     private String apiKey;
 
-    @Value("p_mRglFqQ5_MfcS-YypN9XBx5Uo")
+    @Value("${CLOUDINARY_API_SECRET}")
     private String apiSecret;
 
     @Bean
