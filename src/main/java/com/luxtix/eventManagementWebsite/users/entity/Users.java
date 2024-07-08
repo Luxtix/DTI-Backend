@@ -82,7 +82,7 @@ public class Users {
     private Set<EventReviews> eventReviews = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "users",cascade = CascadeType.ALL)
-    private Set<UserUsageReferrals> userUsageRefferals = new LinkedHashSet<>();
+    private Set<UserUsageReferrals> userUsageReferrals = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "users",cascade = CascadeType.ALL)
     private Set<Transactions> transactions = new LinkedHashSet<>();

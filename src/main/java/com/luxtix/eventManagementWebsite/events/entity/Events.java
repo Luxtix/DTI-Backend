@@ -2,7 +2,7 @@ package com.luxtix.eventManagementWebsite.events.entity;
 
 
 import com.luxtix.eventManagementWebsite.categories.Categories;
-import com.luxtix.eventManagementWebsite.city.Cities;
+import com.luxtix.eventManagementWebsite.city.entity.Cities;
 import com.luxtix.eventManagementWebsite.eventReviews.entity.EventReviews;
 import com.luxtix.eventManagementWebsite.favoriteEvents.entity.FavoriteEvents;
 import com.luxtix.eventManagementWebsite.tickets.entity.Tickets;

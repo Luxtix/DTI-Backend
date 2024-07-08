@@ -1,5 +1,5 @@
 package com.luxtix.eventManagementWebsite.city.services.impl;
-import com.luxtix.eventManagementWebsite.city.Cities;
+import com.luxtix.eventManagementWebsite.city.entity.Cities;
 import com.luxtix.eventManagementWebsite.city.dto.AddNewCityDto;
 import com.luxtix.eventManagementWebsite.city.repository.CityRepository;
 import com.luxtix.eventManagementWebsite.city.services.CityService;
@@ -9,10 +9,10 @@ import java.util.List;
 
 
 @Service
-public class CItyServiceImpl implements CityService {
+public class CityServiceImpl implements CityService {
     private final CityRepository cityRepository;
 
-    public CItyServiceImpl(CityRepository cityRepository) {
+    public CityServiceImpl(CityRepository cityRepository) {
         this.cityRepository = cityRepository;
     }
 

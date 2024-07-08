@@ -11,7 +11,7 @@ public class TransactionRequestDto {
     private Long voucherId;
     private int totalQty;
     private int totalPrice;
-    private int usePoint;
+    private Integer usePoint;
     private List<TransactionTicketDto> tickets;
 
 

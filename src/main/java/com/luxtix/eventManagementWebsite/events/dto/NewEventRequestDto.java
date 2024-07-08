@@ -2,7 +2,7 @@ package com.luxtix.eventManagementWebsite.events.dto;
 
 
 import com.luxtix.eventManagementWebsite.categories.Categories;
-import com.luxtix.eventManagementWebsite.city.Cities;
+import com.luxtix.eventManagementWebsite.city.entity.Cities;
 import com.luxtix.eventManagementWebsite.events.entity.Events;
 import lombok.Data;
 

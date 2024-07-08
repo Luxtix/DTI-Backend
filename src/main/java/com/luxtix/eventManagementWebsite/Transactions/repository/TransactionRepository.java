@@ -13,12 +13,12 @@ import java.util.Optional;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transactions,Long> {
-    List<Transactions> findByUsersId(long userId);
+    Optional<List<Transactions>> findByUsersId(long userId);
 
 
-    public static final String allUserTransactionQuery ="select\n" +
-            "\ttl.tickets.id as id,\n" +
-            "    e.name as eventName,\n" +
+    public static final String allUserTransactionDetailQuery ="select\n" +
+            "\ttl.id as id,\n" +
+            "    e.name as eventName, e.eventImage as eventImage,\n" +
             "    e.venueName  as venue,\n" +
             "    ti.name AS ticketName,\n" +
             "    tl.qty AS ticketQty,\n" +
@@ -38,8 +38,10 @@ public interface TransactionRepository extends JpaRepository<Transactions,Long> 
             "JOIN \n" +
             "    Events e ON ti.events.id = e.id\n" +
             "WHERE \n" +
-            "    u.id = :userId";
+            "    tr.id = :transactionId";
 
-    @Query(value = allUserTransactionQuery)
-    Optional<List<getAllTransactionResponseDao>> getAllUserTransactions(@Param("userId") long userId);
+    @Query(value = allUserTransactionDetailQuery)
+    Optional<List<getAllTransactionResponseDao>> getAllUserTransactions(@Param("transactionId") long transactionId);
+
+
 }
