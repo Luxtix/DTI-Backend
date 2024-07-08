@@ -26,10 +26,14 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             options.put("folder", foldername);
             Map uploadedFile = cloudinary.uploader().upload(bytes, options);
             String publicId = (String) uploadedFile.get("public_id");
-            return cloudinary.url().secure(true).generate(publicId);
+            return publicId;
         }catch (IOException e){
             throw new DataNotFoundException("Cloudinary not found");
 
         }
+    }
+
+    public String generateUrl(String publicId){
+        return cloudinary.url().secure(true).generate(publicId);
     }
 }
