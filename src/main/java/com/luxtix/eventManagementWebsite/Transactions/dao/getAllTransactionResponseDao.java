@@ -22,4 +22,7 @@ public interface getAllTransactionResponseDao {
     LocalTime getEndTime();
 
     boolean getIsOnline();
+
+
+    String getEventImage();
 }

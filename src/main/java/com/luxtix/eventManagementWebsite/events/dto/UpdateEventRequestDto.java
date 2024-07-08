@@ -45,48 +45,4 @@ public class UpdateEventRequestDto {
         private LocalDate endDate;
         private Boolean referralOnly;
     }
-
-//    public Events toEntity() {
-//        Events event = new Events();
-//        if(!name.isEmpty()){
-//            event.setName(name);
-//        }
-//
-//        if(category != 0){
-//            Categories categories = new Categories();
-//            categories.setId(category);
-//            event.setCategories(categories);
-//        }
-//        if(isOnline != null){
-//            event.setIsOnline(isOnline);
-//        }
-//        if(eventDate != null){
-//            event.setEventDate(eventDate);
-//        }
-//        if(startTime != null){
-//            event.setStartTime(startTime);
-//        }
-//        if(endTime != null){
-//            event.setEndTime(endTime);
-//        }
-//        if(venue.isEmpty()){
-//            event.setVenueName(venue);
-//        }
-//        if(address.isEmpty()){
-//            event.setAddress(address);
-//        }
-//        if(isPaid != null){
-//            event.setIsPaid(isPaid);
-//        }
-//        if(city != 0){
-//            Cities newCity = new Cities();
-//            newCity.setId(city);
-//            event.setCities(newCity);
-//        }
-//        if(description.isEmpty()){
-//            event.setDescriptions(description);
-//        }
-//        return event;
-//    }
-
 }

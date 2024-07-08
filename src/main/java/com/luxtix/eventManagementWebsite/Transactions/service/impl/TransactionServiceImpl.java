@@ -1,6 +1,7 @@
 package com.luxtix.eventManagementWebsite.Transactions.service.impl;
 
 import com.luxtix.eventManagementWebsite.Transactions.dao.getAllTransactionResponseDao;
+import com.luxtix.eventManagementWebsite.Transactions.dto.GetTransactionListResponseDto;
 import com.luxtix.eventManagementWebsite.Transactions.dto.GetTransactionResponseDto;
 import com.luxtix.eventManagementWebsite.Transactions.dto.TransactionRequestDto;
 import com.luxtix.eventManagementWebsite.Transactions.entity.Transactions;
@@ -10,9 +11,7 @@ import com.luxtix.eventManagementWebsite.events.entity.Events;
 import com.luxtix.eventManagementWebsite.exceptions.DataNotFoundException;
 import com.luxtix.eventManagementWebsite.pointHistory.entity.PointHistory;
 import com.luxtix.eventManagementWebsite.pointHistory.service.PointHistoryService;
-import com.luxtix.eventManagementWebsite.tickets.dao.TicketSummaryDao;
 import com.luxtix.eventManagementWebsite.tickets.entity.Tickets;
-import com.luxtix.eventManagementWebsite.tickets.service.TicketService;
 import com.luxtix.eventManagementWebsite.transactionList.entity.TransactionList;
 import com.luxtix.eventManagementWebsite.transactionList.service.TransactionListService;
 import com.luxtix.eventManagementWebsite.userUsageRefferals.entity.UserUsageReferrals;
@@ -25,6 +24,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -38,16 +38,13 @@ public class TransactionServiceImpl implements TransactionService {
     private final UserUsageReferralsService userUsageReferralsService;
     private final VoucherService voucherService;
 
-    private final TicketService ticketService;
-
     private final PointHistoryService pointHistoryService;
-    public TransactionServiceImpl(UserService userService, TransactionRepository transactionRepository, TransactionListService transactionListService, UserUsageReferralsService userUsageReferralsService, VoucherService voucherService, TicketService ticketService, PointHistoryService pointHistoryService) {
+    public TransactionServiceImpl(UserService userService, TransactionRepository transactionRepository, TransactionListService transactionListService, UserUsageReferralsService userUsageReferralsService, VoucherService voucherService, PointHistoryService pointHistoryService) {
         this.userService = userService;
         this.transactionRepository = transactionRepository;
         this.transactionListService = transactionListService;
         this.userUsageReferralsService = userUsageReferralsService;
         this.voucherService = voucherService;
-        this.ticketService = ticketService;
         this.pointHistoryService = pointHistoryService;
     }
 
@@ -55,7 +52,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional
     public Transactions newTransaction(TransactionRequestDto data,String email) {
         Transactions newTransactions = new Transactions();
-        Users userData =userService.getUserByEmail(email);
+        Users userData = userService.getUserByEmail(email);
         newTransactions.setUsers(userData);
         Events event = new Events();
         event.setId(data.getEventId());
@@ -74,7 +71,7 @@ public class TransactionServiceImpl implements TransactionService {
             newTransactions.setVouchers(voucher);
         }
         transactionRepository.save(newTransactions);
-        if(data.getUsePoint() != 0){
+        if(data.getUsePoint() != null){
             PointHistory newPoint = new PointHistory();
             newPoint.setUsers(userData);
             newPoint.setTotalPoint(data.getUsePoint());
@@ -94,10 +91,9 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
 
-    public List<GetTransactionResponseDto> getAllTransactions(long userId){
-//        GetTransactionResponseDto resp = new GetTransactionResponseDto();
+    public List<GetTransactionResponseDto> getAllTransactionDetail(long transactionId){
         List<GetTransactionResponseDto> respList = new ArrayList<>();
-        List<getAllTransactionResponseDao> transactions =  transactionRepository.getAllUserTransactions(userId).orElseThrow(() -> new DataNotFoundException("Transaction is null"));
+        List<getAllTransactionResponseDao> transactions =  transactionRepository.getAllUserTransactions(transactionId).orElseThrow(() -> new DataNotFoundException("Transaction is null"));
         for(getAllTransactionResponseDao data : transactions){
             GetTransactionResponseDto resp = new GetTransactionResponseDto();
             resp.setId(data.getId());
@@ -109,15 +105,39 @@ public class TransactionServiceImpl implements TransactionService {
             resp.setTicketQty(data.getTicketQty());
             resp.setCityName(data.getCityName());
             resp.setTicketName(data.getTicketName());
+            resp.setEventDate(data.getEventDate());
             DayOfWeek day = data.getEventDate().getDayOfWeek();
             String eventDay = day.getDisplayName(
                     java.time.format.TextStyle.FULL,
                     Locale.ENGLISH
             );
             resp.setEventDay(eventDay);
+            resp.setEventImage(data.getEventImage());
             respList.add(resp);
         }
         return respList;
 
+    }
+
+    @Override
+    public List<GetTransactionListResponseDto> getAllTransactions(long userId) {
+        List<Transactions> transactions = transactionRepository.findByUsersId(userId).orElseThrow(() -> new DataNotFoundException("Transaction is empty"));
+        List<GetTransactionListResponseDto> transactionList = new ArrayList<>();
+        LocalDate currentDate = LocalDate.now();
+        for(Transactions transactionData : transactions){
+            GetTransactionListResponseDto newTransaction = new GetTransactionListResponseDto();
+            newTransaction.setEventId(transactionData.getEvents().getId());
+            newTransaction.setEventName(transactionData.getEvents().getName());
+            newTransaction.setEventDate(transactionData.getEvents().getEventDate());
+            newTransaction.setTransactionId(transactionData.getId());
+            newTransaction.setEventImage(transactionData.getEvents().getEventImage());
+            if(!transactionData.getEvents().getEventDate().isAfter(currentDate)){
+                newTransaction.setDone(true);
+            }else{
+                newTransaction.setDone(false);
+            }
+            transactionList.add(newTransaction);
+        }
+        return  transactionList;
     }
 }

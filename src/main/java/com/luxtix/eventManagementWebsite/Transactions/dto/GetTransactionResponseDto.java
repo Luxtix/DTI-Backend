@@ -10,6 +10,7 @@ import java.time.LocalTime;
 public class GetTransactionResponseDto {
     private long id;
     private String eventName;
+    private String eventImage;
     private LocalDate eventDate;
     private LocalTime startTime;
     private LocalTime endTime;

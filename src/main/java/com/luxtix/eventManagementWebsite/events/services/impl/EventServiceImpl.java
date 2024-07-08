@@ -2,14 +2,8 @@ package com.luxtix.eventManagementWebsite.events.services.impl;
 
 import com.luxtix.eventManagementWebsite.auth.helpers.Claims;
 import com.luxtix.eventManagementWebsite.categories.Categories;
-import com.luxtix.eventManagementWebsite.city.Cities;
+import com.luxtix.eventManagementWebsite.city.entity.Cities;
 import com.luxtix.eventManagementWebsite.cloudinary.CloudinaryService;
-import com.luxtix.eventManagementWebsite.eventReviews.dao.EventReviewsDao;
-import com.luxtix.eventManagementWebsite.eventReviews.dto.EventReviewsDto;
-import com.luxtix.eventManagementWebsite.eventReviews.dto.ReviewEventRequestDto;
-import com.luxtix.eventManagementWebsite.eventReviews.dto.ReviewEventResponseDto;
-import com.luxtix.eventManagementWebsite.eventReviews.entity.EventReviews;
-import com.luxtix.eventManagementWebsite.eventReviews.service.EventReviewService;
 import com.luxtix.eventManagementWebsite.events.dao.EventDetailDao;
 import com.luxtix.eventManagementWebsite.events.dao.EventListDao;
 import com.luxtix.eventManagementWebsite.events.dao.EventSummaryDao;
@@ -56,15 +50,14 @@ public class EventServiceImpl implements EventService {
     private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "svg", "webp");
     private final UserService userService;
     private final VoucherService voucherService;
-    private final EventReviewService eventReviewService;
 
-    public EventServiceImpl(EventRepository eventRepository, CloudinaryService cloudinaryService, TicketService ticketService, UserService userService, VoucherService voucherService, EventReviewService eventReviewService) {
+
+    public EventServiceImpl(EventRepository eventRepository, CloudinaryService cloudinaryService, TicketService ticketService, UserService userService, VoucherService voucherService) {
         this.eventRepository = eventRepository;
         this.cloudinaryService = cloudinaryService;
         this.ticketService = ticketService;
         this.userService = userService;
         this.voucherService = voucherService;
-        this.eventReviewService = eventReviewService;
     }
 
 

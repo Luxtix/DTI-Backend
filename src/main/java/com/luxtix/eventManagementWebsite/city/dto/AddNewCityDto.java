@@ -1,5 +1,5 @@
 package com.luxtix.eventManagementWebsite.city.dto;
-import com.luxtix.eventManagementWebsite.city.Cities;
+import com.luxtix.eventManagementWebsite.city.entity.Cities;
 import lombok.Data;
 
 

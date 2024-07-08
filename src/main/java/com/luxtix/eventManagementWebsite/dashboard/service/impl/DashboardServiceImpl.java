@@ -13,6 +13,7 @@ import com.luxtix.eventManagementWebsite.tickets.dao.TicketSummaryDao;
 import com.luxtix.eventManagementWebsite.tickets.service.TicketService;
 import com.luxtix.eventManagementWebsite.users.entity.Users;
 import com.luxtix.eventManagementWebsite.users.service.UserService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -32,7 +33,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     private final UserService userService;
 
-    public DashboardServiceImpl(TicketService ticketService, EventService eventService, UserService userService) {
+    public DashboardServiceImpl(TicketService ticketService, @Lazy EventService eventService, UserService userService) {
         this.ticketService = ticketService;
         this.eventService = eventService;
         this.userService = userService;

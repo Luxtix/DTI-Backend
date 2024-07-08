@@ -1,7 +1,7 @@
 package com.luxtix.eventManagementWebsite.city.controller;
 
 
-import com.luxtix.eventManagementWebsite.city.Cities;
+import com.luxtix.eventManagementWebsite.city.entity.Cities;
 import com.luxtix.eventManagementWebsite.city.dto.AddNewCityDto;
 import com.luxtix.eventManagementWebsite.city.services.CityService;
 import com.luxtix.eventManagementWebsite.response.Response;

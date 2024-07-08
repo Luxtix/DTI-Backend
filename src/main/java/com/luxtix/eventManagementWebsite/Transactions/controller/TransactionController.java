@@ -1,6 +1,7 @@
 package com.luxtix.eventManagementWebsite.Transactions.controller;
 
 
+import com.luxtix.eventManagementWebsite.Transactions.dto.GetTransactionListResponseDto;
 import com.luxtix.eventManagementWebsite.Transactions.dto.GetTransactionResponseDto;
 import com.luxtix.eventManagementWebsite.Transactions.dto.TransactionRequestDto;
 import com.luxtix.eventManagementWebsite.Transactions.entity.Transactions;
@@ -35,11 +36,17 @@ public class TransactionController {
         return Response.successfulResponse("Transaction added successfully", transactionService.newTransaction(data,email));
     }
 
-    @GetMapping
+    @GetMapping("/detail/{id}")
     @RolesAllowed({"USER"})
-    public ResponseEntity<Response<List<GetTransactionResponseDto>>> getAllTransaction(){
+    public ResponseEntity<Response<List<GetTransactionResponseDto>>> getAllTransactionDetail(@PathVariable("id") long transactionId){
+        return Response.successfulResponse("Transaction detail fetched successfully", transactionService.getAllTransactionDetail(transactionId));
+    }
+
+    @GetMapping("")
+    @RolesAllowed({"USER"})
+    public ResponseEntity<Response<List<GetTransactionListResponseDto>>> getAllTransactions(){
         var claims = Claims.getClaimsFromJwt();
         var userId = (long) claims.get("id");
-        return Response.successfulResponse("All transactions fetched successfully", transactionService.getAllTransactions(userId));
+        return Response.successfulResponse("All user transaction fetched successfully", transactionService.getAllTransactions(userId));
     }
 }

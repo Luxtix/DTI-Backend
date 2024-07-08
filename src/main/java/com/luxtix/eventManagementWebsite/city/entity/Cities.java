@@ -1,4 +1,4 @@
-package com.luxtix.eventManagementWebsite.city;
+package com.luxtix.eventManagementWebsite.city.entity;
 
 
 import jakarta.persistence.*;

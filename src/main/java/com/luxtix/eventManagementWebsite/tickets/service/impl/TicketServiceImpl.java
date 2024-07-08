@@ -71,7 +71,6 @@ public class TicketServiceImpl implements TicketService {
                     LocalDateTime startOfMonth = LocalDateTime.of(firstDayOfMonth, LocalTime.MIN);
                     startDate = startOfMonth.atZone(zoneId).toInstant();
 
-                // Last day of the month
                     LocalDate lastDayOfMonth = LocalDate.now(zoneId).with(TemporalAdjusters.lastDayOfMonth());
                     LocalDateTime endOfMonth = LocalDateTime.of(lastDayOfMonth, LocalTime.MAX);
                     endDate = endOfMonth.atZone(zoneId).toInstant();
@@ -82,14 +81,11 @@ public class TicketServiceImpl implements TicketService {
                     intervalStart = "hour";
                     zoneId = ZoneId.of("Africa/Lagos");
 
-                // Get the current instant in the specified timezone
                     ZonedDateTime currentZonedDateTime = ZonedDateTime.now(zoneId);
 
-                // Truncate to the start of the day in the specified timezone
                     ZonedDateTime startOfDay = currentZonedDateTime.truncatedTo(ChronoUnit.DAYS);
                     startDate = startOfDay.toInstant();
 
-                // Calculate the end of the day in the specified timezone
                     endDate = startOfDay.plus(1, ChronoUnit.DAYS).minus(1, ChronoUnit.NANOS).toInstant();
                     intervalTime = "1 hour";
                     intervalTo = "hour";
