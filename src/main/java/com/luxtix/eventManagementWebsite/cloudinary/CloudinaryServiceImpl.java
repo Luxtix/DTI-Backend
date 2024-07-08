@@ -38,8 +38,10 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     }
 
 
+
     public void deleteImage(String publicId) throws IOException {
         Map result = cloudinary.uploader().destroy(publicId, Map.of());
         System.out.println(result);
     }
+
 }

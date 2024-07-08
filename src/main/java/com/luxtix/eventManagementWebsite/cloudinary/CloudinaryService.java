@@ -10,4 +10,5 @@ public interface CloudinaryService {
     String generateUrl(String publicId);
 
     void deleteImage(String publicId) throws IOException;
+
 }
