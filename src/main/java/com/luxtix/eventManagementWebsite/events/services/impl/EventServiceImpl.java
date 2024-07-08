@@ -200,6 +200,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void deleteEventById(long id) {
+        Events event = eventRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Event with id " + id + " is not found"));
+
         eventRepository.deleteById(id);
     }
 

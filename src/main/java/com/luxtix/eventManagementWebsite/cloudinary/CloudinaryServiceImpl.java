@@ -36,4 +36,12 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     public String generateUrl(String publicId){
         return cloudinary.url().secure(true).generate(publicId);
     }
+
+
+
+    public void deleteImage(String publicId) throws IOException {
+        Map result = cloudinary.uploader().destroy(publicId, Map.of());
+        System.out.println(result);
+    }
+
 }
