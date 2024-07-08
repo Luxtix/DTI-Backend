@@ -7,6 +7,7 @@ import com.luxtix.eventManagementWebsite.users.dto.*;
 import com.luxtix.eventManagementWebsite.users.entity.Users;
 import com.luxtix.eventManagementWebsite.users.service.UserService;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.validation.Valid;
 import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -24,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Response<Users>> register(@RequestBody UserRegisterRequestDto userRegisterRequestDto) {
+    public ResponseEntity<Response<Users>> register(@Valid @RequestBody UserRegisterRequestDto userRegisterRequestDto) {
         return Response.successfulResponse("User registered successfully", userService.register(userRegisterRequestDto));
     }
 
