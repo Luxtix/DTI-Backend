@@ -15,12 +15,8 @@ import java.util.Map;
 public class CloudinaryServiceImpl implements CloudinaryService {
 
 
-
-    private final Cloudinary cloudinary;
-
-    public CloudinaryServiceImpl(Cloudinary cloudinary) {
-        this.cloudinary = cloudinary;
-    }
+    @Resource
+    private Cloudinary cloudinary;
 
     @Override
     public String uploadFile(MultipartFile file, String foldername) {
