@@ -1,5 +1,6 @@
 package com.luxtix.eventManagementWebsite.events.services.impl;
 
+import com.cloudinary.Cloudinary;
 import com.luxtix.eventManagementWebsite.auth.helpers.Claims;
 import com.luxtix.eventManagementWebsite.categories.Categories;
 import com.luxtix.eventManagementWebsite.city.entity.Cities;
@@ -26,6 +27,7 @@ import com.luxtix.eventManagementWebsite.vouchers.entity.Vouchers;
 import com.luxtix.eventManagementWebsite.vouchers.dao.VoucherDao;
 import com.luxtix.eventManagementWebsite.vouchers.dto.VoucherDto;
 import com.luxtix.eventManagementWebsite.vouchers.service.VoucherService;
+import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
 import lombok.extern.java.Log;
 import org.springframework.data.domain.Page;
@@ -46,6 +48,9 @@ import java.util.Locale;
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final CloudinaryService cloudinaryService;
+
+    @Resource
+    private Cloudinary cloudinary;
     private final TicketService ticketService;
     private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "svg", "webp");
     private final UserService userService;
@@ -114,7 +119,7 @@ public class EventServiceImpl implements EventService {
             eventData.setPriceCategory(allEventData.getPriceCategory());
             eventData.setDescriptions(allEventData.getDescriptions());
             eventData.setAddress(allEventData.getAddress());
-            eventData.setEventImage(allEventData.getEventImage());
+            eventData.setEventImage(cloudinaryService.generateUrl(allEventData.getEventImage()));
             eventData.setCategoryName(allEventData.getCategoryName());
             eventData.setCityName(allEventData.getCityName());
             eventData.setTicketPrice(allEventData.getTicketPrice());
