@@ -75,7 +75,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-//                .cors(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/error/**").permitAll();
                     auth.requestMatchers("/api/auth/**").permitAll();
