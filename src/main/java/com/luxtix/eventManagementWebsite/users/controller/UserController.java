@@ -29,8 +29,6 @@ public class UserController {
         return Response.successfulResponse("User registered successfully", userService.register(userRegisterRequestDto));
     }
 
-
-
     @RolesAllowed({"ORGANIZER","USER"})
     @PutMapping("/profile")
     public ResponseEntity<Response<ProfileResponseDto>> updateProfile(@ModelAttribute ProfileRequestDto profileRequestDto) {
