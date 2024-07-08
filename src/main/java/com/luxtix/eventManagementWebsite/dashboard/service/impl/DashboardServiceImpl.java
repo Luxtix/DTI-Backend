@@ -33,7 +33,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     private final UserService userService;
 
-    public DashboardServiceImpl(TicketService ticketService, @Lazy EventService eventService, UserService userService) {
+    public DashboardServiceImpl(TicketService ticketService,EventService eventService, UserService userService) {
         this.ticketService = ticketService;
         this.eventService = eventService;
         this.userService = userService;
