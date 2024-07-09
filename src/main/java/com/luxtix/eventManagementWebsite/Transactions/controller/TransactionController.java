@@ -1,14 +1,14 @@
 package com.luxtix.eventManagementWebsite.Transactions.controller;
 
 
-import com.luxtix.eventManagementWebsite.Transactions.dto.GetTransactionListResponseDto;
-import com.luxtix.eventManagementWebsite.Transactions.dto.GetTransactionResponseDto;
+import com.luxtix.eventManagementWebsite.Transactions.dto.TransactionDetailResponseDto;
+import com.luxtix.eventManagementWebsite.Transactions.dto.TransactionListResponseDto;
 import com.luxtix.eventManagementWebsite.Transactions.dto.TransactionRequestDto;
 import com.luxtix.eventManagementWebsite.Transactions.entity.Transactions;
 import com.luxtix.eventManagementWebsite.Transactions.service.TransactionService;
 import com.luxtix.eventManagementWebsite.auth.helpers.Claims;
 import com.luxtix.eventManagementWebsite.response.Response;
-import com.luxtix.eventManagementWebsite.tickets.dao.TicketSummaryDao;
+import com.luxtix.eventManagementWebsite.transactionList.entity.TransactionList;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;
@@ -38,13 +38,13 @@ public class TransactionController {
 
     @GetMapping("/detail/{id}")
     @RolesAllowed({"USER"})
-    public ResponseEntity<Response<List<GetTransactionResponseDto>>> getAllTransactionDetail(@PathVariable("id") long transactionId){
+    public ResponseEntity<Response<List<TransactionDetailResponseDto>>> getAllTransactionDetail(@PathVariable("id") long transactionId){
         return Response.successfulResponse("Transaction detail fetched successfully", transactionService.getAllTransactionDetail(transactionId));
     }
 
     @GetMapping("")
     @RolesAllowed({"USER"})
-    public ResponseEntity<Response<List<GetTransactionListResponseDto>>> getAllTransactions(){
+    public ResponseEntity<Response<List<TransactionListResponseDto>>> getAllTransactions(){
         var claims = Claims.getClaimsFromJwt();
         var userId = (long) claims.get("id");
         return Response.successfulResponse("All user transaction fetched successfully", transactionService.getAllTransactions(userId));

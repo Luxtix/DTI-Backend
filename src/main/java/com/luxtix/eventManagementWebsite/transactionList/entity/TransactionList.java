@@ -1,6 +1,7 @@
 package com.luxtix.eventManagementWebsite.transactionList.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.luxtix.eventManagementWebsite.Transactions.entity.Transactions;
 import com.luxtix.eventManagementWebsite.tickets.entity.Tickets;
 import jakarta.persistence.*;
@@ -19,6 +20,7 @@ public class TransactionList {
     @SequenceGenerator(name = "transaction_list_id_gen", sequenceName = "transaction_list_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private long id;
+
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "transaction_id", nullable = false)

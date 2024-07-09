@@ -7,7 +7,7 @@ import lombok.Data;
 public class TicketDto {
     private long id;
     private String name;
-    private int price;
-    private int qty;
-    private int remainingQty;
+    private Integer price;
+    private Integer qty;
+    private Integer remainingQty;
 }

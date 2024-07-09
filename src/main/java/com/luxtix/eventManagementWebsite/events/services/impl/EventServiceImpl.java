@@ -24,7 +24,6 @@ import com.luxtix.eventManagementWebsite.tickets.service.TicketService;
 import com.luxtix.eventManagementWebsite.users.entity.Users;
 import com.luxtix.eventManagementWebsite.users.service.UserService;
 import com.luxtix.eventManagementWebsite.vouchers.entity.Vouchers;
-import com.luxtix.eventManagementWebsite.vouchers.dao.VoucherDao;
 import com.luxtix.eventManagementWebsite.vouchers.dto.VoucherDto;
 import com.luxtix.eventManagementWebsite.vouchers.service.VoucherService;
 import jakarta.annotation.Resource;
@@ -36,7 +35,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.DayOfWeek;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -48,9 +49,6 @@ import java.util.Locale;
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final CloudinaryService cloudinaryService;
-
-    @Resource
-    private Cloudinary cloudinary;
     private final TicketService ticketService;
     private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "svg", "webp");
     private final UserService userService;
@@ -78,26 +76,16 @@ public class EventServiceImpl implements EventService {
         }
         var imageUrl = cloudinaryService.uploadFile(image,"folder_luxtix");
         newEvent.setEventImage(imageUrl);
-
         eventRepository.save(newEvent);
         for(NewEventRequestDto.TicketEventDto ticketData : event.getTickets()){
-            Tickets newTicket = new Tickets();
-            newTicket.setEvents(newEvent);
-            newTicket.setName(ticketData.getName());
-            newTicket.setPrice(ticketData.getPrice());
-            newTicket.setQty(ticketData.getQty());
-            ticketService.addNewTicket(newTicket);
+            Tickets ticket = ticketData.toEntity();
+            ticket.setEvents(newEvent);
+            ticketService.createNewTicket(ticket);
         }
         for(NewEventRequestDto.VoucherEventDto voucherData : event.getVouchers()){
-            Vouchers newVoucher = new Vouchers();
-            newVoucher.setEvents(newEvent);
-            newVoucher.setName(voucherData.getName());
-            newVoucher.setRate(voucherData.getRate());
-            newVoucher.setVoucherLimit(voucherData.getQty());
-            newVoucher.setStartDate(voucherData.getStartDate());
-            newVoucher.setEndDate(voucherData.getEndDate());
-            newVoucher.setReferralOnly(voucherData.getReferralOnly());
-            voucherService.addNewVoucher(newVoucher);
+            Vouchers voucher = voucherData.toEntity();
+            voucher.setEvents(newEvent);
+            voucherService.createNewVoucher(voucher);
         }
         return newEvent;
     }
@@ -143,16 +131,11 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventDetailDtoResponse getEventById(long id) {
-        var claims = Claims.getClaimsFromJwt();
-        var email = (String) claims.get("sub");
-        var isReferrals = (Boolean) claims.get("isReferral");
-        List<TicketDto> ticketList = new ArrayList<>();
-        List<VoucherDto> voucherList = new ArrayList<>();
+    public EventDetailDtoResponse getEventById(String email, Boolean isReferral, long id) {
         Users userData = userService.getUserByEmail(email);
         EventDetailDao data =  eventRepository.getEventById(userData.getId(),id);
-        List<TicketDao> ticketData = ticketService.getEventTicket(id);
-        List<VoucherDao> voucherData = voucherService.getEventVoucher(id,isReferrals);
+        List<TicketDto> ticketData = ticketService.getEventTicket(id);
+        List<VoucherDto> voucherData = voucherService.getEventVoucher(id,isReferral);
         EventDetailDtoResponse eventDetail = new EventDetailDtoResponse();
         eventDetail.setId(data.getEventId());
         eventDetail.setDescription(data.getDescription());
@@ -171,37 +154,14 @@ public class EventServiceImpl implements EventService {
         eventDetail.setOrganizerName(data.getOrganizerName());
         eventDetail.setOrganizerAvatar(data.getOrganizerAvatar());
         eventDetail.setFavoriteCounts(data.getFavoriteCounts());
-        for(TicketDao ticket : ticketData){
-            TicketDto newTicket = new TicketDto();
-            newTicket.setId(ticket.getTicketId());
-            newTicket.setName(ticket.getTicketName());
-            newTicket.setPrice(ticket.getTicketPrice());
-            newTicket.setQty(ticket.getTicketQuantity());
-            newTicket.setRemainingQty(ticket.getRemainingQty());
-            ticketList.add(newTicket);
-        }
-        eventDetail.setTickets(ticketList);
-
-        for(VoucherDao voucher : voucherData){
-            VoucherDto newVoucher = new VoucherDto();
-            newVoucher.setId(voucher.getVoucherId());
-            newVoucher.setVoucherName(voucher.getVoucherName());
-            newVoucher.setVoucherRate(voucher.getVoucherRate());
-            newVoucher.setStartDate(voucher.getStartDate());
-            newVoucher.setEndDate(voucher.getEndDate());
-            newVoucher.setVoucherLimit(voucher.getVoucherLimit());
-            newVoucher.setRemainingVoucherLimit(voucher.getRemainingVoucherLimit());
-            newVoucher.setReferralOnly(voucher.getReferralOnly());
-            voucherList.add(newVoucher);
-        }
-        eventDetail.setVouchers(voucherList);
+        eventDetail.setTickets(ticketData);
+        eventDetail.setVouchers(voucherData);
         return eventDetail;
     }
 
     @Override
     public void deleteEventById(long id) {
         Events event = eventRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Event with id " + id + " is not found"));
-
         eventRepository.deleteById(id);
     }
 
@@ -210,106 +170,47 @@ public class EventServiceImpl implements EventService {
     @Override
     public Events updateEvent(long id, MultipartFile image, UpdateEventRequestDto data) {
         Events eventData = eventRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Event with id " + id + " is not found"));
-        if(!data.getName().isEmpty()){
-            eventData.setName(data.getName());
-        }
-        if(data.getCategory() != null){
-            Categories categories = new Categories();
-            categories.setId(data.getCategory());
-            eventData.setCategories(categories);
-        }
-        if(data.getIsOnline() != null){
-            eventData.setIsOnline(data.getIsOnline());
-        }
-        if(data.getEventDate() != null){
-            eventData.setEventDate(data.getEventDate());
-        }
-        if(data.getStartTime() != null){
-            eventData.setStartTime(data.getStartTime());
-        }
-        if(data.getEndTime() != null){
-            eventData.setEndTime(data.getEndTime());
-        }
-        if(data.getVenue().isEmpty()){
-            eventData.setVenueName(data.getVenue());
-        }
-        if(data.getAddress().isEmpty()){
-            eventData.setAddress(data.getAddress());
-        }
-        if(data.getIsPaid() != null){
-            eventData.setIsPaid(data.getIsPaid());
-        }
-        if(data.getCity() != null){
-            Cities city = new Cities();
-            city.setId(data.getCity());
-            eventData.setCities(city);
-        }
-        if(data.getDescription().isEmpty()){
-            eventData.setDescriptions(data.getDescription());
-        }
+        Events updatedEvents = data.toEntity();
+        updatedEvents.setId(eventData.getId());
+        updatedEvents.setUsers(eventData.getUsers());
+        updatedEvents.setCreatedAt(eventData.getCreatedAt());
+        updatedEvents.setUpdatedAt(Instant.now());
         if(!image.isEmpty()){
-            eventData.setEventImage(cloudinaryService.uploadFile(image,"folder_luxtix"));
+            try {
+                cloudinaryService.deleteImage(eventData.getEventImage());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            updatedEvents.setEventImage(cloudinaryService.uploadFile(image,"folder_luxtix"));
         }
-        eventRepository.save(eventData);
+        eventRepository.save(updatedEvents);
         for(UpdateEventRequestDto.TicketEventUpdateDto ticketData : data.getTickets()){
             if(ticketData.getId() == null){
-                Tickets ticket = new Tickets();
-                ticket.setName(ticketData.getName());
-                ticket.setPrice(ticketData.getPrice());
-                ticket.setQty(ticketData.getQty());
-                ticketService.addNewTicket(ticket);
+                Tickets tickets = ticketData.toEntity();
+                tickets.setEvents(eventData);
+                ticketService.createNewTicket(tickets);
             }else{
                 Tickets ticket = ticketService.getEventTicketById(ticketData.getId());
-                if(!ticketData.getName().isEmpty()){
-                    ticket.setName(ticketData.getName());
-                }
-                if(ticketData.getPrice() != null) {
-                ticket.setPrice(ticketData.getPrice());
-                }
-                if(ticketData.getQty() != null) {
-                    ticket.setQty(ticketData.getQty());
-                }
-                ticketService.addNewTicket(ticket);
+                Tickets updatedTicket = ticketData.toEntity();
+                updatedTicket.setEvents(ticket.getEvents());
+                updatedTicket.setCreatedAt(ticket.getCreatedAt());
+                updatedTicket.setUpdatedAt(Instant.now());
+                ticketService.updateTicket(updatedTicket);
             }
 
         }
         for(UpdateEventRequestDto.VoucherEventUpdateDto voucherData : data.getVouchers()){
             if(voucherData.getId() == null){
-                Vouchers vouchers = new Vouchers();
-                vouchers.setName(voucherData.getName());
-                vouchers.setVoucherLimit(voucherData.getQty());
-                vouchers.setEvents(eventData);
-                vouchers.setRate(voucherData.getRate());
-                if(voucherData.getStartDate() != null){
-                    vouchers.setStartDate(voucherData.getStartDate());
-                }
-                if(voucherData.getEndDate() != null) {
-                    vouchers.setEndDate(voucherData.getEndDate());
-                }
-                vouchers.setReferralOnly(voucherData.getReferralOnly());
-                voucherService.addNewVoucher(vouchers);
+                Vouchers voucher = voucherData.toEntity();
+                voucher.setEvents(eventData);
+                voucherService.createNewVoucher(voucher);
             }else{
-                    Vouchers vouchers = voucherService.getVoucherById(voucherData.getId());
-                if(voucherData.getName() != null){
-                    vouchers.setName(voucherData.getName());
-                }
-                if(voucherData.getQty() != 0){
-                    vouchers.setVoucherLimit(voucherData.getQty());
-                }
-                if(voucherData.getRate() != null){
-                    vouchers.setRate(voucherData.getRate());
-                }
-                if(voucherData.getStartDate() != null){
-                    vouchers.setStartDate(voucherData.getStartDate());
-                }
-                if(voucherData.getEndDate() != null){
-                    vouchers.setEndDate(voucherData.getEndDate());
-                }
-
-                if(voucherData.getReferralOnly() != null){
-                    vouchers.setReferralOnly(voucherData.getReferralOnly());
-                }
-                voucherService.addNewVoucher(vouchers);
+                Vouchers vouchers = voucherService.getVoucherById(voucherData.getId());
+                Vouchers updatedVoucher = voucherData.toEntity();
+                updatedVoucher.setEvents(vouchers.getEvents());
+                updatedVoucher.setCreatedAt(vouchers.getCreatedAt());
+                updatedVoucher.setUpdatedAt(Instant.now());
+                voucherService.updateVoucher(updatedVoucher);
             }
         }
         return eventData;

@@ -9,8 +9,8 @@ import java.io.Serializable;
 @Data
 public class ProfileResponseDto implements Serializable {
     private String email;
-    private String fullname;
+    private String displayName;
     private String phoneNumber;
     private String avatar;
-    private String refferalCode;
+    private String referralCode;
 }
