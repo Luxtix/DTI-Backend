@@ -103,8 +103,8 @@ public class UserServiceImpl implements UserService {
         if(profileRequestDto.getAvatar() != null){
             userData.setAvatar(cloudinaryService.uploadFile(profileRequestDto.getAvatar(),"folder_luxtix"));
         }
-        if(profileRequestDto.getFullname() != null){
-            userData.setFullname(profileRequestDto.getFullname());
+        if(profileRequestDto.getDisplayName() != null){
+            userData.setFullname(profileRequestDto.getDisplayName());
         }
         if(profileRequestDto.getPhoneNumber() != null)
         {
@@ -113,11 +113,11 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userData);
         ProfileResponseDto data = new ProfileResponseDto();
         data.setEmail(userData.getEmail());
-        data.setFullname(userData.getFullname());
+        data.setDisplayName(userData.getFullname());
         data.setAvatar(userData.getAvatar());
         data.setPhoneNumber(userData.getPhoneNumber());
-        data.setFullname(userData.getFullname());
-        data.setRefferalCode(userData.getReferrals().getCode());
+        data.setDisplayName(userData.getFullname());
+        data.setReferralCode(userData.getReferrals().getCode());
         return data;
     }
 
@@ -127,11 +127,11 @@ public class UserServiceImpl implements UserService {
         Users userData = userRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("User not found"));
         ProfileResponseDto data = new ProfileResponseDto();
         data.setEmail(email);
-        data.setFullname(userData.getFullname());
+        data.setDisplayName(userData.getFullname());
         data.setAvatar(userData.getAvatar());
         data.setPhoneNumber(userData.getPhoneNumber());
-        data.setFullname(userData.getFullname());
-        data.setRefferalCode(userData.getReferrals().getCode());
+        data.setDisplayName(userData.getFullname());
+        data.setReferralCode(userData.getReferrals().getCode());
         return data;
     }
 

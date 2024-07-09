@@ -75,7 +75,10 @@ public class EventController {
     @GetMapping("/{id}")
     @RolesAllowed({"USER"})
     public ResponseEntity<Response<EventDetailDtoResponse>> getEventById(@PathVariable("id") long id){
-        return Response.successfulResponse("Event has been fetched successfully", eventService.getEventById(id));
+        var claims = Claims.getClaimsFromJwt();
+        var email = (String) claims.get("sub");
+        var isReferrals = (Boolean) claims.get("isReferral");
+        return Response.successfulResponse("Event has been fetched successfully", eventService.getEventById(email, isReferrals,id));
     }
 
 

@@ -4,6 +4,11 @@ package com.luxtix.eventManagementWebsite.events.dto;
 import com.luxtix.eventManagementWebsite.categories.Categories;
 import com.luxtix.eventManagementWebsite.city.entity.Cities;
 import com.luxtix.eventManagementWebsite.events.entity.Events;
+import com.luxtix.eventManagementWebsite.tickets.entity.Tickets;
+import com.luxtix.eventManagementWebsite.vouchers.entity.Vouchers;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -14,16 +19,37 @@ import java.util.List;
 @Data
 public class NewEventRequestDto {
 
+    @NotNull(message = "Event name is required")
     private String name;
-    private long category;
-    private long city;
+
+    @NotNull(message = "Category id is required")
+    private Long category;
+
+    @NotNull(message = "City id is required")
+    private Long city;
+
+    @NotNull(message = "isOnline is required")
     private Boolean isOnline;
+
+    @NotNull(message = "Event date is required")
     private LocalDate eventDate;
+
+    @NotNull(message = "Event venue is required")
     private String venue;
+
+    @NotNull(message = "Event address is required")
     private String address;
+
+    @NotNull(message = "Event description is required")
     private String description;
+
+    @NotNull(message = "isPaid is required")
     private Boolean isPaid;
+
+    @NotNull(message = "Event start time is required")
     private LocalTime startTime;
+
+    @NotNull(message = "Event end time is required")
     private LocalTime endTime;
     private List<TicketEventDto> tickets;
     private List<VoucherEventDto> vouchers;
@@ -32,20 +58,60 @@ public class NewEventRequestDto {
 
     @Data
     public static class TicketEventDto{
+        @NotNull(message = "Ticket name is required")
         private String name;
-        private int price;
-        private int qty;
+
+        @NotNull(message = "Ticket price is required")
+        private Integer price;
+
+        @NotNull(message = "Ticket quantity is required")
+        @Min(value = 1, message = "Total quantity must be at least 1")
+        private Integer qty;
+
+        public Tickets toEntity(){
+            Tickets ticket = new Tickets();
+            ticket.setName(name);
+            ticket.setPrice(price);
+            ticket.setQty(qty);
+            return ticket;
+        }
 
     }
 
     @Data
     public static class VoucherEventDto{
+        @NotNull(message = "Voucher name is required")
         private String name;
+
+
+        @NotNull(message = "Voucher quantity is required")
+        @Min(value = 1, message = "Total quantity must be at least 1")
         private int qty;
+
+
+        @NotNull(message = "Rate is required")
+        @DecimalMin(value = "0.01", message = "Rate must be at least 0.01")
         private BigDecimal rate;
+
+        @NotNull(message = "Voucher start date is required")
         private LocalDate startDate;
+
+        @NotNull(message = "Voucher end date is required")
         private LocalDate endDate;
+
+        @NotNull(message = "Voucher referral only is required")
         private Boolean referralOnly;
+
+        public Vouchers toEntity(){
+            Vouchers voucher = new Vouchers();
+            voucher.setName(name);
+            voucher.setVoucherLimit(qty);
+            voucher.setRate(rate);
+            voucher.setStartDate(startDate);
+            voucher.setEndDate(endDate);
+            voucher.setReferralOnly(referralOnly);
+            return voucher;
+        }
 
     }
 
@@ -68,7 +134,4 @@ public class NewEventRequestDto {
         event.setDescriptions(description);
         return event;
     }
-
-
-
 }

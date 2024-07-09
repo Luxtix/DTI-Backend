@@ -1,12 +1,12 @@
 package com.luxtix.eventManagementWebsite.vouchers.service.impl;
-
 import com.luxtix.eventManagementWebsite.exceptions.DataNotFoundException;
-import com.luxtix.eventManagementWebsite.vouchers.dao.VoucherDao;
+import com.luxtix.eventManagementWebsite.vouchers.dto.VoucherDto;
 import com.luxtix.eventManagementWebsite.vouchers.entity.Vouchers;
 import com.luxtix.eventManagementWebsite.vouchers.repository.VoucherRepository;
 import com.luxtix.eventManagementWebsite.vouchers.service.VoucherService;
 import org.springframework.stereotype.Service;
-
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -19,8 +19,38 @@ public class VoucherServiceImpl implements VoucherService {
     }
 
     @Override
-    public List<VoucherDao> getEventVoucher(long id, Boolean isReferral) {
-        return voucherRepository.getEventVoucher(id,isReferral);
+    public List<VoucherDto> getEventVoucher(long id, Boolean isReferral) {
+        List<Vouchers> vouchers =  voucherRepository.findByEventsId(id);
+        List<VoucherDto> voucherList = new ArrayList<>();
+        LocalDate currentDate = LocalDate.now();
+        for(Vouchers voucher : vouchers){
+            VoucherDto voucherDto = new VoucherDto();
+            voucherDto.setVoucherId(voucher.getId());
+            voucherDto.setVoucherLimit(voucher.getVoucherLimit());
+            voucherDto.setVoucherName(voucher.getName());
+            voucherDto.setVoucherRate(voucher.getRate());
+            voucherDto.setStartDate(voucher.getStartDate());
+            voucherDto.setEndDate(voucher.getEndDate());
+            voucherDto.setReferralOnly(voucher.getReferralOnly());
+            int remainingVoucher = voucherRepository.getRemainingTicket(voucher.getId());
+            voucherDto.setRemainingVoucherLimit(remainingVoucher);
+            voucherDto.setIsValid(isVoucherValid(voucher,isReferral, currentDate,remainingVoucher));
+            voucherList.add(voucherDto);
+        }
+        return  voucherList;
+
+    }
+
+    private boolean isVoucherValid(Vouchers voucher, boolean isReferral, LocalDate currentDate, long remainingVoucherLimit) {
+        if (isReferral) {
+            return (voucher.getStartDate() == null || !voucher.getStartDate().isAfter(currentDate))
+                    && (voucher.getEndDate() == null || !voucher.getEndDate().isBefore(currentDate));
+        } else {
+            return !voucher.getReferralOnly()
+                    && (voucher.getStartDate() == null || !voucher.getStartDate().isAfter(currentDate))
+                    && (voucher.getEndDate() == null || !voucher.getEndDate().isBefore(currentDate))
+                    && remainingVoucherLimit > 0;
+        }
     }
 
     @Override
@@ -29,8 +59,13 @@ public class VoucherServiceImpl implements VoucherService {
     }
 
     @Override
-    public void addNewVoucher(Vouchers vouchers) {
-        voucherRepository.save(vouchers);
+    public void createNewVoucher(Vouchers newVoucher) {
+        voucherRepository.save(newVoucher);
+    }
+
+    @Override
+    public void updateVoucher(Vouchers updatedVoucher) {
+        voucherRepository.save(updatedVoucher);
     }
 
     @Override
