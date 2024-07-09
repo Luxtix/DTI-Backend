@@ -21,6 +21,6 @@ public class EventManagementWebsiteApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		log.info("luxtix Backend Application started successfully");
+		log.info("Luxtix Backend Application started successfully");
 	}
 }

@@ -12,7 +12,7 @@ import lombok.Data;
 
 @Data
 public class UserRegisterRequestDto {
-    @NotBlank(message = "fullname is required")
+    @NotBlank(message = "Display name is required")
     @NotNull
     private String fullname;
 

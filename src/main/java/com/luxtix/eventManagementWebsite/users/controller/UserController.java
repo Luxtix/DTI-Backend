@@ -50,7 +50,7 @@ public class UserController {
 
     @RolesAllowed({"ORGANIZER","USER"})
     @PostMapping("/change-password")
-    public ResponseEntity<Response<ChangePasswordResponseDto>> changePassword(@RequestBody ChangePasswordRequestDto data){
+    public ResponseEntity<Response<ChangePasswordResponseDto>> changePassword(@Valid @RequestBody ChangePasswordRequestDto data){
         var claims = Claims.getClaimsFromJwt();
         var email = (String) claims.get("sub");
         return Response.successfulResponse("Password has been successfully change", userService.changePassword(data,email));

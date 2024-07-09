@@ -1,8 +1,11 @@
 package com.luxtix.eventManagementWebsite.tickets.service.impl;
 
+import com.luxtix.eventManagementWebsite.events.dto.NewEventRequestDto;
+import com.luxtix.eventManagementWebsite.events.dto.UpdateEventRequestDto;
+import com.luxtix.eventManagementWebsite.events.entity.Events;
 import com.luxtix.eventManagementWebsite.exceptions.DataNotFoundException;
-import com.luxtix.eventManagementWebsite.tickets.dao.TicketDao;
 import com.luxtix.eventManagementWebsite.tickets.dao.TicketSummaryDao;
+import com.luxtix.eventManagementWebsite.tickets.dto.TicketDto;
 import com.luxtix.eventManagementWebsite.tickets.entity.Tickets;
 import com.luxtix.eventManagementWebsite.tickets.repository.TicketRepository;
 import com.luxtix.eventManagementWebsite.tickets.service.TicketService;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -24,13 +28,31 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public void addNewTicket(Tickets tickets) {
-        ticketRepository.save(tickets);
+    public void createNewTicket(Tickets newTickets) {
+        ticketRepository.save(newTickets);
+    }
+
+
+    @Override
+    public void updateTicket(Tickets updatedTickets){
+        ticketRepository.save(updatedTickets);
     }
 
     @Override
-    public List<TicketDao> getEventTicket(long eventId) {
-        return ticketRepository.getEventTicket(eventId);
+    public List<TicketDto> getEventTicket(long eventId) {
+        List<Tickets> tickets = ticketRepository.findByEventsId(eventId);
+        List<TicketDto> ticketDtoList = new ArrayList<>();
+        for(Tickets ticket : tickets){
+            TicketDto newTicketDto = new TicketDto();
+            newTicketDto.setId(ticket.getId());
+            newTicketDto.setPrice(ticket.getPrice());
+            newTicketDto.setQty(ticket.getQty());
+            newTicketDto.setName(ticket.getName());
+            newTicketDto.setRemainingQty(ticketRepository.getRemainingTicket(ticket.getId()));
+            ticketDtoList.add(newTicketDto);
+
+        }
+        return ticketDtoList;
     }
 
     @Override

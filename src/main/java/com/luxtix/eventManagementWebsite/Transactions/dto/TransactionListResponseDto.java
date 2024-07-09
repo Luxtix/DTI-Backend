@@ -6,7 +6,7 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class GetTransactionListResponseDto {
+public class TransactionListResponseDto {
     private long transactionId;
     private long eventId;
     private LocalDate eventDate;

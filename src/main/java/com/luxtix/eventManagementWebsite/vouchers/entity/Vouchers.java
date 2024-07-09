@@ -1,6 +1,7 @@
 package com.luxtix.eventManagementWebsite.vouchers.entity;
 
 
+import com.luxtix.eventManagementWebsite.Transactions.entity.Transactions;
 import com.luxtix.eventManagementWebsite.events.entity.Events;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
@@ -11,8 +12,11 @@ import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Data
@@ -67,6 +71,10 @@ public class Vouchers {
 
     @Column(name = "deleted_at")
     private Instant deletedAt;
+
+
+    @OneToMany(mappedBy = "vouchers",cascade = CascadeType.ALL)
+    private Set<Transactions> transactions = new LinkedHashSet<>();
 
     @PrePersist
     protected void onCreate(){

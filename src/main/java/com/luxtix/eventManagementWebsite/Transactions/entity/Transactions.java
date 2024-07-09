@@ -33,8 +33,8 @@ public class Transactions {
     @JoinColumn(name = "user_id", nullable = false)
     private Users users;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "voucher_id")
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "voucher_id",nullable = true)
     private Vouchers vouchers;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
@@ -55,11 +55,8 @@ public class Transactions {
     private Instant deletedAt;
 
 
-    @OneToMany(mappedBy = "transactions",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "transactions", cascade = CascadeType.ALL)
     private Set<TransactionList> transactionLists = new LinkedHashSet<>();
-
-
-
 
     @PrePersist
     protected void onCreate(){

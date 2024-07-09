@@ -20,7 +20,7 @@ public interface EventService {
     Page<EventListDao> getAllEvent(String email, String categoryName, String cityName, String eventName, Boolean eventType, Boolean isOnline, Boolean isFavorite, int page, int page_size);
     List<GetEventListDtoResponse> convertAllEventToDto(Page<EventListDao> data);
 
-    EventDetailDtoResponse getEventById(long id);
+    EventDetailDtoResponse getEventById(String email, Boolean isReferral, long id);
 
     void deleteEventById(long id);
 
