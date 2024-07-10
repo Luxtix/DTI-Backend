@@ -1,5 +1,6 @@
 //package com.luxtix.eventManagementWebsite.events.transaction;
 //
+
 //import com.luxtix.eventManagementWebsite.Transactions.dto.TransactionRequestDto;
 //import com.luxtix.eventManagementWebsite.Transactions.entity.Transactions;
 //import com.luxtix.eventManagementWebsite.Transactions.repository.TransactionRepository;
@@ -20,6 +21,7 @@
 //
 //import java.util.ArrayList;
 //import java.util.List;
+
 //
 //
 //@ExtendWith(MockitoExtension.class)
@@ -70,6 +72,7 @@
 //        TransactionRequestDto data = new TransactionRequestDto();
 //        data.setEventId(1L);
 //        data.setVoucherId(1L);
+
 //        data.setTotalPrice(100);
 //        data.setTotalQty(2);
 //        data.setUsePoint(10);
@@ -81,10 +84,13 @@
 //        tickets.add(ticketDto);
 //        data.setTickets(tickets);
 //
+
 //        Transactions result = transactionService.newTransaction(data, email);
 //
 //        assertNotNull(result);
 //        assertEquals(data.getVoucherId(),result.getVouchers().getId());
+
+
 //        assertEquals(user, result.getUsers());
 //        assertEquals(data.getTotalPrice(), result.getTotalPrice());
 //        assertEquals(data.getTotalQty(), result.getTotalQty());
