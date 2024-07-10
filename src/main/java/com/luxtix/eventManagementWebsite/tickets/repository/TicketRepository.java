@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface TicketRepository extends JpaRepository<Tickets,Long> {
 
+
     public static final String getRemainingTicketCount = "SELECT t.qty - COALESCE(SUM(tl.qty),0) as remainingQty from Tickets t left join TransactionList tl on t.id = tl.tickets.id where tl.tickets.id = :ticketId GROUP BY t.qty";
 
 
@@ -45,6 +46,7 @@ public interface TicketRepository extends JpaRepository<Tickets,Long> {
     @Query(value = getRemainingTicketCount)
     int getRemainingTicket(@Param("ticketId") long ticketId);
 
+  
     @Query(value = ticketSoldQuantityQuery)
     int getTicketSoldQuantity(@Param("eventId") long eventId,@Param("dateFilter") String dateFilter) ;
 
