@@ -26,7 +26,6 @@ public class CityController {
     }
 
     @GetMapping("")
-    @RolesAllowed({"ORGANIZER","USER"})
     public ResponseEntity<Response<List<CityResponseDto>>> getAllCity() {
         return Response.successfulResponse("All city has been fetched successfully", cityService.getAllCity());
     }

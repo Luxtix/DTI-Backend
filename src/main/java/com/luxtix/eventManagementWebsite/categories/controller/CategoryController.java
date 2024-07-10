@@ -28,7 +28,6 @@ public class CategoryController {
     }
 
 
-    @RolesAllowed({"ORGANIZER","USER"})
     @GetMapping("")
     public ResponseEntity<Response<List<CategoryResponseDto>>> getAllCategory() {
         return Response.successfulResponse("All category has been fetched successfully", categoryService.getAllCategory());
