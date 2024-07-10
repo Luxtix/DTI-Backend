@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.security.SecureRandom;
 
 @Service
@@ -101,6 +102,11 @@ public class UserServiceImpl implements UserService {
     public ProfileResponseDto updateProfile(String email, ProfileRequestDto profileRequestDto) {
         Users userData = userRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("User not found"));
         if(profileRequestDto.getAvatar() != null){
+            try {
+                cloudinaryService.deleteImage(userData.getAvatar());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             userData.setAvatar(cloudinaryService.uploadFile(profileRequestDto.getAvatar(),"folder_luxtix"));
         }
         if(profileRequestDto.getDisplayName() != null){
@@ -114,7 +120,7 @@ public class UserServiceImpl implements UserService {
         ProfileResponseDto data = new ProfileResponseDto();
         data.setEmail(userData.getEmail());
         data.setDisplayName(userData.getFullname());
-        data.setAvatar(userData.getAvatar());
+        data.setAvatar(cloudinaryService.generateUrl(userData.getAvatar()));
         data.setPhoneNumber(userData.getPhoneNumber());
         data.setDisplayName(userData.getFullname());
         data.setReferralCode(userData.getReferrals().getCode());
@@ -128,7 +134,7 @@ public class UserServiceImpl implements UserService {
         ProfileResponseDto data = new ProfileResponseDto();
         data.setEmail(email);
         data.setDisplayName(userData.getFullname());
-        data.setAvatar(userData.getAvatar());
+        data.setAvatar(cloudinaryService.generateUrl(userData.getAvatar()));
         data.setPhoneNumber(userData.getPhoneNumber());
         data.setDisplayName(userData.getFullname());
         data.setReferralCode(userData.getReferrals().getCode());

@@ -22,7 +22,6 @@ public class FavoriteEventServiceImpl implements FavoriteEventService {
     @Override
     public EventToggleDtoResponse toggleEvent(long eventId, long userId) {
         Optional<FavoriteEvents> favoriteEventData = favoriteEventRepository.getFavoriteEventByUserIdAndEventId(userId,eventId);
-        FavoriteEvents favoriteData = favoriteEventData.orElse(null);
         if(favoriteEventData.isEmpty()){
             FavoriteEvents newFavoriteEvent =  new FavoriteEvents();
             Events event = new Events();
@@ -43,5 +42,16 @@ public class FavoriteEventServiceImpl implements FavoriteEventService {
             favoriteEventRepository.deleteById(favoriteEventData.get().getId());
             return resp;
         }
+    }
+
+    @Override
+    public int getFavoriteEventCount(long eventId) {
+        return favoriteEventRepository.getFavoriteEventCountByEventId(eventId);
+    }
+
+
+    @Override
+    public boolean isEventFavorite(long eventId, long userId){
+        return favoriteEventRepository.isEventFavorite(eventId,userId);
     }
 }

@@ -1,19 +1,16 @@
 package com.luxtix.eventManagementWebsite.dashboard.service.impl;
 
+import com.luxtix.eventManagementWebsite.Transactions.service.TransactionService;
 import com.luxtix.eventManagementWebsite.dashboard.dto.DashboardEventResponseDto;
 import com.luxtix.eventManagementWebsite.dashboard.dto.DashboardEventSummaryResponseDto;
 import com.luxtix.eventManagementWebsite.dashboard.service.DashboardService;
-import com.luxtix.eventManagementWebsite.eventReviews.dto.EventReviewsDto;
-import com.luxtix.eventManagementWebsite.eventReviews.entity.EventReviews;
 import com.luxtix.eventManagementWebsite.eventReviews.service.EventReviewService;
-import com.luxtix.eventManagementWebsite.events.dao.EventSummaryDao;
 import com.luxtix.eventManagementWebsite.events.entity.Events;
 import com.luxtix.eventManagementWebsite.events.services.EventService;
 import com.luxtix.eventManagementWebsite.tickets.dao.TicketSummaryDao;
 import com.luxtix.eventManagementWebsite.tickets.service.TicketService;
 import com.luxtix.eventManagementWebsite.users.entity.Users;
 import com.luxtix.eventManagementWebsite.users.service.UserService;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -33,10 +30,17 @@ public class DashboardServiceImpl implements DashboardService {
 
     private final UserService userService;
 
-    public DashboardServiceImpl(TicketService ticketService,EventService eventService, UserService userService) {
+    private final TransactionService transactionService;
+
+
+    private final EventReviewService eventReviewService;
+
+    public DashboardServiceImpl(TicketService ticketService, EventService eventService, UserService userService, TransactionService transactionService, EventReviewService eventReviewService) {
         this.ticketService = ticketService;
         this.eventService = eventService;
         this.userService = userService;
+        this.transactionService = transactionService;
+        this.eventReviewService = eventReviewService;
     }
 
 
@@ -57,10 +61,10 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     public DashboardEventSummaryResponseDto getSummaryData(long eventId, String dateType) {
        List<TicketSummaryDao> ticketData = ticketService.getTicketSummaryData(eventId,dateType);
+       Events eventData = eventService.getEventData(eventId);
        DashboardEventSummaryResponseDto resp = new DashboardEventSummaryResponseDto();
-       EventSummaryDao eventData = eventService.getEventSummaryData(eventId);
        resp.setName(eventData.getName());
-       resp.setCity(eventData.getCityName());
+       resp.setCity(eventData.getCities().getName());
        resp.setAddress(eventData.getAddress());
         DayOfWeek day = eventData.getEventDate().getDayOfWeek();
         String eventDay = day.getDisplayName(
@@ -71,11 +75,11 @@ public class DashboardServiceImpl implements DashboardService {
        resp.setEventDate(eventData.getEventDate());
        resp.setStartTime(eventData.getStartTime());
        resp.setEndTime(eventData.getEndTime());
-       resp.setRevenue(eventData.getRevenue());
-       resp.setVenue(eventData.getVenue());
-       resp.setRating(eventData.getAverageRating());
-       resp.setTicketQty(eventData.getTicketQty());
-       resp.setRemainingTicket(eventData.getRemainingTicket());
+       resp.setRevenue(transactionService.getEventTotalRevenue(eventId,dateType));
+       resp.setVenue(eventData.getVenueName());
+       resp.setRating(eventReviewService.getAverageEventRating(eventId,dateType));
+       resp.setTicketQty(ticketService.getTotalTicketInEvent(eventId));
+       resp.setSoldTicket(ticketService.getTicketSoldQuantity(eventId,dateType));
        resp.setTickets(ticketData);
        return resp;
     }

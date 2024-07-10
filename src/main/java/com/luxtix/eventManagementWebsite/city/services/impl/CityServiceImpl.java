@@ -1,10 +1,14 @@
 package com.luxtix.eventManagementWebsite.city.services.impl;
+import com.luxtix.eventManagementWebsite.categories.Categories;
+import com.luxtix.eventManagementWebsite.categories.dto.CategoryResponseDto;
+import com.luxtix.eventManagementWebsite.city.dto.CityResponseDto;
 import com.luxtix.eventManagementWebsite.city.entity.Cities;
 import com.luxtix.eventManagementWebsite.city.dto.AddNewCityDto;
 import com.luxtix.eventManagementWebsite.city.repository.CityRepository;
 import com.luxtix.eventManagementWebsite.city.services.CityService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -17,8 +21,16 @@ public class CityServiceImpl implements CityService {
     }
 
     @Override
-    public List<Cities> getAllCity() {
-        return cityRepository.findAll();
+    public List<CityResponseDto> getAllCity() {
+        List<Cities> cities = cityRepository.findAll();
+        List<CityResponseDto> list = new ArrayList<>();
+        for(Cities city : cities){
+            CityResponseDto resp = new CityResponseDto();
+            resp.setId(city.getId());
+            resp.setName(city.getName());
+            list.add(resp);
+        }
+        return list;
     }
 
 
