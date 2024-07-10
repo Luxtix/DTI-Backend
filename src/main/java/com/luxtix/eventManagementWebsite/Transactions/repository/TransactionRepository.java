@@ -17,5 +17,4 @@ public interface TransactionRepository extends JpaRepository<Transactions,Long> 
 
     @Query(value = eventRevenueDataQuery)
     int getTotalEventRevenue(long eventId, String dateFilter);
-
 }

@@ -133,7 +133,6 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventDetailDtoResponse getEventById(String email, Boolean isReferral, long id) {
-
         Events event = eventRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Event with id " + id + " is not found"));
         Users user = userService.getUserByEmail(email);
         LocalDate currentDate = LocalDate.now();
