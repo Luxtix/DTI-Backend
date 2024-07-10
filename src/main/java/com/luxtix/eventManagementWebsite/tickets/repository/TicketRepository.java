@@ -20,6 +20,7 @@ public interface TicketRepository extends JpaRepository<Tickets,Long> {
 
 
     public static final String totalTicketInEventQuery = "SELECT COALESCE(SUM(t.qty), 0) from Tickets t where t.events.id = :eventId";
+
     @Query(value = "SELECT ds.date_start AS date, COALESCE(SUM(tr.total_qty), 0) AS total_qty " +
             "FROM (SELECT DISTINCT DATE_TRUNC(CAST(:intervalStart AS text), generate_series(CAST(:startDate AS timestamp), CAST(:endDate AS timestamp), CAST(:intervalTime AS interval))) AS date_start) ds " +
             "LEFT JOIN transactions tr ON DATE_TRUNC(CAST(:intervalTo AS text), tr.created_at) = ds.date_start " +
@@ -55,4 +56,5 @@ public interface TicketRepository extends JpaRepository<Tickets,Long> {
 
     @Query(value = totalTicketInEventQuery)
     int getTotalTicketInEvent(@Param("eventId") long eventId);
+
 }

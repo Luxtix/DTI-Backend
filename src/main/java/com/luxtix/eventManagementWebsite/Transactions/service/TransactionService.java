@@ -15,5 +15,7 @@ public interface TransactionService {
 
     List<TransactionListResponseDto> getAllTransactions(long userId);
 
+
     int getEventTotalRevenue(long eventId, String dateType);
+
 }
