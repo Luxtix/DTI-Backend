@@ -12,7 +12,6 @@ public class TransactionRequestDto {
     @NotNull
     private long eventId;
 
-    @NotNull
     private Long voucherId;
 
     @NotNull
