@@ -147,4 +147,11 @@ public class TransactionServiceImpl implements TransactionService {
         }
         return  transactionList;
     }
+
+
+
+    @Override
+    public int getEventTotalRevenue(long eventId, String dateType){
+        return transactionRepository.getTotalEventRevenue(eventId,dateType);
+    }
 }

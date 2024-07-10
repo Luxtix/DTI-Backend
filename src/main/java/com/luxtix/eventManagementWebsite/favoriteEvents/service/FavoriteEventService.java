@@ -3,4 +3,9 @@ import com.luxtix.eventManagementWebsite.favoriteEvents.dto.EventToggleDtoRespon
 
 public interface FavoriteEventService {
     EventToggleDtoResponse toggleEvent(long eventId, long userId);
+
+
+    int getFavoriteEventCount(long eventId);
+
+    boolean isEventFavorite(long eventId, long userId);
 }
