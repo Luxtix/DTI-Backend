@@ -1,6 +1,4 @@
 package com.luxtix.eventManagementWebsite.tickets.repository;
-
-import com.luxtix.eventManagementWebsite.tickets.dao.TicketDao;
 import com.luxtix.eventManagementWebsite.tickets.dao.TicketSummaryDao;
 import com.luxtix.eventManagementWebsite.tickets.entity.Tickets;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,11 +9,18 @@ import java.time.Instant;
 import java.util.List;
 
 public interface TicketRepository extends JpaRepository<Tickets,Long> {
-    public static final String eventTicketQuery = "SELECT t.id as ticketId, t.name as ticketName, t.price as ticketPrice, t.qty as ticketQuantity, t.qty - COALESCE(SUM(tl.qty),0) as remainingQty from Tickets t left join Events e on t.events.id = e.id left join TransactionList tl on t.id = tl.tickets.id where e.id = :eventId GROUP BY t.id";
 
 
     public static final String getRemainingTicketCount = "SELECT t.qty - COALESCE(SUM(tl.qty),0) as remainingQty from Tickets t left join TransactionList tl on t.id = tl.tickets.id where tl.tickets.id = :ticketId GROUP BY t.qty";
 
+
+    public static final String lowestTicketPriceQuery = "SELECT COALESCE(MIN(t.price), 0) from Tickets  t WHERE t.events.id = :eventId";
+
+
+    public static final String ticketSoldQuantityQuery = "SELECT COALESCE(SUM(tr.totalQty), 0) FROM Transactions tr WHERE tr.events.id = :eventId AND DATE_TRUNC(:dateFilter, tr.createdAt) = DATE_TRUNC(:dateFilter, CURRENT_TIMESTAMP)";
+
+
+    public static final String totalTicketInEventQuery = "SELECT COALESCE(SUM(t.qty), 0) from Tickets t where t.events.id = :eventId";
 
     @Query(value = "SELECT ds.date_start AS date, COALESCE(SUM(tr.total_qty), 0) AS total_qty " +
             "FROM (SELECT DISTINCT DATE_TRUNC(CAST(:intervalStart AS text), generate_series(CAST(:startDate AS timestamp), CAST(:endDate AS timestamp), CAST(:intervalTime AS interval))) AS date_start) ds " +
@@ -33,8 +38,6 @@ public interface TicketRepository extends JpaRepository<Tickets,Long> {
                                                            @Param("intervalTo") String intervalTo,
                                                            @Param("eventId") long eventId);
 
-    @Query(value = eventTicketQuery)
-    List<TicketDao> getEventTicket(@Param("eventId") Long eventId);
 
 
     List<Tickets> findByEventsId(long eventId);
@@ -43,4 +46,18 @@ public interface TicketRepository extends JpaRepository<Tickets,Long> {
 
     @Query(value = getRemainingTicketCount)
     int getRemainingTicket(@Param("ticketId") long ticketId);
+
+
+    @Query(value = ticketSoldQuantityQuery)
+    int getTicketSoldQuantity(@Param("eventId") long eventId,@Param("dateFilter") String dateFilter) ;
+
+
+
+    @Query(value = lowestTicketPriceQuery)
+    int getLowestTicketPrice(@Param("eventId") long eventId);
+
+
+    @Query(value = totalTicketInEventQuery)
+    int getTotalTicketInEvent(@Param("eventId") long eventId);
+
 }

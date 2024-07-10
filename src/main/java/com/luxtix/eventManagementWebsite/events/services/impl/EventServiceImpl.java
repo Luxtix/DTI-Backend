@@ -1,23 +1,17 @@
 package com.luxtix.eventManagementWebsite.events.services.impl;
 
-import com.cloudinary.Cloudinary;
-import com.luxtix.eventManagementWebsite.auth.helpers.Claims;
-import com.luxtix.eventManagementWebsite.categories.Categories;
-import com.luxtix.eventManagementWebsite.city.entity.Cities;
 import com.luxtix.eventManagementWebsite.cloudinary.CloudinaryService;
-import com.luxtix.eventManagementWebsite.events.dao.EventDetailDao;
-import com.luxtix.eventManagementWebsite.events.dao.EventListDao;
-import com.luxtix.eventManagementWebsite.events.dao.EventSummaryDao;
 import com.luxtix.eventManagementWebsite.events.dto.EventDetailDtoResponse;
-import com.luxtix.eventManagementWebsite.events.dto.GetEventListDtoResponse;
+import com.luxtix.eventManagementWebsite.events.dto.EventListDtoResponse;
 import com.luxtix.eventManagementWebsite.events.dto.NewEventRequestDto;
 import com.luxtix.eventManagementWebsite.events.dto.UpdateEventRequestDto;
 import com.luxtix.eventManagementWebsite.events.entity.Events;
 import com.luxtix.eventManagementWebsite.events.repository.EventRepository;
 import com.luxtix.eventManagementWebsite.events.services.EventService;
+import com.luxtix.eventManagementWebsite.events.specification.EventListSpecification;
 import com.luxtix.eventManagementWebsite.exceptions.DataNotFoundException;
 import com.luxtix.eventManagementWebsite.exceptions.InputException;
-import com.luxtix.eventManagementWebsite.tickets.dao.TicketDao;
+import com.luxtix.eventManagementWebsite.favoriteEvents.service.FavoriteEventService;
 import com.luxtix.eventManagementWebsite.tickets.dto.TicketDto;
 import com.luxtix.eventManagementWebsite.tickets.entity.Tickets;
 import com.luxtix.eventManagementWebsite.tickets.service.TicketService;
@@ -26,19 +20,19 @@ import com.luxtix.eventManagementWebsite.users.service.UserService;
 import com.luxtix.eventManagementWebsite.vouchers.entity.Vouchers;
 import com.luxtix.eventManagementWebsite.vouchers.dto.VoucherDto;
 import com.luxtix.eventManagementWebsite.vouchers.service.VoucherService;
-import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
 import lombok.extern.java.Log;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.Instant;
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -54,13 +48,16 @@ public class EventServiceImpl implements EventService {
     private final UserService userService;
     private final VoucherService voucherService;
 
+    private final FavoriteEventService favoriteEventService;
 
-    public EventServiceImpl(EventRepository eventRepository, CloudinaryService cloudinaryService, TicketService ticketService, UserService userService, VoucherService voucherService) {
+
+    public EventServiceImpl(EventRepository eventRepository, CloudinaryService cloudinaryService, TicketService ticketService, UserService userService, VoucherService voucherService, FavoriteEventService favoriteEventService) {
         this.eventRepository = eventRepository;
         this.cloudinaryService = cloudinaryService;
         this.ticketService = ticketService;
         this.userService = userService;
         this.voucherService = voucherService;
+        this.favoriteEventService = favoriteEventService;
     }
 
 
@@ -91,69 +88,83 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Page<EventListDao> getAllEvent(String email, String categoryName, String cityName, String eventName, Boolean eventType, Boolean isOnline, Boolean isFavorite,int page, int page_size) {
+    public List<EventListDtoResponse> getAllEvent(String email, String categoryName, String cityName, String eventName, Boolean eventType, Boolean isOnline, Boolean isFavorite, int page, int page_size) {
         Pageable pageable = PageRequest.of(page, page_size);
         Users userData = userService.getUserByEmail(email);
-        return eventRepository.getAllEventWithFilter(userData.getId(),categoryName,eventName,cityName, eventType, isOnline, isFavorite,pageable);
+        Specification<Events> specification = Specification.where(EventListSpecification.byEventName(eventName).and(EventListSpecification.byCategory(categoryName)).and(EventListSpecification.byCity(cityName)).and(EventListSpecification.byIsOnline(isOnline)).and(EventListSpecification.byIsFavorite(isFavorite, userData.getId())).and(EventListSpecification.byIsPaid(eventType)));
+        Page<Events> events = eventRepository.findAll(specification,pageable);
+        return  events.getContent().stream()
+                .map(event -> convertAllEventToDto(event,userData.getId()))
+                .toList();
+
     }
 
     @Override
-    public List<GetEventListDtoResponse> convertAllEventToDto(Page<EventListDao> data) {
-        List<GetEventListDtoResponse> resp = new ArrayList<>();
-        for(EventListDao allEventData : data){
-            GetEventListDtoResponse eventData = new GetEventListDtoResponse();
-            eventData.setId(allEventData.getEventId());
-            eventData.setEventName(allEventData.getEventName());
-            eventData.setPriceCategory(allEventData.getPriceCategory());
-            eventData.setDescriptions(allEventData.getDescriptions());
-            eventData.setAddress(allEventData.getAddress());
-            eventData.setEventImage(cloudinaryService.generateUrl(allEventData.getEventImage()));
-            eventData.setCategoryName(allEventData.getCategoryName());
-            eventData.setCityName(allEventData.getCityName());
-            eventData.setTicketPrice(allEventData.getTicketPrice());
-            eventData.setVenueName(allEventData.getVenueName());
-            eventData.setCategoryName(allEventData.getCategoryName());
-            eventData.setOnline(allEventData.getIsOnline());
-            eventData.setFavorite(allEventData.getIsFavorite());
-            eventData.setFavoriteCount(allEventData.getFavoriteCount());
-            DayOfWeek day = allEventData.getEventDate().getDayOfWeek();
+    public EventListDtoResponse convertAllEventToDto(Events events, long userId) {
+            EventListDtoResponse eventData = new EventListDtoResponse();
+            eventData.setId(events.getId());
+            eventData.setEventName(events.getName());
+            if(events.getIsPaid()){
+                eventData.setPriceCategory("Paid");
+            }else{
+                eventData.setPriceCategory("Free");
+            }
+            eventData.setDescriptions(events.getDescriptions());
+            eventData.setAddress(events.getAddress());
+            eventData.setEventImage(cloudinaryService.generateUrl(events.getEventImage()));
+            eventData.setCategoryName(events.getCategories().getName());
+            eventData.setCityName(events.getCities().getName());
+            eventData.setTicketPrice(ticketService.getLowestTicketPrice(events.getId()));
+            eventData.setVenueName(events.getVenueName());
+            eventData.setOnline(events.getIsOnline());
+            eventData.setFavorite(favoriteEventService.isEventFavorite(events.getId(),userId));
+            eventData.setFavoriteCount(favoriteEventService.getFavoriteEventCount(events.getId()));
+            DayOfWeek day = events.getEventDate().getDayOfWeek();
             String dayOfWeekString = day.getDisplayName(
                     java.time.format.TextStyle.FULL,
                     Locale.ENGLISH
             );
             eventData.setEventDay(dayOfWeekString);
-            eventData.setEventDate(allEventData.getEventDate());
-            eventData.setStartTime(allEventData.getStartTime());
-            eventData.setEndTime(allEventData.getEndTime());
-            resp.add(eventData);
-        }
-        return resp;
+            eventData.setEventDate(events.getEventDate());
+            eventData.setStartTime(events.getStartTime());
+            eventData.setEndTime(events.getEndTime());
+            return eventData;
     }
 
     @Override
     public EventDetailDtoResponse getEventById(String email, Boolean isReferral, long id) {
-        Users userData = userService.getUserByEmail(email);
-        EventDetailDao data =  eventRepository.getEventById(userData.getId(),id);
+
+        Events event = eventRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Event with id " + id + " is not found"));
+        Users user = userService.getUserByEmail(email);
+        LocalDate currentDate = LocalDate.now();
         List<TicketDto> ticketData = ticketService.getEventTicket(id);
         List<VoucherDto> voucherData = voucherService.getEventVoucher(id,isReferral);
         EventDetailDtoResponse eventDetail = new EventDetailDtoResponse();
-        eventDetail.setId(data.getEventId());
-        eventDetail.setDescription(data.getDescription());
-        eventDetail.setEventDate(data.getEventDate());
-        eventDetail.setAddress(data.getAddress());
-        eventDetail.setEventName(data.getEventName());
-        eventDetail.setCityName(data.getCityName());
-        eventDetail.setIsOnline(data.getIsOnline());
-        eventDetail.setIsFavorite(data.getIsFavorite());
-        eventDetail.setPriceCategory(data.getPriceCategory());
-        eventDetail.setEventImage(data.getEventImage());
-        eventDetail.setVenueName(data.getVenueName());
-        eventDetail.setStartTime(data.getStartTime());
-        eventDetail.setEndTime(data.getEndTime());
-        eventDetail.setIsDone(data.getIsDone());
-        eventDetail.setOrganizerName(data.getOrganizerName());
-        eventDetail.setOrganizerAvatar(data.getOrganizerAvatar());
-        eventDetail.setFavoriteCounts(data.getFavoriteCounts());
+        eventDetail.setId(event.getId());
+        eventDetail.setDescription(event.getDescriptions());
+        eventDetail.setEventDate(event.getEventDate());
+        eventDetail.setAddress(event.getAddress());
+        eventDetail.setEventName(event.getName());
+        eventDetail.setCityName(event.getCities().getName());
+        eventDetail.setIsOnline(event.getIsOnline());
+        eventDetail.setIsFavorite(favoriteEventService.isEventFavorite(id,user.getId()));
+        if(event.getIsPaid()){
+            eventDetail.setPriceCategory("Paid");
+        }else{
+            eventDetail.setPriceCategory("Free");
+        }
+        eventDetail.setEventImage(cloudinaryService.generateUrl(event.getEventImage()));
+        eventDetail.setVenueName(event.getVenueName());
+        eventDetail.setStartTime(event.getStartTime());
+        eventDetail.setEndTime(event.getEndTime());
+        if(!event.getEventDate().isAfter(currentDate)){
+            eventDetail.setIsDone(true);
+        }else{
+            eventDetail.setIsDone(false);
+        }
+        eventDetail.setOrganizerName(event.getUsers().getFullname());
+        eventDetail.setOrganizerAvatar(cloudinaryService.generateUrl(event.getUsers().getAvatar()));
+        eventDetail.setFavoriteCounts(favoriteEventService.getFavoriteEventCount(id));
         eventDetail.setTickets(ticketData);
         eventDetail.setVouchers(voucherData);
         return eventDetail;
@@ -216,6 +227,7 @@ public class EventServiceImpl implements EventService {
         return eventData;
     }
 
+
     public boolean isValidImageExtension(String fileName) {
         String extension = getFileExtension(fileName).toLowerCase();
         return ALLOWED_EXTENSIONS.contains(extension);
@@ -229,9 +241,7 @@ public class EventServiceImpl implements EventService {
         return "";
     }
 
-    public EventSummaryDao getEventSummaryData(long eventId){
-        return eventRepository.getEventDataSummary(eventId);
-    }
+
 
     @Override
     public Events getEventData(long eventId) {

@@ -55,6 +55,13 @@ public class TicketServiceImpl implements TicketService {
         return ticketDtoList;
     }
 
+
+    @Override
+
+    public int getLowestTicketPrice(long eventId){
+        return ticketRepository.getLowestTicketPrice(eventId);
+    }
+
     @Override
     public Tickets getEventTicketById(long id) {
         return ticketRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Ticket with id " + id + " is not found"));
@@ -66,6 +73,20 @@ public class TicketServiceImpl implements TicketService {
         }
         ticketRepository.deleteById(id);
     }
+
+
+    @Override
+    public int getTicketSoldQuantity(long eventId, String dateFilter){
+        return ticketRepository.getTicketSoldQuantity(eventId,dateFilter);
+    }
+
+
+
+    @Override
+    public int getTotalTicketInEvent(long eventId){
+        return ticketRepository.getTotalTicketInEvent(eventId);
+    }
+
 
 
     public List<TicketSummaryDao> getTicketSummaryData(long eventId, String dateType){

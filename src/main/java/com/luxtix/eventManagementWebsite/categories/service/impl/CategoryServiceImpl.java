@@ -1,10 +1,12 @@
 package com.luxtix.eventManagementWebsite.categories.service.impl;
 
 import com.luxtix.eventManagementWebsite.categories.Categories;
+import com.luxtix.eventManagementWebsite.categories.dto.CategoryResponseDto;
 import com.luxtix.eventManagementWebsite.categories.repository.CategoryRepository;
 import com.luxtix.eventManagementWebsite.categories.service.CategoryService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -18,7 +20,15 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Categories> getAllCategory() {
-        return categoryRepository.findAll();
+    public List<CategoryResponseDto> getAllCategory() {
+        List<Categories> categoryList = categoryRepository.findAll();
+        List<CategoryResponseDto> list = new ArrayList<>();
+        for(Categories categories : categoryList){
+            CategoryResponseDto resp = new CategoryResponseDto();
+            resp.setId(categories.getId());
+            resp.setName(categories.getName());
+            list.add(resp);
+        }
+        return list;
     }
 }

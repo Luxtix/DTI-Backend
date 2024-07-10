@@ -28,7 +28,7 @@ public class DashboardController {
 
     @GetMapping("/{id}")
     @RolesAllowed({"ORGANIZER"})
-    public ResponseEntity<Response<DashboardEventSummaryResponseDto>> getTransactionSummary(@RequestParam("dateType") String dateType, @PathVariable("id") long eventId){
+    public ResponseEntity<Response<DashboardEventSummaryResponseDto>> getTransactionSummary(@RequestParam(value = "dateType", defaultValue = "day",required = false) String dateType, @PathVariable("id") long eventId){
         return Response.successfulResponse("All transactions fetched successfully", dashboardService.getSummaryData(eventId,dateType));
     }
 

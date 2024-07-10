@@ -1,6 +1,7 @@
 package com.luxtix.eventManagementWebsite.city.controller;
 
 
+import com.luxtix.eventManagementWebsite.city.dto.CityResponseDto;
 import com.luxtix.eventManagementWebsite.city.entity.Cities;
 import com.luxtix.eventManagementWebsite.city.dto.AddNewCityDto;
 import com.luxtix.eventManagementWebsite.city.services.CityService;
@@ -26,7 +27,7 @@ public class CityController {
 
     @GetMapping("")
     @RolesAllowed({"ORGANIZER","USER"})
-    public ResponseEntity<Response<List<Cities>>> getAllCity() {
+    public ResponseEntity<Response<List<CityResponseDto>>> getAllCity() {
         return Response.successfulResponse("All city has been fetched successfully", cityService.getAllCity());
     }
 

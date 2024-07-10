@@ -12,8 +12,25 @@ public interface FavoriteEventRepository extends JpaRepository<FavoriteEvents,Lo
     public static final String eventFavoriteQuery = "SELECT fe FROM FavoriteEvents fe WHERE fe.events.id = :eventId AND fe.users.id = :userId";
 
 
+    public static final String eventFavoriteCount = "SELECT COUNT(fe.id) FROM FavoriteEvents fe WHERE fe.events.id = :eventId";
+
+
 
     @Query(value = eventFavoriteQuery)
     Optional<FavoriteEvents> getFavoriteEventByUserIdAndEventId(@Param("userId") Long userId, @Param("eventId") Long eventId);
+
+
+    @Query(value = eventFavoriteCount)
+    int getFavoriteEventCountByEventId(@Param("eventId") Long eventId);
+
+
+
+    @Query("SELECT CASE WHEN (count(fe) > 0) THEN TRUE ELSE FALSE END " +
+            "FROM FavoriteEvents fe " +
+            "WHERE fe.events.id = :eventId AND fe.users.id = :userId")
+    boolean isEventFavorite(@Param("eventId") Long eventId, @Param("userId") Long userId);
+
+
+
 
 }

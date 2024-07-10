@@ -2,6 +2,7 @@ package com.luxtix.eventManagementWebsite.categories.controller;
 
 
 import com.luxtix.eventManagementWebsite.categories.Categories;
+import com.luxtix.eventManagementWebsite.categories.dto.CategoryResponseDto;
 import com.luxtix.eventManagementWebsite.categories.service.CategoryService;
 import com.luxtix.eventManagementWebsite.response.Response;
 import jakarta.annotation.security.RolesAllowed;
@@ -29,7 +30,7 @@ public class CategoryController {
 
     @RolesAllowed({"ORGANIZER","USER"})
     @GetMapping("")
-    public ResponseEntity<Response<List<Categories>>> getAllCategory() {
-        return Response.successfulResponse("All city has been fetched successfully", categoryService.getAllCategory());
+    public ResponseEntity<Response<List<CategoryResponseDto>>> getAllCategory() {
+        return Response.successfulResponse("All category has been fetched successfully", categoryService.getAllCategory());
     }
 }

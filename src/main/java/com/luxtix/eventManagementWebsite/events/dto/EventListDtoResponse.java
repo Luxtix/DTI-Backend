@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Data
-public class GetEventListDtoResponse {
+public class EventListDtoResponse {
     private long id;
     private String EventName;
     private String address;
