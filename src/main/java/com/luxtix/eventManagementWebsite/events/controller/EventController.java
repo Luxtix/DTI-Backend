@@ -72,6 +72,15 @@ public class EventController {
 
     }
 
+
+    @GetMapping("/public")
+    public ResponseEntity<Response<List<EventListDtoResponse>>> getAllEventPublic(@RequestParam(value = "category",required = false) String category, @RequestParam(value ="city", required = false) String city, @RequestParam(value = "isPaid", required = false) Boolean isPaid, @RequestParam(value = "eventName",required = false) String eventName, @RequestParam(value = "isOnline",required = false) Boolean isOnline, @RequestParam(value = "isFavorite",required = false) Boolean isFavorite, @RequestParam(defaultValue = "0",required = false) int page, @RequestParam(defaultValue = "10",required = false) int size) {
+        List<EventListDtoResponse> data = eventService.getAllEventPublic(category,city,eventName,isPaid,isOnline,isFavorite, page, size);
+        Page<EventListDtoResponse> pageDto = new PageImpl<>(data);
+        return Response.successfulResponseWithPage(HttpStatus.OK.value(),"All event fetched successfully", data,pageDto.getTotalPages(),pageDto.getTotalElements(),pageDto.getNumber());
+
+    }
+
     @GetMapping("/{id}")
     @RolesAllowed({"USER"})
     public ResponseEntity<Response<EventDetailDtoResponse>> getEventById(@PathVariable("id") long id){
@@ -79,6 +88,13 @@ public class EventController {
         var email = (String) claims.get("sub");
         var isReferrals = (Boolean) claims.get("isReferral");
         return Response.successfulResponse("Event has been fetched successfully", eventService.getEventById(email, isReferrals,id));
+    }
+
+
+    @GetMapping("/public/{id}")
+    @RolesAllowed({"USER"})
+    public ResponseEntity<Response<EventDetailDtoResponse>> getEventByIdPublic(@PathVariable("id") long id){
+        return Response.successfulResponse("Event has been fetched successfully", eventService.getPublicEventById(id));
     }
 
 

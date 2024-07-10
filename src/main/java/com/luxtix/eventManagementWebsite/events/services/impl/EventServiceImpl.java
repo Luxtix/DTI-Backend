@@ -100,7 +100,18 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventListDtoResponse convertAllEventToDto(Events events, long userId) {
+    public List<EventListDtoResponse> getAllEventPublic(String categoryName, String cityName, String eventName, Boolean eventType, Boolean isOnline, Boolean isFavorite, int page, int page_size) {
+        Pageable pageable = PageRequest.of(page, page_size);
+        Specification<Events> specification = Specification.where(EventListSpecification.byEventName(eventName).and(EventListSpecification.byCategory(categoryName)).and(EventListSpecification.byCity(cityName)).and(EventListSpecification.byIsOnline(isOnline)).and(EventListSpecification.byIsPaid(eventType)));
+        Page<Events> events = eventRepository.findAll(specification,pageable);
+        Long id = null;
+        return  events.getContent().stream()
+                .map(event -> convertAllEventToDto(event,id))
+                .toList();
+    }
+
+    @Override
+    public EventListDtoResponse convertAllEventToDto(Events events, Long userId) {
             EventListDtoResponse eventData = new EventListDtoResponse();
             eventData.setId(events.getId());
             eventData.setEventName(events.getName());
@@ -117,7 +128,11 @@ public class EventServiceImpl implements EventService {
             eventData.setTicketPrice(ticketService.getLowestTicketPrice(events.getId()));
             eventData.setVenueName(events.getVenueName());
             eventData.setOnline(events.getIsOnline());
-            eventData.setFavorite(favoriteEventService.isEventFavorite(events.getId(),userId));
+            if(userId == null){
+                eventData.setFavorite(false);
+            }else{
+                eventData.setFavorite(favoriteEventService.isEventFavorite(events.getId(),userId));
+            }
             eventData.setFavoriteCount(favoriteEventService.getFavoriteEventCount(events.getId()));
             DayOfWeek day = events.getEventDate().getDayOfWeek();
             String dayOfWeekString = day.getDisplayName(
@@ -173,6 +188,45 @@ public class EventServiceImpl implements EventService {
     public void deleteEventById(long id) {
         Events event = eventRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Event with id " + id + " is not found"));
         eventRepository.deleteById(id);
+    }
+
+
+    @Override
+    public EventDetailDtoResponse getPublicEventById(long id){
+        Events event = eventRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Event with id " + id + " is not found"));
+        LocalDate currentDate = LocalDate.now();
+        List<TicketDto> ticketData = ticketService.getEventTicket(id);
+        List<VoucherDto> voucherData = voucherService.getEventVoucher(id,false);
+        EventDetailDtoResponse eventDetail = new EventDetailDtoResponse();
+        eventDetail.setId(event.getId());
+        eventDetail.setDescription(event.getDescriptions());
+        eventDetail.setEventDate(event.getEventDate());
+        eventDetail.setAddress(event.getAddress());
+        eventDetail.setEventName(event.getName());
+        eventDetail.setCityName(event.getCities().getName());
+        eventDetail.setIsOnline(event.getIsOnline());
+        eventDetail.setIsFavorite(false);
+        if(event.getIsPaid()){
+            eventDetail.setPriceCategory("Paid");
+        }else{
+            eventDetail.setPriceCategory("Free");
+        }
+        eventDetail.setEventImage(cloudinaryService.generateUrl(event.getEventImage()));
+        eventDetail.setVenueName(event.getVenueName());
+        eventDetail.setStartTime(event.getStartTime());
+        eventDetail.setEndTime(event.getEndTime());
+        if(!event.getEventDate().isAfter(currentDate)){
+            eventDetail.setIsDone(true);
+        }else{
+            eventDetail.setIsDone(false);
+        }
+        eventDetail.setOrganizerName(event.getUsers().getFullname());
+        eventDetail.setOrganizerAvatar(cloudinaryService.generateUrl(event.getUsers().getAvatar()));
+        eventDetail.setFavoriteCounts(favoriteEventService.getFavoriteEventCount(id));
+        eventDetail.setTickets(ticketData);
+        eventDetail.setVouchers(voucherData);
+        return eventDetail;
+
     }
 
 
