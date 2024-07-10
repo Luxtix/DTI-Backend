@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface TicketRepository extends JpaRepository<Tickets,Long> {
 
+
     public static final String getRemainingTicketCount = "SELECT t.qty - COALESCE(SUM(tl.qty),0) as remainingQty from Tickets t left join TransactionList tl on t.id = tl.tickets.id where tl.tickets.id = :ticketId GROUP BY t.qty";
 
 
@@ -20,6 +21,7 @@ public interface TicketRepository extends JpaRepository<Tickets,Long> {
 
 
     public static final String totalTicketInEventQuery = "SELECT COALESCE(SUM(t.qty), 0) from Tickets t where t.events.id = :eventId";
+
     @Query(value = "SELECT ds.date_start AS date, COALESCE(SUM(tr.total_qty), 0) AS total_qty " +
             "FROM (SELECT DISTINCT DATE_TRUNC(CAST(:intervalStart AS text), generate_series(CAST(:startDate AS timestamp), CAST(:endDate AS timestamp), CAST(:intervalTime AS interval))) AS date_start) ds " +
             "LEFT JOIN transactions tr ON DATE_TRUNC(CAST(:intervalTo AS text), tr.created_at) = ds.date_start " +
@@ -37,12 +39,14 @@ public interface TicketRepository extends JpaRepository<Tickets,Long> {
                                                            @Param("eventId") long eventId);
 
 
+
     List<Tickets> findByEventsId(long eventId);
 
 
 
     @Query(value = getRemainingTicketCount)
     int getRemainingTicket(@Param("ticketId") long ticketId);
+
 
     @Query(value = ticketSoldQuantityQuery)
     int getTicketSoldQuantity(@Param("eventId") long eventId,@Param("dateFilter") String dateFilter) ;
@@ -55,4 +59,5 @@ public interface TicketRepository extends JpaRepository<Tickets,Long> {
 
     @Query(value = totalTicketInEventQuery)
     int getTotalTicketInEvent(@Param("eventId") long eventId);
+
 }
