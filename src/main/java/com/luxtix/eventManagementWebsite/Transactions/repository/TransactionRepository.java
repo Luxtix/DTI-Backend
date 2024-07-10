@@ -1,9 +1,7 @@
 package com.luxtix.eventManagementWebsite.Transactions.repository;
-import com.luxtix.eventManagementWebsite.Transactions.dto.TransactionDetailResponseDto;
 import com.luxtix.eventManagementWebsite.Transactions.entity.Transactions;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
@@ -13,4 +11,10 @@ import java.util.Optional;
 public interface TransactionRepository extends JpaRepository<Transactions,Long> {
     Optional<List<Transactions>> findByUsersId(long userId);
 
+
+    public static final String eventRevenueDataQuery = "SELECT COALESCE(SUM(tr.totalPrice), 0) FROM Transactions tr WHERE tr.events.id = :eventId AND DATE_TRUNC(:dateFilter, tr.createdAt) = DATE_TRUNC(:dateFilter, CURRENT_TIMESTAMP)";
+
+
+    @Query(value = eventRevenueDataQuery)
+    int getTotalEventRevenue(long eventId, String dateFilter);
 }

@@ -1,7 +1,4 @@
 package com.luxtix.eventManagementWebsite.eventReviews.service.impl;
-
-
-import com.luxtix.eventManagementWebsite.eventReviews.dao.EventReviewsDao;
 import com.luxtix.eventManagementWebsite.eventReviews.dto.EventReviewsDto;
 import com.luxtix.eventManagementWebsite.eventReviews.dto.ReviewEventRequestDto;
 import com.luxtix.eventManagementWebsite.eventReviews.dto.ReviewEventResponseDto;
@@ -19,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +39,11 @@ public class EventReviewServiceImpl implements EventReviewService {
     public Page<EventReviews> getEventReviews(long id, int page, int page_size ) {
         Pageable pageable = PageRequest.of(page, page_size);
         return eventReviewsRepository.findByEventsId(id,pageable).orElseThrow(() -> new DataNotFoundException("Review is empty"));
+    }
+
+    @Override
+    public BigDecimal getAverageEventRating(long eventId, String dateFilter){
+        return eventReviewsRepository.getEventAverageRating(eventId,dateFilter);
     }
 
     @Override

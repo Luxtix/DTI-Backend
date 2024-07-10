@@ -2,8 +2,6 @@ package com.luxtix.eventManagementWebsite.eventReviews.controller;
 
 
 import com.luxtix.eventManagementWebsite.auth.helpers.Claims;
-import com.luxtix.eventManagementWebsite.dashboard.dto.DashboardEventSummaryResponseDto;
-import com.luxtix.eventManagementWebsite.eventReviews.dao.EventReviewsDao;
 import com.luxtix.eventManagementWebsite.eventReviews.dto.EventReviewsDto;
 import com.luxtix.eventManagementWebsite.eventReviews.dto.ReviewEventRequestDto;
 import com.luxtix.eventManagementWebsite.eventReviews.dto.ReviewEventResponseDto;

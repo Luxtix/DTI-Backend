@@ -5,6 +5,7 @@ import com.luxtix.eventManagementWebsite.eventReviews.dto.EventReviewsDto;
 import com.luxtix.eventManagementWebsite.tickets.dao.TicketSummaryDao;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -20,9 +21,9 @@ public class DashboardEventSummaryResponseDto {
     private LocalTime startTime;
     private LocalTime endTime;
     private int ticketQty;
-    private int remainingTicket;
+    private int soldTicket;
     private int revenue;
-    private double rating;
+    private BigDecimal rating;
     private List<TicketSummaryDao> tickets;
 //    private List<EventReviewsDto> reviews;
 

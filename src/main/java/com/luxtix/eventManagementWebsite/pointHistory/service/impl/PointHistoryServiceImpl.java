@@ -1,7 +1,5 @@
 package com.luxtix.eventManagementWebsite.pointHistory.service.impl;
 
-
-import com.luxtix.eventManagementWebsite.pointHistory.dao.PointHistoryDao;
 import com.luxtix.eventManagementWebsite.pointHistory.dto.PointHistoryResponseDto;
 import com.luxtix.eventManagementWebsite.pointHistory.entity.PointHistory;
 import com.luxtix.eventManagementWebsite.pointHistory.repository.PointHistoryRepository;
@@ -12,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 
 @Service
 public class PointHistoryServiceImpl implements PointHistoryService {
@@ -28,14 +27,9 @@ public class PointHistoryServiceImpl implements PointHistoryService {
     public PointHistoryResponseDto getUserPoint(String email) {
         Instant expiredDate = Instant.now().minus(90, ChronoUnit.DAYS);
         Users userData = userService.getUserByEmail(email);
-        PointHistoryDao data = pointHistoryRepository.getUserPoint(userData.getId(),expiredDate).orElse(null);
+        Integer totalPoint = pointHistoryRepository.getUserPoint(userData.getId(),expiredDate);
         PointHistoryResponseDto points = new PointHistoryResponseDto();
-        if(data == null){
-            points.setPoints(0);
-        }else{
-            points.setPoints(data.getPoints());
-        }
-
+        points.setPoints(Objects.requireNonNullElse(totalPoint, 0));
         return points;
     }
 
