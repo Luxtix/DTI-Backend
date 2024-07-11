@@ -22,6 +22,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,7 +73,9 @@ public class AddNewTransactionTest {
         TransactionRequestDto data = new TransactionRequestDto();
         data.setEventId(1L);
         data.setTotalQty(2);
-        data.setTotalPrice(100);
+        data.setOriginalPrice(BigDecimal.valueOf(200000));
+        data.setTotalDiscount(BigDecimal.valueOf(10000));
+        data.setFinalPrice(BigDecimal.valueOf(190000));
         data.setUsePoint(1000);
         List<TransactionRequestDto.TransactionTicketDto> tickets = new ArrayList<>();
         TransactionRequestDto.TransactionTicketDto ticketDto = new TransactionRequestDto.TransactionTicketDto();
@@ -99,7 +103,7 @@ public class AddNewTransactionTest {
         Transactions result = transactionService.newTransaction(data, email);
         assertNotNull(result);
         assertEquals(user, result.getUsers());
-        assertEquals(data.getTotalPrice(), result.getTotalPrice());
+        assertEquals(data.getFinalPrice(), result.getFinalPrice());
         assertEquals(data.getTotalQty(), result.getTotalQty());
         assertEquals(data.getVoucherId(),result.getVouchers().getId());
     }
@@ -123,7 +127,9 @@ public class AddNewTransactionTest {
         TransactionRequestDto data = new TransactionRequestDto();
         data.setEventId(1L);
         data.setTotalQty(2);
-        data.setTotalPrice(100);
+        data.setOriginalPrice(BigDecimal.valueOf(200000));
+        data.setTotalDiscount(BigDecimal.valueOf(0));
+        data.setFinalPrice(BigDecimal.valueOf(200000));
         data.setUsePoint(null);
         List<TransactionRequestDto.TransactionTicketDto> tickets = new ArrayList<>();
         TransactionRequestDto.TransactionTicketDto ticketDto = new TransactionRequestDto.TransactionTicketDto();
@@ -136,7 +142,7 @@ public class AddNewTransactionTest {
         Transactions result = transactionService.newTransaction(data, email);
         assertNotNull(result);
         assertEquals(user, result.getUsers());
-        assertEquals(data.getTotalPrice(), result.getTotalPrice());
+        assertEquals(data.getFinalPrice(), result.getFinalPrice());
         assertEquals(data.getTotalQty(), result.getTotalQty());
         assertNull(result.getVouchers());
     }

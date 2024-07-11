@@ -1,8 +1,6 @@
 package com.luxtix.eventManagementWebsite.Transactions.service;
 
-import com.luxtix.eventManagementWebsite.Transactions.dto.TransactionDetailResponseDto;
-import com.luxtix.eventManagementWebsite.Transactions.dto.TransactionListResponseDto;
-import com.luxtix.eventManagementWebsite.Transactions.dto.TransactionRequestDto;
+import com.luxtix.eventManagementWebsite.Transactions.dto.*;
 import com.luxtix.eventManagementWebsite.Transactions.entity.Transactions;
 import com.luxtix.eventManagementWebsite.transactionList.entity.TransactionList;
 
@@ -17,5 +15,8 @@ public interface TransactionService {
 
 
     int getEventTotalRevenue(long eventId, String dateType);
+
+
+    CalculatePriceResponseDto getCalculateTransaction(CalculatePriceRequestDto calculatePriceRequestDto);
 
 }

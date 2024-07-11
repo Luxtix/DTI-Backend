@@ -54,7 +54,7 @@ public class VoucherServiceImpl implements VoucherService {
     }
 
     @Override
-    public Vouchers getVoucherById(long id) {
+    public Vouchers getVoucherById(Long id) {
         return voucherRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Voucher with id " + id + " is not found"));
     }
 
