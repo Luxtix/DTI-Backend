@@ -90,8 +90,9 @@ public class TicketServiceImpl implements TicketService {
         Instant endDate = null;
         String intervalTime = "";
         String intervalTo = "";
-        ZoneId zoneId = ZoneId.of("Africa/Abidjan");
+        ZoneId zoneId = ZoneId.of("UTC");
         LocalDate now = LocalDate.now(zoneId);
+        System.out.println(now);
         switch (dateType){
             case "year":
                     intervalStart = "month";
@@ -113,7 +114,6 @@ public class TicketServiceImpl implements TicketService {
                     break;
             case "day" :
                     intervalStart = "hour";
-                    zoneId = ZoneId.of("Africa/Lagos");
                     ZonedDateTime currentZonedDateTime = ZonedDateTime.now(zoneId);
                     ZonedDateTime startOfDay = currentZonedDateTime.truncatedTo(ChronoUnit.DAYS);
                     startDate = startOfDay.toInstant();
