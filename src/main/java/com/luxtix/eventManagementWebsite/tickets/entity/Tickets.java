@@ -45,8 +45,6 @@ public class Tickets {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
-
-
     @PrePersist
     protected void onCreate(){
         createdAt = Instant.now();

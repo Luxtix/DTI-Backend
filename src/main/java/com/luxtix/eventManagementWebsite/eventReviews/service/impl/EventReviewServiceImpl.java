@@ -37,6 +37,10 @@ public class EventReviewServiceImpl implements EventReviewService {
 
     @Override
     public Page<EventReviews> getEventReviews(long id, int page, int page_size ) {
+        Events events = eventService.getEventData(id);
+        if(null == events){
+            throw new DataNotFoundException("Event with id " + id + " is not found");
+        }
         Pageable pageable = PageRequest.of(page, page_size);
         return eventReviewsRepository.findByEventsId(id,pageable).orElseThrow(() -> new DataNotFoundException("Review is empty"));
     }

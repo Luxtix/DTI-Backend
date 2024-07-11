@@ -1,8 +1,4 @@
 package com.luxtix.eventManagementWebsite.tickets.service.impl;
-
-import com.luxtix.eventManagementWebsite.events.dto.NewEventRequestDto;
-import com.luxtix.eventManagementWebsite.events.dto.UpdateEventRequestDto;
-import com.luxtix.eventManagementWebsite.events.entity.Events;
 import com.luxtix.eventManagementWebsite.exceptions.DataNotFoundException;
 import com.luxtix.eventManagementWebsite.tickets.dao.TicketSummaryDao;
 import com.luxtix.eventManagementWebsite.tickets.dto.TicketDto;
@@ -94,25 +90,21 @@ public class TicketServiceImpl implements TicketService {
         Instant endDate = null;
         String intervalTime = "";
         String intervalTo = "";
+        ZoneId zoneId = ZoneId.of("Africa/Abidjan");
+        LocalDate now = LocalDate.now(zoneId);
         switch (dateType){
             case "year":
                     intervalStart = "month";
-                    ZoneId indonesiaZoneId = ZoneId.of("Africa/Abidjan");
-                    LocalDate now = LocalDate.now(indonesiaZoneId);
-
-                    startDate = now.withDayOfYear(1).atStartOfDay(indonesiaZoneId).toInstant();
-                    endDate = now.withDayOfYear(now.lengthOfYear()).atTime(LocalTime.MAX).atZone(indonesiaZoneId).toInstant();
+                    startDate = now.withDayOfYear(1).atStartOfDay(zoneId).toInstant();
+                    endDate = now.withDayOfYear(now.lengthOfYear()).atTime(LocalTime.MAX).atZone(zoneId).toInstant();
                     intervalTime = "1 month";
                     intervalTo = "month";
                     break;
             case "month":
                     intervalStart = "day";
-                    ZoneId zoneId = ZoneId.of("Africa/Abidjan");
-
                     LocalDate firstDayOfMonth = LocalDate.now(zoneId).with(TemporalAdjusters.firstDayOfMonth());
                     LocalDateTime startOfMonth = LocalDateTime.of(firstDayOfMonth, LocalTime.MIN);
-                    startDate = startOfMonth.atZone(zoneId).toInstant();
-
+                    startDate = startOfMonth.atZone(zoneId).toInstant().plus(1,ChronoUnit.DAYS);
                     LocalDate lastDayOfMonth = LocalDate.now(zoneId).with(TemporalAdjusters.lastDayOfMonth());
                     LocalDateTime endOfMonth = LocalDateTime.of(lastDayOfMonth, LocalTime.MAX);
                     endDate = endOfMonth.atZone(zoneId).toInstant();
@@ -122,17 +114,15 @@ public class TicketServiceImpl implements TicketService {
             case "day" :
                     intervalStart = "hour";
                     zoneId = ZoneId.of("Africa/Lagos");
-
                     ZonedDateTime currentZonedDateTime = ZonedDateTime.now(zoneId);
-
                     ZonedDateTime startOfDay = currentZonedDateTime.truncatedTo(ChronoUnit.DAYS);
                     startDate = startOfDay.toInstant();
-
-                    endDate = startOfDay.plus(1, ChronoUnit.DAYS).minus(1, ChronoUnit.NANOS).toInstant();
+                    endDate = startOfDay.plusDays(1).minusNanos(1).toInstant();
                     intervalTime = "1 hour";
                     intervalTo = "hour";
                     break;
         }
+        assert startDate != null;
         return ticketRepository.getTransactionTicketSummary(intervalStart,startDate.toString(),endDate.toString(),intervalTime,intervalTo,eventId);
     }
 }
