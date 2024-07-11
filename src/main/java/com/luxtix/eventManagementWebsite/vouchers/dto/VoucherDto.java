@@ -21,5 +21,4 @@ public class VoucherDto {
     private Integer voucherLimit;
     private Integer remainingVoucherLimit;
     private Boolean referralOnly;
-    private Boolean isValid;
 }

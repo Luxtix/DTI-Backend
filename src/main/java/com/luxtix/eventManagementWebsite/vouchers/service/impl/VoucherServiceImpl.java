@@ -24,32 +24,32 @@ public class VoucherServiceImpl implements VoucherService {
         List<VoucherDto> voucherList = new ArrayList<>();
         LocalDate currentDate = LocalDate.now();
         for(Vouchers voucher : vouchers){
-            VoucherDto voucherDto = new VoucherDto();
-            voucherDto.setVoucherId(voucher.getId());
-            voucherDto.setVoucherLimit(voucher.getVoucherLimit());
-            voucherDto.setVoucherName(voucher.getName());
-            voucherDto.setVoucherRate(voucher.getRate());
-            voucherDto.setStartDate(voucher.getStartDate());
-            voucherDto.setEndDate(voucher.getEndDate());
-            voucherDto.setReferralOnly(voucher.getReferralOnly());
-            int remainingVoucher = voucherRepository.getRemainingTicket(voucher.getId());
-            voucherDto.setRemainingVoucherLimit(remainingVoucher);
-            voucherDto.setIsValid(isVoucherValid(voucher,isReferral, currentDate,remainingVoucher));
-            voucherList.add(voucherDto);
+            if(isVoucherValid(voucher,isReferral, currentDate)){
+                VoucherDto voucherDto = new VoucherDto();
+                voucherDto.setVoucherId(voucher.getId());
+                voucherDto.setVoucherLimit(voucher.getVoucherLimit());
+                voucherDto.setVoucherName(voucher.getName());
+                voucherDto.setVoucherRate(voucher.getRate());
+                voucherDto.setStartDate(voucher.getStartDate());
+                voucherDto.setEndDate(voucher.getEndDate());
+                voucherDto.setReferralOnly(voucher.getReferralOnly());
+                int remainingVoucher = voucherRepository.getRemainingTicket(voucher.getId());
+                voucherDto.setRemainingVoucherLimit(remainingVoucher);
+                voucherList.add(voucherDto);
+            }
         }
         return  voucherList;
 
     }
 
-    private boolean isVoucherValid(Vouchers voucher, boolean isReferral, LocalDate currentDate, long remainingVoucherLimit) {
+    private boolean isVoucherValid(Vouchers voucher, boolean isReferral, LocalDate currentDate) {
         if (isReferral) {
             return (voucher.getStartDate() == null || !voucher.getStartDate().isAfter(currentDate))
                     && (voucher.getEndDate() == null || !voucher.getEndDate().isBefore(currentDate));
         } else {
             return !voucher.getReferralOnly()
                     && (voucher.getStartDate() == null || !voucher.getStartDate().isAfter(currentDate))
-                    && (voucher.getEndDate() == null || !voucher.getEndDate().isBefore(currentDate))
-                    && remainingVoucherLimit > 0;
+                    && (voucher.getEndDate() == null || !voucher.getEndDate().isBefore(currentDate));
         }
     }
 

@@ -12,5 +12,5 @@ public class TransactionListResponseDto {
     private LocalDate eventDate;
     private String eventName;
     private String eventImage;
-    private boolean isDone;
+    private Boolean isDone;
 }
