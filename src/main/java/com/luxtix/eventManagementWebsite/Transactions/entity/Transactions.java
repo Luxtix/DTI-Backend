@@ -33,8 +33,8 @@ public class Transactions {
     @JoinColumn(name = "user_id", nullable = false)
     private Users users;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = true)
-    @JoinColumn(name = "voucher_id",nullable = true)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "voucher_id")
     private Vouchers vouchers;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
