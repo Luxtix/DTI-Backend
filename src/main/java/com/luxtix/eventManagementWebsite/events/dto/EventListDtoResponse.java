@@ -18,9 +18,9 @@ public class EventListDtoResponse {
     private String priceCategory;
     private String categoryName;
     private String cityName;
-    private boolean isOnline;
+    private Boolean isOnline;
     private int favoriteCount;
-    private boolean isFavorite;
+    private Boolean isFavorite;
     private LocalDate eventDate;
     private String eventDay;
     private LocalTime startTime;

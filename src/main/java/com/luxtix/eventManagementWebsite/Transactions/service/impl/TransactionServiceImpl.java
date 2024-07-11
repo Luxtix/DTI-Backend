@@ -108,7 +108,7 @@ public class TransactionServiceImpl implements TransactionService {
             data.setVenue(transaction.getTransactions().getEvents().getVenueName());
             data.setEventDate(transaction.getTransactions().getEvents().getEventDate());
             data.setId(transaction.getId());
-            data.setOnline(transaction.getTransactions().getEvents().getIsOnline());
+            data.setIsOnline(transaction.getTransactions().getEvents().getIsOnline());
             data.setTicketName(transaction.getTickets().getName());
             data.setTicketQty(transaction.getTickets().getQty());
             data.setStartTime(transaction.getTransactions().getEvents().getStartTime());
@@ -137,9 +137,9 @@ public class TransactionServiceImpl implements TransactionService {
             newTransaction.setTransactionId(transactionData.getId());
             newTransaction.setEventImage(cloudinaryService.generateUrl(transactionData.getEvents().getEventImage()));
             if(!transactionData.getEvents().getEventDate().isAfter(currentDate)){
-                newTransaction.setDone(true);
+                newTransaction.setIsDone(true);
             }else{
-                newTransaction.setDone(false);
+                newTransaction.setIsDone(false);
             }
             transactionList.add(newTransaction);
         }

@@ -127,11 +127,11 @@ public class EventServiceImpl implements EventService {
             eventData.setCityName(events.getCities().getName());
             eventData.setTicketPrice(ticketService.getLowestTicketPrice(events.getId()));
             eventData.setVenueName(events.getVenueName());
-            eventData.setOnline(events.getIsOnline());
+            eventData.setIsOnline(events.getIsOnline());
             if(userId == null){
-                eventData.setFavorite(false);
+                eventData.setIsFavorite(false);
             }else{
-                eventData.setFavorite(favoriteEventService.isEventFavorite(events.getId(),userId));
+                eventData.setIsFavorite(favoriteEventService.isEventFavorite(events.getId(),userId));
             }
             eventData.setFavoriteCount(favoriteEventService.getFavoriteEventCount(events.getId()));
             DayOfWeek day = events.getEventDate().getDayOfWeek();
