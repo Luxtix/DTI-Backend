@@ -20,6 +20,10 @@ import com.luxtix.eventManagementWebsite.vouchers.entity.Vouchers;
 import com.luxtix.eventManagementWebsite.vouchers.service.VoucherService;
 import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -127,8 +131,9 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionListResponseDto> getAllTransactions(long userId) {
-        List<Transactions> transactions = transactionRepository.findByUsersId(userId).orElseThrow(() -> new DataNotFoundException("Transaction is empty"));
+    public Page<TransactionListResponseDto> getAllTransactions(long userId,int page, int page_size) {
+        Pageable pageable = PageRequest.of(page, page_size);
+        Page<Transactions> transactions = transactionRepository.findByUsersId(userId,pageable).orElseThrow(() -> new DataNotFoundException("Transaction is empty"));
         List<TransactionListResponseDto> transactionList = new ArrayList<>();
         LocalDate currentDate = LocalDate.now();
         for(Transactions transactionData : transactions){
@@ -145,7 +150,7 @@ public class TransactionServiceImpl implements TransactionService {
             }
             transactionList.add(newTransaction);
         }
-        return  transactionList;
+        return  new PageImpl<>(transactionList,pageable,transactions.getTotalElements());
     }
 
 

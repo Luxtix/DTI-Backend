@@ -23,6 +23,7 @@ import com.luxtix.eventManagementWebsite.vouchers.service.VoucherService;
 import jakarta.transaction.Transactional;
 import lombok.extern.java.Log;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -88,26 +89,28 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventListDtoResponse> getAllEvent(String email, String categoryName, String cityName, String eventName, Boolean eventType, Boolean isOnline, Boolean isFavorite, int page, int page_size) {
+    public Page<EventListDtoResponse> getAllEvent(String email, String categoryName, String cityName, String eventName, Boolean eventType, Boolean isOnline, Boolean isFavorite, int page, int page_size) {
         Pageable pageable = PageRequest.of(page, page_size);
         Users userData = userService.getUserByEmail(email);
         Specification<Events> specification = Specification.where(EventListSpecification.byEventName(eventName).and(EventListSpecification.byCategory(categoryName)).and(EventListSpecification.byCity(cityName)).and(EventListSpecification.byIsOnline(isOnline)).and(EventListSpecification.byIsFavorite(isFavorite, userData.getId())).and(EventListSpecification.byIsPaid(eventType)));
         Page<Events> events = eventRepository.findAll(specification,pageable);
-        return  events.getContent().stream()
+        List<EventListDtoResponse> eventList = events.getContent().stream()
                 .map(event -> convertAllEventToDto(event,userData.getId()))
                 .toList();
+        return new PageImpl<>(eventList,pageable,events.getTotalElements());
 
     }
 
     @Override
-    public List<EventListDtoResponse> getAllEventPublic(String categoryName, String cityName, String eventName, Boolean eventType, Boolean isOnline, Boolean isFavorite, int page, int page_size) {
+    public Page<EventListDtoResponse> getAllEventPublic(String categoryName, String cityName, String eventName, Boolean eventType, Boolean isOnline, Boolean isFavorite, int page, int page_size) {
         Pageable pageable = PageRequest.of(page, page_size);
         Specification<Events> specification = Specification.where(EventListSpecification.byEventName(eventName).and(EventListSpecification.byCategory(categoryName)).and(EventListSpecification.byCity(cityName)).and(EventListSpecification.byIsOnline(isOnline)).and(EventListSpecification.byIsPaid(eventType)));
         Page<Events> events = eventRepository.findAll(specification,pageable);
         Long id = null;
-        return  events.getContent().stream()
+        List<EventListDtoResponse> eventList =  events.getContent().stream()
                 .map(event -> convertAllEventToDto(event,id))
                 .toList();
+        return new PageImpl<>(eventList,pageable,events.getTotalElements());
     }
 
     @Override
