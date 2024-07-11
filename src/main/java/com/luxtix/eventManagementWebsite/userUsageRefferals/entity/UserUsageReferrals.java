@@ -44,9 +44,6 @@ public class UserUsageReferrals {
     private Instant updatedAt;
 
 
-    @Column(name = "deleted_at")
-    private Instant deletedAt;
-
     @PrePersist
     protected void onCreate(){
         createdAt = Instant.now();

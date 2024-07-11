@@ -1,9 +1,7 @@
 package com.luxtix.eventManagementWebsite.Transactions.controller;
 
 
-import com.luxtix.eventManagementWebsite.Transactions.dto.TransactionDetailResponseDto;
-import com.luxtix.eventManagementWebsite.Transactions.dto.TransactionListResponseDto;
-import com.luxtix.eventManagementWebsite.Transactions.dto.TransactionRequestDto;
+import com.luxtix.eventManagementWebsite.Transactions.dto.*;
 import com.luxtix.eventManagementWebsite.Transactions.entity.Transactions;
 import com.luxtix.eventManagementWebsite.Transactions.service.TransactionService;
 import com.luxtix.eventManagementWebsite.auth.helpers.Claims;
@@ -34,6 +32,13 @@ public class TransactionController {
         var claims = Claims.getClaimsFromJwt();
         var email = (String) claims.get("sub");
         return Response.successfulResponse("Transaction added successfully", transactionService.newTransaction(data,email));
+    }
+
+
+    @PostMapping("/calculate")
+    @RolesAllowed({"USER"})
+    public ResponseEntity<Response<CalculatePriceResponseDto>> calculatePrice(@RequestBody CalculatePriceRequestDto calculatePriceRequestDto){
+        return Response.successfulResponse("Transaction detail fetched successfully",transactionService.getCalculateTransaction(calculatePriceRequestDto));
     }
 
     @GetMapping("/detail/{id}")
