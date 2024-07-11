@@ -52,6 +52,7 @@ public class AddNewTransactionTest {
         MockitoAnnotations.openMocks(this);
         transactionService = new TransactionServiceImpl(userService, transactionRepository, transactionListService, userUsageReferralsService, voucherService, cloudinaryService, pointHistoryService);
     }
+  
     @Test
     public void test_successfully_creates_new_transaction_with_valid_data_and_email_with_voucher_id_not_null_and_using_point() {
         String email = "test@example.com";
@@ -82,6 +83,7 @@ public class AddNewTransactionTest {
         data.setTickets(tickets);
 
 
+
         Vouchers vouchers = new Vouchers();
         vouchers.setId(1L);
         vouchers.setReferralOnly(false);
@@ -93,7 +95,6 @@ public class AddNewTransactionTest {
         pointHistory.setTotalPoint(data.getUsePoint());
         pointHistoryService.addNewPointHistory(pointHistory);
         Mockito.verify(pointHistoryService).addNewPointHistory(pointHistory);
-
         Mockito.when(voucherService.getVoucherById(1L)).thenReturn(vouchers);
         Transactions result = transactionService.newTransaction(data, email);
         assertNotNull(result);
@@ -132,7 +133,6 @@ public class AddNewTransactionTest {
         tickets.add(ticketDto);
         data.setVoucherId(null);
         data.setTickets(tickets);
-
         Transactions result = transactionService.newTransaction(data, email);
         assertNotNull(result);
         assertEquals(user, result.getUsers());
