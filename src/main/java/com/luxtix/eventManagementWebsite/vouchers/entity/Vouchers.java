@@ -69,10 +69,6 @@ public class Vouchers {
     private Instant updatedAt;
 
 
-    @Column(name = "deleted_at")
-    private Instant deletedAt;
-
-
     @OneToMany(mappedBy = "vouchers",cascade = CascadeType.ALL)
     private Set<Transactions> transactions = new LinkedHashSet<>();
 

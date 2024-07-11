@@ -11,7 +11,7 @@ import java.util.List;
 public interface TicketRepository extends JpaRepository<Tickets,Long> {
 
 
-    public static final String getRemainingTicketCount = "SELECT t.qty - COALESCE(SUM(tl.qty),0) as remainingQty from Tickets t left join TransactionList tl on t.id = tl.tickets.id where tl.tickets.id = :ticketId GROUP BY t.qty";
+    public static final String getRemainingTicketCount = "SELECT t.qty - COALESCE((SELECT SUM(tl.qty) FROM TransactionList tl WHERE tl.tickets.id = t.id),0) as remainingQty from Tickets t where t.id = :ticketId";
 
 
     public static final String lowestTicketPriceQuery = "SELECT COALESCE(MIN(t.price), 0) from Tickets  t WHERE t.events.id = :eventId";

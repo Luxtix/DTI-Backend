@@ -96,8 +96,6 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
 
-
-
     @Override
     public List<TransactionDetailResponseDto> getAllTransactionDetail(long transactionId){
         List<TransactionList> transactionLists =transactionListService.getAllTransactionDetail(transactionId);
