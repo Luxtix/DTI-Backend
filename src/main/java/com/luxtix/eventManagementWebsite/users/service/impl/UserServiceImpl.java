@@ -14,6 +14,7 @@ import com.luxtix.eventManagementWebsite.users.dto.*;
 import com.luxtix.eventManagementWebsite.users.entity.Users;
 import com.luxtix.eventManagementWebsite.users.repository.UserRepository;
 import com.luxtix.eventManagementWebsite.users.service.UserService;
+import lombok.extern.java.Log;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.security.SecureRandom;
 
+@Log
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -83,14 +85,16 @@ public class UserServiceImpl implements UserService {
         var password = passwordEncoder.encode(user.getPassword());
         newUser.setPassword(password);
 
-        if(!user.getReferral().equals("")){
+        if(!user.getReferral().isEmpty()){
             Referrals referralsData = referralService.findByReferralCode(user.getReferral());
             UserUsageReferrals userReferralHistoryData = new UserUsageReferrals();
             userReferralHistoryData.setUsers(newUser);
             userReferralHistoryData.setReferrals(referralsData);
+
+            Users referralUser = userRepository.findByReferrals(referralsData).orElseThrow(() -> new DataNotFoundException("User with referral used is not found"));
             userUsageReferralsService.addNewUserUsageReferralData(userReferralHistoryData);
             PointHistory newPointHistory = new PointHistory();
-            newPointHistory.setUsers(newUser);
+            newPointHistory.setUsers(referralUser);
             newPointHistory.setTotalPoint(10000);
             pointHistoryService.addNewPointHistory(newPointHistory);
         }
@@ -161,6 +165,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Users getUserByEmail(String email) {
+        log.info("Requesting User Detail: " + email);
         return userRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("User not found"));
     }
 }
