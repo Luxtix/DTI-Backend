@@ -174,6 +174,12 @@ public class EventServiceImpl implements EventService {
         eventDetail.setVenueName(event.getVenueName());
         eventDetail.setStartTime(event.getStartTime());
         eventDetail.setEndTime(event.getEndTime());
+        DayOfWeek day = event.getEventDate().getDayOfWeek();
+        String dayOfWeekString = day.getDisplayName(
+                java.time.format.TextStyle.FULL,
+                Locale.ENGLISH
+        );
+        eventDetail.setEventDay(dayOfWeekString);
         if(!event.getEventDate().isAfter(currentDate)){
             eventDetail.setIsDone(true);
         }else{
@@ -209,6 +215,12 @@ public class EventServiceImpl implements EventService {
         eventDetail.setCityName(event.getCities().getName());
         eventDetail.setIsOnline(event.getIsOnline());
         eventDetail.setIsFavorite(false);
+        DayOfWeek day = event.getEventDate().getDayOfWeek();
+        String dayOfWeekString = day.getDisplayName(
+                java.time.format.TextStyle.FULL,
+                Locale.ENGLISH
+        );
+        eventDetail.setEventDay(dayOfWeekString);
         if(event.getIsPaid()){
             eventDetail.setPriceCategory("Paid");
         }else{
