@@ -52,7 +52,7 @@ public class AuthController {
         LoginResponseDto resp = authService.generateToken(authentication);
 
 
-        Cookie cookie = new Cookie("Sid", resp.getAccessToken());
+        Cookie cookie = new Cookie("sid", resp.getAccessToken());
         cookie.setMaxAge(3600);
         cookie.setPath("/");
         HttpHeaders headers = new HttpHeaders();

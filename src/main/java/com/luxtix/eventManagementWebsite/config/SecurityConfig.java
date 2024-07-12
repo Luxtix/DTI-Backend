@@ -95,7 +95,7 @@ public class SecurityConfig {
                         Cookie[] cookies = request.getCookies();
                         if (cookies != null) {
                             for (Cookie cookie : cookies) {
-                                if ("Sid".equals(cookie.getName())) {
+                                if ("sid".equals(cookie.getName())) {
                                     return cookie.getValue();
                                 }
                             }
