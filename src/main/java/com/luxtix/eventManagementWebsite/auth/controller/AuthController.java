@@ -7,7 +7,6 @@ import com.luxtix.eventManagementWebsite.auth.entity.UserAuth;
 import com.luxtix.eventManagementWebsite.auth.helpers.Claims;
 import com.luxtix.eventManagementWebsite.auth.service.AuthService;
 import com.luxtix.eventManagementWebsite.response.Response;
-import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.java.Log;
