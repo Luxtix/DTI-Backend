@@ -4,8 +4,10 @@ package com.luxtix.eventManagementWebsite.auth.controller;
 import com.luxtix.eventManagementWebsite.auth.dto.LoginRequestDto;
 import com.luxtix.eventManagementWebsite.auth.dto.LoginResponseDto;
 import com.luxtix.eventManagementWebsite.auth.entity.UserAuth;
+import com.luxtix.eventManagementWebsite.auth.helpers.Claims;
 import com.luxtix.eventManagementWebsite.auth.service.AuthService;
 import com.luxtix.eventManagementWebsite.response.Response;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
 import lombok.extern.java.Log;
 import org.springframework.http.HttpHeaders;
@@ -46,17 +48,14 @@ public class AuthController {
 
         UserAuth userDetails = (UserAuth) authentication.getPrincipal();
         log.info("Token requested for user :" + userDetails.getUsername() + " with roles: " + userDetails.getAuthorities().toArray()[0]);
-        String token = authService.generateToken(authentication);
+        LoginResponseDto resp = authService.generateToken(authentication);
 
-        LoginResponseDto response = new LoginResponseDto();
-        response.setToken(token);
-
-        Cookie cookie = new Cookie("Sid", token);
+        Cookie cookie = new Cookie("Sid", resp.getToken());
         cookie.setMaxAge(6000);
         cookie.setPath("/");
         HttpHeaders headers = new HttpHeaders();
         headers.add("Set-Cookie", cookie.getName() + "=" + cookie.getValue() + "; Path=/; HttpOnly");
-        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(Response.successfulResponse( "Login successfully", response));
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(Response.successfulResponse( "Login successfully", resp));
     }
 
     @PostMapping("/logout")
