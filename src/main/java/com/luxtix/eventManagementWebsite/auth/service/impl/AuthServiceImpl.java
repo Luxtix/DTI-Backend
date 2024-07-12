@@ -51,12 +51,12 @@ public class AuthServiceImpl implements AuthService {
 
         var existingKey = authRedisRepository.getJwtKey(authentication.getName());
         LoginResponseDto response = new LoginResponseDto();
-        response.setUserId(userService.getUserByEmail(authentication.getName()).getId());
+        response.setUserId(Long.toString(userService.getUserByEmail(authentication.getName()).getId()));
         response.setEmail(authentication.getName());
         response.setRole(scope);
         if(existingKey != null){
             log.info("Token already exists for user: " + authentication.getName());
-            response.setToken(existingKey);
+            response.setAccessToken(existingKey);
             return response;
         }
 
@@ -76,7 +76,7 @@ public class AuthServiceImpl implements AuthService {
             throw new InputException("JWT Token has already been blacklisted");
         }
         authRedisRepository.saveJwtKey(authentication.getName(),jwt);
-        response.setToken(jwt);
+        response.setAccessToken(jwt);
         return response;
     }
 
