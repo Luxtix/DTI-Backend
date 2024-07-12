@@ -53,7 +53,7 @@ public class AuthController {
 
 
         Cookie cookie = new Cookie("Sid", resp.getAccessToken());
-        cookie.setMaxAge(6000);
+        cookie.setMaxAge(3600);
         cookie.setPath("/");
         HttpHeaders headers = new HttpHeaders();
         headers.add("Set-Cookie", cookie.getName() + "=" + cookie.getValue() + "; Path=/; HttpOnly");
