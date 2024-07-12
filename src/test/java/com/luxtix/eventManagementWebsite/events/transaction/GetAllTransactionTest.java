@@ -19,6 +19,11 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
@@ -68,15 +73,16 @@ public class GetAllTransactionTest {
         event.setEventImage("image.jpg");
         transaction.setEvents(event);
         transactions.add(transaction);
-
-        Mockito.when(transactionRepository.findByUsersId(userId)).thenReturn(Optional.of(transactions));
+        Pageable pageable = PageRequest.of(0,1);
+        Page<Transactions> transactionPage = new PageImpl<>(transactions, pageable, transactions.size());
+        Mockito.when(transactionRepository.findByUsersId(userId, pageable)).thenReturn(Optional.of(transactionPage));
         Mockito.when(cloudinaryService.generateUrl("image.jpg")).thenReturn("http://image.url");
 
-        List<TransactionListResponseDto> result = transactionService.getAllTransactions(userId);
+        Page<TransactionListResponseDto> result = transactionService.getAllTransactions(userId,0,1);
 
         assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals("Event Name", result.get(0).getEventName());
+        assertEquals(1, result.getTotalElements());
+        assertEquals("Event Name", result.getContent().get(0).getEventName());
     }
 
 
@@ -84,11 +90,11 @@ public class GetAllTransactionTest {
     @Test
     public void test_throws_DataNotFoundException_when_no_transactions_found_for_userId() {
         long userId = 1L;
-
-        Mockito.when(transactionRepository.findByUsersId(userId)).thenReturn(Optional.empty());
+        Pageable pageable = PageRequest.of(0,1);
+        Mockito.when(transactionRepository.findByUsersId(userId,pageable)).thenReturn(Optional.empty());
 
         assertThrows(DataNotFoundException.class, () -> {
-            transactionService.getAllTransactions(userId);
+            transactionService.getAllTransactions(userId,0,1);
         });
     }
 }

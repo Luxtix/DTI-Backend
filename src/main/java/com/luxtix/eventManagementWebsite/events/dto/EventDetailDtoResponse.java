@@ -19,6 +19,7 @@ public class EventDetailDtoResponse {
     private String eventImage;
     private String venueName;
     private String description;
+    private String eventDay;
     private LocalDate eventDate;
     private LocalTime startTime;
     private LocalTime endTime;
@@ -31,5 +32,4 @@ public class EventDetailDtoResponse {
     private Boolean isFavorite;
     private List<TicketDto> tickets;
     private List<VoucherDto> vouchers;
-//    private List<EventReviewsDto> reviews;
 }
