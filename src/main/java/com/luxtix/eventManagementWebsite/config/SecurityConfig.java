@@ -105,6 +105,7 @@ public class SecurityConfig {
                     });
                 })
                 .userDetailsService(userDetailsService)
+                .addFilterBefore(corsFilter(), BasicAuthenticationFilter.class)
                 .httpBasic(Customizer.withDefaults())
                 .build();
     }
