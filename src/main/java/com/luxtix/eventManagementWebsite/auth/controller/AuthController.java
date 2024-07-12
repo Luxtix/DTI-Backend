@@ -52,12 +52,14 @@ public class AuthController {
         log.info("Token requested for user :" + userDetails.getUsername() + " with roles: " + userDetails.getAuthorities().toArray()[0]);
         LoginResponseDto resp = authService.generateToken(authentication);
 
+
         Cookie cookie = new Cookie("Sid", resp.getAccessToken());
         cookie.setMaxAge(6000);
         cookie.setPath("/");
         HttpHeaders headers = new HttpHeaders();
         headers.add("Set-Cookie", cookie.getName() + "=" + cookie.getValue() + "; Path=/; HttpOnly");
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(resp);
+
     }
 
     @PostMapping("/logout")
