@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface TransactionService {
     Transactions newTransaction(TransactionRequestDto data, String email);
-    List<TransactionDetailResponseDto> getAllTransactionDetail(long transactionId);
+    TransactionDetailResponseDto getAllTransactionDetail(long transactionId);
 
 
     Page<TransactionListResponseDto> getAllTransactions(long userId, int page, int page_size);

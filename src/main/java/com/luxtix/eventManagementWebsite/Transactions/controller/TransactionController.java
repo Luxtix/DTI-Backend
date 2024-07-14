@@ -49,7 +49,7 @@ public class TransactionController {
 
     @GetMapping("/detail/{id}")
     @RolesAllowed({"USER"})
-    public ResponseEntity<Response<List<TransactionDetailResponseDto>>> getAllTransactionDetail(@PathVariable("id") long transactionId){
+    public ResponseEntity<Response<TransactionDetailResponseDto>> getAllTransactionDetail(@PathVariable("id") long transactionId){
         return Response.successfulResponse("Transaction detail fetched successfully", transactionService.getAllTransactionDetail(transactionId));
     }
 
