@@ -19,6 +19,7 @@ public class TransactionDetailResponseDto {
     private long id;
     private String eventName;
     private String eventImage;
+    private String cityName;
     private LocalDate eventDate;
     private LocalTime startTime;
     private LocalTime endTime;

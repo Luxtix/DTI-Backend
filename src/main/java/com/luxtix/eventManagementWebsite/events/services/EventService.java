@@ -5,6 +5,7 @@ import com.luxtix.eventManagementWebsite.events.dto.EventListDtoResponse;
 import com.luxtix.eventManagementWebsite.events.dto.NewEventRequestDto;
 import com.luxtix.eventManagementWebsite.events.dto.UpdateEventRequestDto;
 import com.luxtix.eventManagementWebsite.events.entity.Events;
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

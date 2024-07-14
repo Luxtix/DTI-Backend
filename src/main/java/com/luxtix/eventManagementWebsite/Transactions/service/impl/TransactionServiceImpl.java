@@ -188,11 +188,4 @@ public class TransactionServiceImpl implements TransactionService {
 
         return calculatePriceResponseDto;
     }
-
-
-
-    @Override
-    public int getEventTotalRevenue(long eventId, String dateType){
-        return transactionRepository.getTotalEventRevenue(eventId,dateType);
-    }
 }

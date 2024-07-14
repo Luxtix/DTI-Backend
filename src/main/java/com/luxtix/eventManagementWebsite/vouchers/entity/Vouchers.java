@@ -72,9 +72,7 @@ public class Vouchers {
     @OneToMany(mappedBy = "vouchers",cascade = CascadeType.ALL)
     private Set<Transactions> transactions = new LinkedHashSet<>();
 
-
-    @OneToMany(mappedBy = "vouchers",cascade = CascadeType.ALL)
-    private Set<Transactions> transactions = new LinkedHashSet<>();
+    
 
     @PrePersist
     protected void onCreate(){
