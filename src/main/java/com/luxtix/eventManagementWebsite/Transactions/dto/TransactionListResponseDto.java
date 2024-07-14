@@ -10,6 +10,7 @@ public class TransactionListResponseDto {
     private long transactionId;
     private long eventId;
     private LocalDate eventDate;
+    private String eventDay;
     private String eventName;
     private String eventImage;
     private Boolean isDone;

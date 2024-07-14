@@ -65,7 +65,7 @@ public class AuthController {
     public ResponseEntity<?> logout(){
         authService.logout();
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Set-Cookie", "Sid=; Path=/; Max-Age=0; HttpOnly");
+        headers.add("Set-Cookie", "sid=; Path=/; Max-Age=0; HttpOnly");
 
         return ResponseEntity.status(HttpStatus.OK)
                 .headers(headers)

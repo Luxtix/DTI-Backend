@@ -23,7 +23,7 @@ public class TransactionDetailResponseDto {
     private LocalTime startTime;
     private LocalTime endTime;
     private String eventDay;
-    private String venue;
+    private String venueName;
     private String ticketName;
     private int ticketQty;
     private String cityName;

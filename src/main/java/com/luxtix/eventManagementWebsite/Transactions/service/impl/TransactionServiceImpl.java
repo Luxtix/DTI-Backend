@@ -111,12 +111,12 @@ public class TransactionServiceImpl implements TransactionService {
             data.setEventName(transaction.getTransactions().getEvents().getName());
             data.setCityName(transaction.getTransactions().getEvents().getCities().getName());
             data.setEventImage(cloudinaryService.generateUrl(transaction.getTransactions().getEvents().getEventImage()));
-            data.setVenue(transaction.getTransactions().getEvents().getVenueName());
+            data.setVenueName(transaction.getTransactions().getEvents().getVenueName());
             data.setEventDate(transaction.getTransactions().getEvents().getEventDate());
             data.setId(transaction.getId());
             data.setIsOnline(transaction.getTransactions().getEvents().getIsOnline());
             data.setTicketName(transaction.getTickets().getName());
-            data.setTicketQty(transaction.getTickets().getQty());
+            data.setTicketQty(transaction.getQty());
             data.setStartTime(transaction.getTransactions().getEvents().getStartTime());
             data.setEndTime(transaction.getTransactions().getEvents().getEndTime());
             DayOfWeek day = transaction.getTransactions().getEvents().getEventDate().getDayOfWeek();
@@ -141,6 +141,12 @@ public class TransactionServiceImpl implements TransactionService {
             newTransaction.setEventId(transactionData.getEvents().getId());
             newTransaction.setEventName(transactionData.getEvents().getName());
             newTransaction.setEventDate(transactionData.getEvents().getEventDate());
+            DayOfWeek day = transactionData.getEvents().getEventDate().getDayOfWeek();
+            String eventDay = day.getDisplayName(
+                    java.time.format.TextStyle.FULL,
+                    Locale.ENGLISH
+            );
+            newTransaction.setEventDay(eventDay);
             newTransaction.setTransactionId(transactionData.getId());
             newTransaction.setEventImage(cloudinaryService.generateUrl(transactionData.getEvents().getEventImage()));
             if(!transactionData.getEvents().getEventDate().isAfter(currentDate)){
