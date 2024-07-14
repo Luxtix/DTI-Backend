@@ -16,6 +16,7 @@ public class TransactionRequestDto {
     private Long voucherId;
 
     @NotNull
+
     @Min(1)
     private int totalQty;
 

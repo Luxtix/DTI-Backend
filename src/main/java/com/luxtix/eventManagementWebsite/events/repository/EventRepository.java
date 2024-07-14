@@ -14,6 +14,6 @@ import java.util.Optional;
 
 @Repository
 public interface EventRepository extends JpaRepository<Events,Long>, JpaSpecificationExecutor<Events> {
-
     Optional<List<Events>> findByUsersId(long userId);
+
 }

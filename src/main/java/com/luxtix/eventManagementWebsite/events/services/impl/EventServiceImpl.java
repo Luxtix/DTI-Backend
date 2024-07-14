@@ -98,10 +98,10 @@ public class EventServiceImpl implements EventService {
                 .map(event -> convertAllEventToDto(event,userData.getId()))
                 .toList();
         return new PageImpl<>(eventList,pageable,events.getTotalElements());
-
     }
 
     @Override
+
     public Page<EventListDtoResponse> getAllEventPublic(String categoryName, String cityName, String eventName, Boolean eventType, Boolean isOnline, Boolean isFavorite, int page, int page_size) {
         Pageable pageable = PageRequest.of(page, page_size);
         Specification<Events> specification = Specification.where(EventListSpecification.byEventName(eventName).and(EventListSpecification.byCategory(categoryName)).and(EventListSpecification.byCity(cityName)).and(EventListSpecification.byIsOnline(isOnline)).and(EventListSpecification.byIsPaid(eventType)));

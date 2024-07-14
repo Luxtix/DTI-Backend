@@ -42,6 +42,7 @@ public class VoucherServiceImpl implements VoucherService {
 
     }
 
+
     private boolean isVoucherValid(Vouchers voucher, boolean isReferral, LocalDate currentDate) {
         if (isReferral) {
             return (voucher.getStartDate() == null || !voucher.getStartDate().isAfter(currentDate))

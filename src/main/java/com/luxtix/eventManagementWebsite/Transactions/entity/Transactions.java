@@ -45,7 +45,6 @@ public class Transactions {
     @JoinColumn(name = "user_id", nullable = false)
     private Users users;
 
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "voucher_id")
     private Vouchers vouchers;

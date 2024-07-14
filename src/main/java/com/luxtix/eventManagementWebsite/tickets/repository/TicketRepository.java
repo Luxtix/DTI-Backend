@@ -46,7 +46,7 @@ public interface TicketRepository extends JpaRepository<Tickets,Long> {
     @Query(value = getRemainingTicketCount)
     int getRemainingTicket(@Param("ticketId") long ticketId);
 
-  
+
     @Query(value = ticketSoldQuantityQuery)
     int getTicketSoldQuantity(@Param("eventId") long eventId,@Param("dateFilter") String dateFilter) ;
 

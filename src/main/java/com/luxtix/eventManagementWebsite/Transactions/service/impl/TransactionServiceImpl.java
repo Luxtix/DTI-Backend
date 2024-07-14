@@ -1,5 +1,6 @@
 package com.luxtix.eventManagementWebsite.Transactions.service.impl;
 
+
 import com.luxtix.eventManagementWebsite.Transactions.dto.*;
 import com.luxtix.eventManagementWebsite.Transactions.entity.Transactions;
 import com.luxtix.eventManagementWebsite.Transactions.repository.TransactionRepository;
@@ -186,5 +187,12 @@ public class TransactionServiceImpl implements TransactionService {
         calculatePriceResponseDto.setOriginalPrice(originalPrice.setScale(2, RoundingMode.HALF_UP));
 
         return calculatePriceResponseDto;
+    }
+
+
+
+    @Override
+    public int getEventTotalRevenue(long eventId, String dateType){
+        return transactionRepository.getTotalEventRevenue(eventId,dateType);
     }
 }

@@ -51,7 +51,6 @@ public class TicketServiceImpl implements TicketService {
         return ticketDtoList;
     }
 
-
     @Override
     public int getLowestTicketPrice(long eventId){
         return ticketRepository.getLowestTicketPrice(eventId);

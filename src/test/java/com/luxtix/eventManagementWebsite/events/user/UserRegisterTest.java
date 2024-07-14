@@ -132,6 +132,7 @@ public class UserRegisterTest {
         Mockito.verify(pointHistoryService).addNewPointHistory(pointHistory);
         Mockito.verify(userUsageReferralsService).addNewUserUsageReferralData(userUsageReferrals);
         Users registeredUser = userService.register(userDto);
+      
         assertNotNull(registeredUser);
         assertEquals(userDto.getReferral(),result.getCode());
         assertEquals(userDto.getEmail(), registeredUser.getEmail());
