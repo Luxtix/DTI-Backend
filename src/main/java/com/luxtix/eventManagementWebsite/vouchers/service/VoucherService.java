@@ -9,7 +9,7 @@ public interface VoucherService {
 
     List<VoucherDto> getEventVoucher(long id, Boolean isReferral);
 
-    Vouchers getVoucherById(long id);
+    Vouchers getVoucherById(Long id);
 
     void createNewVoucher(Vouchers newVoucher);
 

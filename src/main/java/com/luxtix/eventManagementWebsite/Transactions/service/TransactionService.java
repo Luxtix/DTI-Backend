@@ -1,11 +1,9 @@
 package com.luxtix.eventManagementWebsite.Transactions.service;
 
-import com.luxtix.eventManagementWebsite.Transactions.dto.TransactionDetailResponseDto;
-import com.luxtix.eventManagementWebsite.Transactions.dto.TransactionListResponseDto;
-import com.luxtix.eventManagementWebsite.Transactions.dto.TransactionRequestDto;
+import com.luxtix.eventManagementWebsite.Transactions.dto.*;
 import com.luxtix.eventManagementWebsite.Transactions.entity.Transactions;
 import com.luxtix.eventManagementWebsite.transactionList.entity.TransactionList;
-
+import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface TransactionService {
@@ -13,7 +11,12 @@ public interface TransactionService {
     List<TransactionDetailResponseDto> getAllTransactionDetail(long transactionId);
 
 
-    List<TransactionListResponseDto> getAllTransactions(long userId);
+    Page<TransactionListResponseDto> getAllTransactions(long userId, int page, int page_size);
+
 
     int getEventTotalRevenue(long eventId, String dateType);
+
+
+    CalculatePriceResponseDto getCalculateTransaction(CalculatePriceRequestDto calculatePriceRequestDto);
+
 }

@@ -26,6 +26,5 @@ public class TransactionDetailResponseDto {
     private String venue;
     private String ticketName;
     private int ticketQty;
-    private String cityName;
-    private boolean isOnline;
+    private Boolean isOnline;
 }

@@ -66,19 +66,17 @@ public class EventController {
     public ResponseEntity<Response<List<EventListDtoResponse>>> getAllEvent(@RequestParam(value = "category",required = false) String category, @RequestParam(value ="city", required = false) String city, @RequestParam(value = "isPaid", required = false) Boolean isPaid, @RequestParam(value = "eventName",required = false) String eventName, @RequestParam(value = "isOnline",required = false) Boolean isOnline, @RequestParam(value = "isFavorite",required = false) Boolean isFavorite, @RequestParam(defaultValue = "0",required = false) int page, @RequestParam(defaultValue = "10",required = false) int size) {
         var claims = Claims.getClaimsFromJwt();
         var email = (String) claims.get("sub");
-        List<EventListDtoResponse> data = eventService.getAllEvent(email,category,city,eventName,isPaid,isOnline,isFavorite, page, size);
-        Page<EventListDtoResponse> pageDto = new PageImpl<>(data);
-        return Response.successfulResponseWithPage(HttpStatus.OK.value(),"All event fetched successfully", data,pageDto.getTotalPages(),pageDto.getTotalElements(),pageDto.getNumber());
+
+        Page<EventListDtoResponse> data = eventService.getAllEvent(email,category,city,eventName,isPaid,isOnline,isFavorite, page, size);
+        return Response.successfulResponseWithPage(HttpStatus.OK.value(),"All event fetched successfully", data.getContent(),data.getTotalPages(),data.getTotalElements(),data.getNumber());
 
     }
 
 
     @GetMapping("/public")
     public ResponseEntity<Response<List<EventListDtoResponse>>> getAllEventPublic(@RequestParam(value = "category",required = false) String category, @RequestParam(value ="city", required = false) String city, @RequestParam(value = "isPaid", required = false) Boolean isPaid, @RequestParam(value = "eventName",required = false) String eventName, @RequestParam(value = "isOnline",required = false) Boolean isOnline, @RequestParam(value = "isFavorite",required = false) Boolean isFavorite, @RequestParam(defaultValue = "0",required = false) int page, @RequestParam(defaultValue = "10",required = false) int size) {
-        List<EventListDtoResponse> data = eventService.getAllEventPublic(category,city,eventName,isPaid,isOnline,isFavorite, page, size);
-        Page<EventListDtoResponse> pageDto = new PageImpl<>(data);
-        return Response.successfulResponseWithPage(HttpStatus.OK.value(),"All event fetched successfully", data,pageDto.getTotalPages(),pageDto.getTotalElements(),pageDto.getNumber());
-
+        Page<EventListDtoResponse> data = eventService.getAllEventPublic(category,city,eventName,isPaid,isOnline,isFavorite, page, size);
+        return Response.successfulResponseWithPage(HttpStatus.OK.value(),"All event fetched successfully", data.getContent(),data.getTotalPages(),data.getTotalElements(),data.getNumber());
     }
 
     @GetMapping("/{id}")

@@ -6,9 +6,11 @@ import com.luxtix.eventManagementWebsite.transactionList.entity.TransactionList;
 import com.luxtix.eventManagementWebsite.users.entity.Users;
 import com.luxtix.eventManagementWebsite.vouchers.entity.Vouchers;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Digits;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -26,8 +28,18 @@ public class Transactions {
     @Column(name = "total_qty", nullable = false)
     private int totalQty;
 
-    @Column(name = "total_price", nullable = false)
-    private int totalPrice;
+    @Digits(integer = 20, fraction = 2)
+    @Column(name = "final_price", nullable = false)
+    private BigDecimal finalPrice;
+
+    @Digits(integer = 20, fraction = 2)
+    @Column(name = "total_discount", nullable = false)
+    private BigDecimal totalDiscount;
+
+    @Digits(integer = 20, fraction = 2)
+    @Column(name = "original_price", nullable = false)
+    private BigDecimal originalPrice;
+
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
@@ -49,10 +61,6 @@ public class Transactions {
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "updated_at")
     private Instant updatedAt;
-
-
-    @Column(name = "deleted_at")
-    private Instant deletedAt;
 
 
     @OneToMany(mappedBy = "transactions", cascade = CascadeType.ALL)

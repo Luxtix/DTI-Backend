@@ -12,10 +12,12 @@ import java.util.List;
 public interface EventService {
     Events addNewEvent(MultipartFile image, NewEventRequestDto newEventRequestDto,String email);
 
-    List<EventListDtoResponse> getAllEvent(String email, String categoryName, String cityName, String eventName, Boolean eventType, Boolean isOnline, Boolean isFavorite, int page, int page_size);
+
+    Page<EventListDtoResponse> getAllEvent(String email, String categoryName, String cityName, String eventName, Boolean eventType, Boolean isOnline, Boolean isFavorite, int page, int page_size);
 
 
-    List<EventListDtoResponse> getAllEventPublic(String categoryName, String cityName, String eventName, Boolean eventType, Boolean isOnline, Boolean isFavorite, int page, int page_size);
+    Page<EventListDtoResponse> getAllEventPublic(String categoryName, String cityName, String eventName, Boolean eventType, Boolean isOnline, Boolean isFavorite, int page, int page_size);
+    
     EventListDtoResponse convertAllEventToDto(Events events, Long userId);
 
     EventDetailDtoResponse getEventById(String email, Boolean isReferral, long id);

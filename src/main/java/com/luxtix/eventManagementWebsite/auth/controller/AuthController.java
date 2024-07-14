@@ -4,9 +4,11 @@ package com.luxtix.eventManagementWebsite.auth.controller;
 import com.luxtix.eventManagementWebsite.auth.dto.LoginRequestDto;
 import com.luxtix.eventManagementWebsite.auth.dto.LoginResponseDto;
 import com.luxtix.eventManagementWebsite.auth.entity.UserAuth;
+import com.luxtix.eventManagementWebsite.auth.helpers.Claims;
 import com.luxtix.eventManagementWebsite.auth.service.AuthService;
 import com.luxtix.eventManagementWebsite.response.Response;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.java.Log;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -46,17 +49,16 @@ public class AuthController {
 
         UserAuth userDetails = (UserAuth) authentication.getPrincipal();
         log.info("Token requested for user :" + userDetails.getUsername() + " with roles: " + userDetails.getAuthorities().toArray()[0]);
-        String token = authService.generateToken(authentication);
+        LoginResponseDto resp = authService.generateToken(authentication);
 
-        LoginResponseDto response = new LoginResponseDto();
-        response.setToken(token);
 
-        Cookie cookie = new Cookie("Sid", token);
-        cookie.setMaxAge(6000);
+        Cookie cookie = new Cookie("Sid", resp.getAccessToken());
+        cookie.setMaxAge(3600);
         cookie.setPath("/");
         HttpHeaders headers = new HttpHeaders();
         headers.add("Set-Cookie", cookie.getName() + "=" + cookie.getValue() + "; Path=/; HttpOnly");
-        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(Response.successfulResponse( "Login successfully", response));
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(resp);
+
     }
 
     @PostMapping("/logout")

@@ -98,9 +98,6 @@ public class Events {
     private Instant updatedAt;
 
 
-    @Column(name = "deleted_at")
-    private Instant deletedAt;
-
     @OneToMany(mappedBy = "events",cascade = CascadeType.ALL)
     private Set<EventReviews> eventReviews = new LinkedHashSet<>();
 

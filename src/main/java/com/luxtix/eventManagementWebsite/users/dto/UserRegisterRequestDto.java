@@ -14,7 +14,7 @@ import lombok.Data;
 public class UserRegisterRequestDto {
     @NotBlank(message = "Display name is required")
     @NotNull
-    private String fullname;
+    private String displayName;
 
     @NotBlank(message = "Email is required")
     @Email
@@ -36,7 +36,7 @@ public class UserRegisterRequestDto {
         user.setRole(role);
         user.setEmail(email);
         user.setPassword(password);
-        user.setFullname(fullname);
+        user.setFullname(displayName);
         return user;
     }
 }

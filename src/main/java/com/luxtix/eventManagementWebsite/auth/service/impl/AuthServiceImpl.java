@@ -1,5 +1,6 @@
 package com.luxtix.eventManagementWebsite.auth.service.impl;
 
+import com.luxtix.eventManagementWebsite.auth.dto.LoginResponseDto;
 import com.luxtix.eventManagementWebsite.auth.helpers.Claims;
 import com.luxtix.eventManagementWebsite.auth.repository.AuthRedisRepository;
 import com.luxtix.eventManagementWebsite.auth.service.AuthService;
@@ -38,7 +39,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String generateToken(Authentication authentication) {
+    public LoginResponseDto generateToken(Authentication authentication) {
         long userId = userService.getUserByEmail(authentication.getName()).getId();
         Instant expiredDate = Instant.now().minus(90, ChronoUnit.DAYS);
         boolean exist = userUsageReferralsService.checkUserIsReferralAndValid(userId,expiredDate);
@@ -49,9 +50,14 @@ public class AuthServiceImpl implements AuthService {
                 .collect(Collectors.joining(" "));
 
         var existingKey = authRedisRepository.getJwtKey(authentication.getName());
+        LoginResponseDto response = new LoginResponseDto();
+        response.setUserId(Long.toString(userService.getUserByEmail(authentication.getName()).getId()));
+        response.setEmail(authentication.getName());
+        response.setRole(scope);
         if(existingKey != null){
             log.info("Token already exists for user: " + authentication.getName());
-            return existingKey;
+            response.setAccessToken(existingKey);
+            return response;
         }
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
@@ -70,7 +76,8 @@ public class AuthServiceImpl implements AuthService {
             throw new InputException("JWT Token has already been blacklisted");
         }
         authRedisRepository.saveJwtKey(authentication.getName(),jwt);
-        return jwt;
+        response.setAccessToken(jwt);
+        return response;
     }
 
     @Override

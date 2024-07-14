@@ -1,8 +1,7 @@
 package com.luxtix.eventManagementWebsite.Transactions.service.impl;
 
-import com.luxtix.eventManagementWebsite.Transactions.dto.TransactionDetailResponseDto;
-import com.luxtix.eventManagementWebsite.Transactions.dto.TransactionListResponseDto;
-import com.luxtix.eventManagementWebsite.Transactions.dto.TransactionRequestDto;
+
+import com.luxtix.eventManagementWebsite.Transactions.dto.*;
 import com.luxtix.eventManagementWebsite.Transactions.entity.Transactions;
 import com.luxtix.eventManagementWebsite.Transactions.repository.TransactionRepository;
 import com.luxtix.eventManagementWebsite.Transactions.service.TransactionService;
@@ -22,8 +21,14 @@ import com.luxtix.eventManagementWebsite.vouchers.entity.Vouchers;
 import com.luxtix.eventManagementWebsite.vouchers.service.VoucherService;
 import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -62,7 +67,9 @@ public class TransactionServiceImpl implements TransactionService {
         Events event = new Events();
         event.setId(data.getEventId());
         newTransactions.setEvents(event);
-        newTransactions.setTotalPrice(data.getTotalPrice());
+        newTransactions.setFinalPrice(data.getFinalPrice());
+        newTransactions.setTotalDiscount(data.getTotalDiscount());
+        newTransactions.setOriginalPrice(data.getOriginalPrice());
         newTransactions.setTotalQty(data.getTotalQty());
         Vouchers voucher = new Vouchers();
         if(data.getVoucherId() != null){
@@ -79,7 +86,7 @@ public class TransactionServiceImpl implements TransactionService {
         if(data.getUsePoint() != null){
             PointHistory newPoint = new PointHistory();
             newPoint.setUsers(userData);
-            newPoint.setTotalPoint(data.getUsePoint());
+            newPoint.setTotalPoint(Math.negateExact(data.getUsePoint()));
             pointHistoryService.addNewPointHistory(newPoint);
         }
         for(TransactionRequestDto.TransactionTicketDto ticketData: data.getTickets()){
@@ -96,8 +103,6 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
 
-
-
     @Override
     public List<TransactionDetailResponseDto> getAllTransactionDetail(long transactionId){
         List<TransactionList> transactionLists =transactionListService.getAllTransactionDetail(transactionId);
@@ -110,7 +115,7 @@ public class TransactionServiceImpl implements TransactionService {
             data.setVenue(transaction.getTransactions().getEvents().getVenueName());
             data.setEventDate(transaction.getTransactions().getEvents().getEventDate());
             data.setId(transaction.getId());
-            data.setOnline(transaction.getTransactions().getEvents().getIsOnline());
+            data.setIsOnline(transaction.getTransactions().getEvents().getIsOnline());
             data.setTicketName(transaction.getTickets().getName());
             data.setTicketQty(transaction.getTickets().getQty());
             data.setStartTime(transaction.getTransactions().getEvents().getStartTime());
@@ -127,8 +132,9 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionListResponseDto> getAllTransactions(long userId) {
-        List<Transactions> transactions = transactionRepository.findByUsersId(userId).orElseThrow(() -> new DataNotFoundException("Transaction is empty"));
+    public Page<TransactionListResponseDto> getAllTransactions(long userId,int page, int page_size) {
+        Pageable pageable = PageRequest.of(page, page_size);
+        Page<Transactions> transactions = transactionRepository.findByUsersId(userId,pageable).orElseThrow(() -> new DataNotFoundException("Transaction is empty"));
         List<TransactionListResponseDto> transactionList = new ArrayList<>();
         LocalDate currentDate = LocalDate.now();
         for(Transactions transactionData : transactions){
@@ -139,13 +145,48 @@ public class TransactionServiceImpl implements TransactionService {
             newTransaction.setTransactionId(transactionData.getId());
             newTransaction.setEventImage(cloudinaryService.generateUrl(transactionData.getEvents().getEventImage()));
             if(!transactionData.getEvents().getEventDate().isAfter(currentDate)){
-                newTransaction.setDone(true);
+                newTransaction.setIsDone(true);
             }else{
-                newTransaction.setDone(false);
+                newTransaction.setIsDone(false);
             }
             transactionList.add(newTransaction);
         }
-        return  transactionList;
+        return  new PageImpl<>(transactionList,pageable,transactions.getTotalElements());
+    }
+
+
+
+    @Override
+    public int getEventTotalRevenue(long eventId, String dateType){
+        return transactionRepository.getTotalEventRevenue(eventId,dateType);
+    }
+
+    @Override
+    public CalculatePriceResponseDto getCalculateTransaction(CalculatePriceRequestDto calculatePriceRequestDto) {
+        BigDecimal originalPrice = calculatePriceRequestDto.getOriginalPrice();
+        BigDecimal rateAsBigDecimal = BigDecimal.ZERO;
+
+        if (calculatePriceRequestDto.getVoucherId() != null) {
+            Vouchers vouchers = voucherService.getVoucherById(calculatePriceRequestDto.getVoucherId());
+            rateAsBigDecimal = vouchers.getRate();
+        }
+
+        BigDecimal result = originalPrice.multiply(rateAsBigDecimal);
+
+        if (calculatePriceRequestDto.getUsePoint() == null) {
+            calculatePriceRequestDto.setUsePoint(0);
+        }
+
+        BigDecimal pointsDiscount = BigDecimal.valueOf(calculatePriceRequestDto.getUsePoint());
+        BigDecimal finalPrice = originalPrice.subtract(result).subtract(pointsDiscount);
+        BigDecimal totalDiscount = result.add(pointsDiscount);
+
+        CalculatePriceResponseDto calculatePriceResponseDto = new CalculatePriceResponseDto();
+        calculatePriceResponseDto.setFinalPrice(finalPrice.setScale(2, RoundingMode.HALF_UP));
+        calculatePriceResponseDto.setTotalDiscount(totalDiscount.setScale(2, RoundingMode.HALF_UP));
+        calculatePriceResponseDto.setOriginalPrice(originalPrice.setScale(2, RoundingMode.HALF_UP));
+
+        return calculatePriceResponseDto;
     }
 
 
