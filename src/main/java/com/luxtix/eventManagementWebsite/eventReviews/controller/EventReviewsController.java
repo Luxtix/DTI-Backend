@@ -40,7 +40,7 @@ public class EventReviewsController {
 
     @PostMapping("")
     @RolesAllowed({"USER"})
-    public ResponseEntity<Response<ReviewEventResponseDto>> addNewReview(@RequestBody ReviewEventRequestDto data) {
+    public ResponseEntity<Response<ReviewEventResponseDto>> addNewReview(@Validated @RequestBody ReviewEventRequestDto data) {
         var claims = Claims.getClaimsFromJwt();
         var email = (String) claims.get("sub");
         return Response.successfulResponse("Event review add successfully",eventReviewService.addNewReview(email,data));

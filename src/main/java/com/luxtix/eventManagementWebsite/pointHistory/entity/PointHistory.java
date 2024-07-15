@@ -3,6 +3,7 @@ package com.luxtix.eventManagementWebsite.pointHistory.entity;
 
 import com.luxtix.eventManagementWebsite.users.entity.Users;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 

@@ -9,6 +9,7 @@ import com.luxtix.eventManagementWebsite.tickets.dao.TicketSummaryDao;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,14 +28,14 @@ public class DashboardController {
     }
 
     @GetMapping("/{id}")
-    @RolesAllowed({"ORGANIZER"})
+    @PreAuthorize("hasRole('ORGANIZER')")
     public ResponseEntity<Response<DashboardEventSummaryResponseDto>> getTransactionSummary(@RequestParam(value = "dateType", defaultValue = "day",required = false) String dateType, @PathVariable("id") long eventId){
         return Response.successfulResponse("All transactions fetched successfully", dashboardService.getSummaryData(eventId,dateType));
     }
 
     @GetMapping("/event")
-    @RolesAllowed({"ORGANIZER"})
-    public ResponseEntity<Response<List<DashboardEventResponseDto>>> getAllEventOrganizer(){
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public ResponseEntity<Response<List<DashboardEventResponseDto>>> getAllOrganizerEvent(){
         var claims = Claims.getClaimsFromJwt();
         var email = (String) claims.get("sub");
         return Response.successfulResponse("All organizer event fetched successfully", dashboardService.getOrganizerEvent(email));

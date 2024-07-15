@@ -25,8 +25,9 @@ public class VoucherController {
 
 
 
-    @RolesAllowed({"ORGANIZER"})
+
     @DeleteMapping("/{id}")
+    @RolesAllowed({"ORGANIZER"})
     public ResponseEntity<Response<Vouchers>> deleteVoucher(@PathVariable("id") Long id) {
         voucherService.deleteVoucherById(id);
         return Response.successfulResponse("Voucher has been deleted successfully");

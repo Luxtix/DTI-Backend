@@ -5,7 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 public interface CloudinaryService {
-    String uploadFile(MultipartFile file, String foldername);
+    String uploadFile(MultipartFile file, String folderName);
 
     String generateUrl(String publicId);
 

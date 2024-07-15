@@ -16,7 +16,6 @@ public class TransactionRequestDto {
     private Long voucherId;
 
     @NotNull
-
     @Min(1)
     private int totalQty;
 
@@ -39,13 +38,14 @@ public class TransactionRequestDto {
 
     @Data
     public static class TransactionTicketDto{
-        @NotNull
-        private long ticketId;
+        @NotNull(message = "Ticket ID is required")
+        private Long ticketId;
 
+        @Min(value = 0, message = "Price must be at least 0")
         private int price;
 
-        @NotNull
-        @Min(1)
+        @NotNull(message = "Quantity is required")
+        @Min(value = 1, message = "Quantity must be at least 1")
         private int qty;
     }
 }

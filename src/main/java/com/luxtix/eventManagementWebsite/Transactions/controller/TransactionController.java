@@ -34,7 +34,7 @@ public class TransactionController {
 
     @PostMapping("")
     @RolesAllowed({"USER"})
-    public ResponseEntity<Response<Transactions>> addNewTransaction(@RequestBody TransactionRequestDto data){
+    public ResponseEntity<Response<Transactions>> addNewTransaction(@Validated @RequestBody TransactionRequestDto data){
         var claims = Claims.getClaimsFromJwt();
         var email = (String) claims.get("sub");
         return Response.successfulResponse("Transaction added successfully", transactionService.newTransaction(data,email));
@@ -43,7 +43,7 @@ public class TransactionController {
 
     @PostMapping("/calculate")
     @RolesAllowed({"USER"})
-    public ResponseEntity<Response<CalculatePriceResponseDto>> calculatePrice(@RequestBody CalculatePriceRequestDto calculatePriceRequestDto){
+    public ResponseEntity<Response<CalculatePriceResponseDto>> calculatePrice(@Validated @RequestBody CalculatePriceRequestDto calculatePriceRequestDto){
         return Response.successfulResponse("Transaction detail fetched successfully",transactionService.getCalculateTransaction(calculatePriceRequestDto));
     }
 
