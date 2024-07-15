@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +34,7 @@ public class TransactionController {
     }
 
     @PostMapping("")
-    @RolesAllowed({"USER"})
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     public ResponseEntity<Response<Transactions>> addNewTransaction(@Validated @RequestBody TransactionRequestDto data){
         var claims = Claims.getClaimsFromJwt();
         var email = (String) claims.get("sub");
@@ -42,19 +43,16 @@ public class TransactionController {
 
 
     @PostMapping("/calculate")
-    @RolesAllowed({"USER"})
     public ResponseEntity<Response<CalculatePriceResponseDto>> calculatePrice(@Validated @RequestBody CalculatePriceRequestDto calculatePriceRequestDto){
         return Response.successfulResponse("Transaction detail fetched successfully",transactionService.getCalculateTransaction(calculatePriceRequestDto));
     }
 
     @GetMapping("/detail/{id}")
-    @RolesAllowed({"USER"})
     public ResponseEntity<Response<TransactionDetailResponseDto>> getAllTransactionDetail(@PathVariable("id") long transactionId){
         return Response.successfulResponse("Transaction detail fetched successfully", transactionService.getAllTransactionDetail(transactionId));
     }
 
     @GetMapping("")
-    @RolesAllowed({"USER"})
     public ResponseEntity<Response<List<TransactionListResponseDto>>> getAllTransactions(@RequestParam(defaultValue = "0",required = false) int page, @RequestParam(defaultValue = "10",required = false) int size){
         var claims = Claims.getClaimsFromJwt();
         var userId = (long) claims.get("id");

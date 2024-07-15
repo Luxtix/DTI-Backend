@@ -28,13 +28,15 @@ public class DashboardController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ORGANIZER')")
+    @PreAuthorize("hasAuthority('SCOPE_ORGANIZER')")
     public ResponseEntity<Response<DashboardEventSummaryResponseDto>> getTransactionSummary(@RequestParam(value = "dateType", defaultValue = "day",required = false) String dateType, @PathVariable("id") long eventId){
+        var claims = Claims.getClaimsFromJwt();
+        log.info(claims.toString());
         return Response.successfulResponse("All transactions fetched successfully", dashboardService.getSummaryData(eventId,dateType));
     }
 
     @GetMapping("/event")
-    @PreAuthorize("hasRole('ORGANIZER')")
+    @PreAuthorize("hasAuthority('SCOPE_ORGANIZER')")
     public ResponseEntity<Response<List<DashboardEventResponseDto>>> getAllOrganizerEvent(){
         var claims = Claims.getClaimsFromJwt();
         var email = (String) claims.get("sub");
