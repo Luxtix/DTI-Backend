@@ -4,6 +4,7 @@ import com.luxtix.eventManagementWebsite.favoriteEvents.dto.EventToggleDtoRespon
 import com.luxtix.eventManagementWebsite.favoriteEvents.service.FavoriteEventService;
 import com.luxtix.eventManagementWebsite.response.Response;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,6 +19,7 @@ public class FavoriteEventController {
 
 
     @PostMapping("toggle/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     public ResponseEntity<Response<EventToggleDtoResponse>> toggleEvent(@PathVariable long id) {
         var claims = Claims.getClaimsFromJwt();
         var userId = (long) claims.get("id");

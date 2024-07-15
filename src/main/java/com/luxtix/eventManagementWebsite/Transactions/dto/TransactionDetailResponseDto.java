@@ -12,20 +12,25 @@ import lombok.NoArgsConstructor;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 
 @Data
 public class TransactionDetailResponseDto {
-    private long id;
     private String eventName;
     private String eventImage;
     private String cityName;
     private LocalDate eventDate;
     private LocalTime startTime;
     private LocalTime endTime;
-    private String eventDay;
-    private String venue;
-    private String ticketName;
-    private int ticketQty;
+    private String venueName;
     private Boolean isOnline;
+    private List<TransactionTicketDto> tickets;
+
+    @Data
+    public static class TransactionTicketDto{
+        private long Id;
+        private String ticketName;
+        private int ticketQty;
+    }
 }

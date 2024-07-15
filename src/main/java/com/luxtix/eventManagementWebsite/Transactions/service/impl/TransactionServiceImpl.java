@@ -104,31 +104,29 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     @Override
-    public List<TransactionDetailResponseDto> getAllTransactionDetail(long transactionId){
+    public TransactionDetailResponseDto getAllTransactionDetail(long transactionId){
         List<TransactionList> transactionLists =transactionListService.getAllTransactionDetail(transactionId);
-        List<TransactionDetailResponseDto> list = new ArrayList<>();
-        for(TransactionList transaction : transactionLists){
-            TransactionDetailResponseDto data = new TransactionDetailResponseDto();
-            data.setEventName(transaction.getTransactions().getEvents().getName());
-            data.setCityName(transaction.getTransactions().getEvents().getCities().getName());
-            data.setEventImage(cloudinaryService.generateUrl(transaction.getTransactions().getEvents().getEventImage()));
-            data.setVenue(transaction.getTransactions().getEvents().getVenueName());
-            data.setEventDate(transaction.getTransactions().getEvents().getEventDate());
-            data.setId(transaction.getId());
-            data.setIsOnline(transaction.getTransactions().getEvents().getIsOnline());
-            data.setTicketName(transaction.getTickets().getName());
-            data.setTicketQty(transaction.getTickets().getQty());
-            data.setStartTime(transaction.getTransactions().getEvents().getStartTime());
-            data.setEndTime(transaction.getTransactions().getEvents().getEndTime());
-            DayOfWeek day = transaction.getTransactions().getEvents().getEventDate().getDayOfWeek();
-            String eventDay = day.getDisplayName(
-                    java.time.format.TextStyle.FULL,
-                    Locale.ENGLISH
-            );
-            data.setEventDay(eventDay);
-            list.add(data);
+        List<TransactionDetailResponseDto.TransactionTicketDto> ticketList = new ArrayList<>();
+        TransactionDetailResponseDto data = new TransactionDetailResponseDto();
+        data.setEventName(transactionLists.getFirst().getTransactions().getEvents().getName());
+        data.setCityName(transactionLists.getFirst().getTransactions().getEvents().getCities().getName());
+        data.setEventImage(cloudinaryService.generateUrl(transactionLists.getFirst().getTransactions().getEvents().getEventImage()));
+        data.setVenueName(transactionLists.getFirst().getTransactions().getEvents().getVenueName());
+        data.setEventDate(transactionLists.getFirst().getTransactions().getEvents().getEventDate());
+        data.setIsOnline(transactionLists.getFirst().getTransactions().getEvents().getIsOnline());
+        for(TransactionList ticket : transactionLists){
+            TransactionDetailResponseDto.TransactionTicketDto ticketData = new TransactionDetailResponseDto.TransactionTicketDto();
+            ticketData.setId(ticket.getId());
+            ticketData.setTicketName(ticket.getTickets().getName());
+            ticketData.setTicketQty(ticket.getQty());
+            ticketList.add(ticketData);
         }
-        return list;
+        data.setStartTime(transactionLists.getFirst().getTransactions().getEvents().getStartTime());
+        data.setEndTime(transactionLists.getFirst().getTransactions().getEvents().getEndTime());
+        DayOfWeek day = transactionLists.getFirst().getTransactions().getEvents().getEventDate().getDayOfWeek();
+        data.setTickets(ticketList);
+
+        return data;
     }
 
     @Override

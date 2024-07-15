@@ -19,11 +19,11 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     private Cloudinary cloudinary;
 
     @Override
-    public String uploadFile(MultipartFile file, String foldername) {
+    public String uploadFile(MultipartFile file, String folderName) {
         try{
             byte[] bytes = file.getBytes();
             HashMap<Object, Object> options = new HashMap<>();
-            options.put("folder", foldername);
+            options.put("folder", folderName);
             Map uploadedFile = cloudinary.uploader().upload(bytes, options);
             String publicId = (String) uploadedFile.get("public_id");
             return publicId;

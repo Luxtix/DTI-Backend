@@ -87,11 +87,10 @@ public class GetAllTransactionDetailTest {
         Mockito.when(transactionListService.getAllTransactionDetail(ArgumentMatchers.anyLong())).thenReturn(transactionLists);
         Mockito.when(cloudinaryService.generateUrl(ArgumentMatchers.anyString())).thenReturn("generatedUrl");
 
-        List<TransactionDetailResponseDto> result = transactionService.getAllTransactionDetail(1L);
+        TransactionDetailResponseDto result = transactionService.getAllTransactionDetail(1L);
 
         assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals("EventName", result.get(0).getEventName());
+        assertEquals("EventName", result.getEventName());
     }
 
 
@@ -100,9 +99,8 @@ public class GetAllTransactionDetailTest {
     public void test_returns_empty_list_when_no_transaction_details_found_for_given_transaction_id() {
         Mockito.when(transactionListService.getAllTransactionDetail(ArgumentMatchers.anyLong())).thenReturn(new ArrayList<>());
 
-        List<TransactionDetailResponseDto> result = transactionService.getAllTransactionDetail(1L);
+       TransactionDetailResponseDto result = transactionService.getAllTransactionDetail(1L);
 
         assertNotNull(result);
-        assertTrue(result.isEmpty());
     }
 }

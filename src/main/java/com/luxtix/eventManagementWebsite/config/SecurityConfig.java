@@ -12,6 +12,7 @@ import jakarta.servlet.http.Cookie;
 import lombok.extern.java.Log;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -84,7 +85,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/api/auth/**").permitAll();
                     auth.requestMatchers("/api/category/**").permitAll();
                     auth.requestMatchers("/api/cities/**").permitAll();
-                    auth.requestMatchers("/api/events/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET,"/api/events/**").permitAll();
                     auth.requestMatchers("/api/users/register").permitAll();
                     auth.anyRequest().authenticated();
                 })

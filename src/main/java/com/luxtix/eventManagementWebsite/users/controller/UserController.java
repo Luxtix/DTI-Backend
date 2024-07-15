@@ -10,6 +10,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +30,9 @@ public class UserController {
         return Response.successfulResponse("User registered successfully", userService.register(userRegisterRequestDto));
     }
 
-    @RolesAllowed({"ORGANIZER","USER"})
+
     @PutMapping("/profile")
+    @PreAuthorize("hasAuthority('SCOPE_USER') or hasAuthority('SCOPE_ORGANIZER')")
     public ResponseEntity<Response<ProfileResponseDto>> updateProfile(@ModelAttribute ProfileRequestDto profileRequestDto) {
         var claims = Claims.getClaimsFromJwt();
         var email = (String) claims.get("sub");
@@ -38,16 +40,17 @@ public class UserController {
     }
 
 
-    @RolesAllowed({"ORGANIZER","USER"})
+
     @GetMapping("/profile")
+    @PreAuthorize("hasAuthority('SCOPE_USER') or hasAuthority('SCOPE_ORGANIZER')")
     public ResponseEntity<Response<ProfileResponseDto>> getProfileData(){
         var claims = Claims.getClaimsFromJwt();
         var email = (String) claims.get("sub");
         return Response.successfulResponse("Profile data has been fetched",userService.getProfileData(email));
     }
 
-    @RolesAllowed({"ORGANIZER","USER"})
     @PostMapping("/change-password")
+    @PreAuthorize("hasAuthority('SCOPE_USER') or hasAuthority('SCOPE_ORGANIZER')")
     public ResponseEntity<Response<ChangePasswordResponseDto>> changePassword(@Valid @RequestBody ChangePasswordRequestDto data){
         var claims = Claims.getClaimsFromJwt();
         var email = (String) claims.get("sub");

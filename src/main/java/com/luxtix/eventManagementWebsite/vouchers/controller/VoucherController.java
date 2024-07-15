@@ -9,6 +9,7 @@ import com.luxtix.eventManagementWebsite.vouchers.service.VoucherService;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,9 +25,8 @@ public class VoucherController {
     }
 
 
-
-    @RolesAllowed({"ORGANIZER"})
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_ORGANIZER')")
     public ResponseEntity<Response<Vouchers>> deleteVoucher(@PathVariable("id") Long id) {
         voucherService.deleteVoucherById(id);
         return Response.successfulResponse("Voucher has been deleted successfully");

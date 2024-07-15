@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,7 +44,7 @@ public class EventController {
     }
 
     @PostMapping("")
-    @RolesAllowed({"ORGANIZER"})
+    @PreAuthorize("hasAuthority('SCOPE_ORGANIZER')")
     public ResponseEntity<Response<Events>> addNewEvent(@RequestParam("image") MultipartFile image,  @RequestParam("eventData") String eventData) {
         var claims = Claims.getClaimsFromJwt();
         var email = (String) claims.get("sub");
@@ -66,7 +67,6 @@ public class EventController {
     public ResponseEntity<Response<List<EventListDtoResponse>>> getAllEvent(@RequestParam(value = "category",required = false) String category, @RequestParam(value ="city", required = false) String city, @RequestParam(value = "isPaid", required = false) Boolean isPaid, @RequestParam(value = "eventName",required = false) String eventName, @RequestParam(value = "isOnline",required = false) Boolean isOnline, @RequestParam(value = "isFavorite",required = false) Boolean isFavorite, @RequestParam(defaultValue = "0",required = false) int page, @RequestParam(defaultValue = "10",required = false) int size) {
         var claims = Claims.getClaimsFromJwt();
         var email = (String) claims.get("sub");
-
         Page<EventListDtoResponse> data = eventService.getAllEvent(email,category,city,eventName,isPaid,isOnline,isFavorite, page, size);
         return Response.successfulResponseWithPage(HttpStatus.OK.value(),"All event fetched successfully", data.getContent(),data.getTotalPages(),data.getTotalElements(),data.getNumber());
 
@@ -80,7 +80,6 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    @RolesAllowed({"USER"})
     public ResponseEntity<Response<EventDetailDtoResponse>> getEventById(@PathVariable("id") long id){
         var claims = Claims.getClaimsFromJwt();
         var email = (String) claims.get("sub");
@@ -90,21 +89,20 @@ public class EventController {
 
 
     @GetMapping("/public/{id}")
-    @RolesAllowed({"USER"})
     public ResponseEntity<Response<EventDetailDtoResponse>> getEventByIdPublic(@PathVariable("id") long id){
         return Response.successfulResponse("Event has been fetched successfully", eventService.getPublicEventById(id));
     }
 
 
     @DeleteMapping("/{id}")
-    @RolesAllowed({"ORGANIZER"})
+    @PreAuthorize("hasAuthority('SCOPE_ORGANIZER')")
     public ResponseEntity<Response<Events>> deleteEventById(@PathVariable("id") long id){
         eventService.deleteEventById(id);
         return Response.successfulResponse("Event has been deleted successfully");
     }
 
     @PutMapping("/{id}")
-    @RolesAllowed({"ORGANIZER"})
+    @PreAuthorize("hasAuthority('SCOPE_ORGANIZER')")
     public ResponseEntity<Response<Events>> updateEventById(@PathVariable("id") long id,@RequestParam("image") MultipartFile image,  @RequestParam("eventData") String eventData){
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter());

@@ -6,6 +6,7 @@ import com.luxtix.eventManagementWebsite.users.entity.Users;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -27,7 +28,7 @@ public class EventReviews {
     @Column(name = "rating", nullable = false)
     private int rating;
 
-    @Column(name = "comment")
+    @Column(name = "comment",nullable = false)
     private String comment;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
