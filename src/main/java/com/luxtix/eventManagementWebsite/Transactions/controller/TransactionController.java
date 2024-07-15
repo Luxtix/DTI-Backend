@@ -44,7 +44,7 @@ public class TransactionController {
 
     @PostMapping("/calculate")
     public ResponseEntity<Response<CalculatePriceResponseDto>> calculatePrice(@Validated @RequestBody CalculatePriceRequestDto calculatePriceRequestDto){
-        return Response.successfulResponse("Transaction detail fetched successfully",transactionService.getCalculateTransaction(calculatePriceRequestDto));
+        return Response.successfulResponse("Calculated price fetched successfully",transactionService.getCalculateTransaction(calculatePriceRequestDto));
     }
 
     @GetMapping("/detail/{id}")

@@ -169,7 +169,7 @@ public class TransactionServiceImpl implements TransactionService {
             rateAsBigDecimal = vouchers.getRate();
         }
 
-        BigDecimal result = originalPrice.multiply(rateAsBigDecimal);
+        BigDecimal result = originalPrice.multiply(rateAsBigDecimal).divide(BigDecimal.valueOf(100));
 
         if (calculatePriceRequestDto.getUsePoint() == null) {
             calculatePriceRequestDto.setUsePoint(0);
