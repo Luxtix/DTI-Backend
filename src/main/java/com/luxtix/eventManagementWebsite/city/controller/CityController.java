@@ -26,8 +26,8 @@ public class CityController {
     }
 
     @GetMapping("")
-    public ResponseEntity<Response<List<CityResponseDto>>> getAllCity() {
-        return Response.successfulResponse("All city has been fetched successfully", cityService.getAllCity());
+    public ResponseEntity<Response<List<CityResponseDto>>> getAllCity(@RequestParam(value = "name",required = false) String name) {
+        return Response.successfulResponse("All city has been fetched successfully", cityService.getAllCity(name));
     }
 
     @PostMapping("")

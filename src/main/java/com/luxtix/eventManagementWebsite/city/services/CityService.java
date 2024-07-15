@@ -7,7 +7,7 @@ import com.luxtix.eventManagementWebsite.city.dto.AddNewCityDto;
 import java.util.List;
 
 public interface CityService {
-    List<CityResponseDto> getAllCity();
+    List<CityResponseDto> getAllCity(String name);
 
     Cities addNewCIty(AddNewCityDto data);
 }
