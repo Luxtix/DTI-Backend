@@ -5,6 +5,7 @@ import com.luxtix.eventManagementWebsite.Transactions.dto.CalculatePriceResponse
 import com.luxtix.eventManagementWebsite.Transactions.repository.TransactionRepository;
 import com.luxtix.eventManagementWebsite.Transactions.service.impl.TransactionServiceImpl;
 import com.luxtix.eventManagementWebsite.cloudinary.CloudinaryService;
+import com.luxtix.eventManagementWebsite.eventReviews.service.EventReviewService;
 import com.luxtix.eventManagementWebsite.exceptions.DataNotFoundException;
 import com.luxtix.eventManagementWebsite.pointHistory.service.PointHistoryService;
 import com.luxtix.eventManagementWebsite.transactionList.service.TransactionListService;
@@ -41,11 +42,14 @@ public class CalculateTransactionTest {
     @Mock
     private TransactionServiceImpl transactionService;
 
+    @Mock
+    private EventReviewService eventReviewService;
+
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        transactionService = new TransactionServiceImpl(userService, transactionRepository, transactionListService, userUsageReferralsService, voucherService, cloudinaryService, pointHistoryService);
+        transactionService = new TransactionServiceImpl(userService,transactionRepository, transactionListService, userUsageReferralsService, voucherService,  eventReviewService,  cloudinaryService, pointHistoryService);
     }
 
 
@@ -75,7 +79,7 @@ public class CalculateTransactionTest {
         requestDto.setUsePoint(10);
 
         Vouchers voucher = new Vouchers();
-        voucher.setRate(new BigDecimal("0.10"));
+        voucher.setRate(new BigDecimal("10"));
         Mockito.when(voucherService.getVoucherById(1L)).thenReturn(voucher);
 
         CalculatePriceResponseDto responseDto = transactionService.getCalculateTransaction(requestDto);

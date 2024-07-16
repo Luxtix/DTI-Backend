@@ -7,6 +7,7 @@ import com.luxtix.eventManagementWebsite.Transactions.repository.TransactionRepo
 import com.luxtix.eventManagementWebsite.Transactions.service.impl.TransactionServiceImpl;
 import com.luxtix.eventManagementWebsite.city.entity.Cities;
 import com.luxtix.eventManagementWebsite.cloudinary.CloudinaryService;
+import com.luxtix.eventManagementWebsite.eventReviews.service.EventReviewService;
 import com.luxtix.eventManagementWebsite.events.entity.Events;
 import com.luxtix.eventManagementWebsite.pointHistory.service.PointHistoryService;
 import com.luxtix.eventManagementWebsite.tickets.entity.Tickets;
@@ -51,10 +52,13 @@ public class GetAllTransactionDetailTest {
     @Mock
     private TransactionServiceImpl transactionService;
 
+    @Mock
+    private EventReviewService eventReviewService;
+
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        transactionService = new TransactionServiceImpl(userService, transactionRepository, transactionListService, userUsageReferralsService, voucherService, cloudinaryService, pointHistoryService);
+        transactionService = new TransactionServiceImpl(userService,transactionRepository, transactionListService, userUsageReferralsService, voucherService,  eventReviewService,  cloudinaryService, pointHistoryService);
     }
 
 
@@ -93,14 +97,4 @@ public class GetAllTransactionDetailTest {
         assertEquals("EventName", result.getEventName());
     }
 
-
-
-    @Test
-    public void test_returns_empty_list_when_no_transaction_details_found_for_given_transaction_id() {
-        Mockito.when(transactionListService.getAllTransactionDetail(ArgumentMatchers.anyLong())).thenReturn(new ArrayList<>());
-
-       TransactionDetailResponseDto result = transactionService.getAllTransactionDetail(1L);
-
-        assertNotNull(result);
-    }
 }

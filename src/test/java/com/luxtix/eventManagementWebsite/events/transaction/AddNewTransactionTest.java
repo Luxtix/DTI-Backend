@@ -6,6 +6,7 @@ import com.luxtix.eventManagementWebsite.Transactions.entity.Transactions;
 import com.luxtix.eventManagementWebsite.Transactions.repository.TransactionRepository;
 import com.luxtix.eventManagementWebsite.Transactions.service.impl.TransactionServiceImpl;
 import com.luxtix.eventManagementWebsite.cloudinary.CloudinaryService;
+import com.luxtix.eventManagementWebsite.eventReviews.service.EventReviewService;
 import com.luxtix.eventManagementWebsite.pointHistory.entity.PointHistory;
 import com.luxtix.eventManagementWebsite.pointHistory.service.PointHistoryService;
 import com.luxtix.eventManagementWebsite.referrals.entity.Referrals;
@@ -50,10 +51,13 @@ public class AddNewTransactionTest {
     @Mock
     private TransactionServiceImpl transactionService;
 
+    @Mock
+    private EventReviewService eventReviewService;
+
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        transactionService = new TransactionServiceImpl(userService, transactionRepository, transactionListService, userUsageReferralsService, voucherService, cloudinaryService, pointHistoryService);
+        transactionService = new TransactionServiceImpl(userService,transactionRepository, transactionListService, userUsageReferralsService, voucherService,  eventReviewService,  cloudinaryService, pointHistoryService);
     }
 
     @Test

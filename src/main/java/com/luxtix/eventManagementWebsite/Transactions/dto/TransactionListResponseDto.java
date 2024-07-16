@@ -13,4 +13,5 @@ public class TransactionListResponseDto {
     private String eventName;
     private String eventImage;
     private Boolean isDone;
+    private Boolean canReview;
 }
