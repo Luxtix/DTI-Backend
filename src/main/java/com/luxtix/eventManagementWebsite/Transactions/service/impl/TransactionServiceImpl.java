@@ -6,6 +6,7 @@ import com.luxtix.eventManagementWebsite.Transactions.entity.Transactions;
 import com.luxtix.eventManagementWebsite.Transactions.repository.TransactionRepository;
 import com.luxtix.eventManagementWebsite.Transactions.service.TransactionService;
 import com.luxtix.eventManagementWebsite.cloudinary.CloudinaryService;
+import com.luxtix.eventManagementWebsite.eventReviews.service.EventReviewService;
 import com.luxtix.eventManagementWebsite.events.entity.Events;
 import com.luxtix.eventManagementWebsite.exceptions.DataNotFoundException;
 import com.luxtix.eventManagementWebsite.pointHistory.entity.PointHistory;
@@ -43,17 +44,20 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionListService transactionListService;
     private final UserUsageReferralsService userUsageReferralsService;
     private final VoucherService voucherService;
+
+    private final EventReviewService eventReviewService;
     private final CloudinaryService cloudinaryService;
 
 
 
     private final PointHistoryService pointHistoryService;
-    public TransactionServiceImpl(UserService userService, TransactionRepository transactionRepository, TransactionListService transactionListService, UserUsageReferralsService userUsageReferralsService, VoucherService voucherService, CloudinaryService cloudinaryService, PointHistoryService pointHistoryService) {
+    public TransactionServiceImpl(UserService userService, TransactionRepository transactionRepository, TransactionListService transactionListService, UserUsageReferralsService userUsageReferralsService, VoucherService voucherService, EventReviewService eventReviewService, CloudinaryService cloudinaryService, PointHistoryService pointHistoryService) {
         this.userService = userService;
         this.transactionRepository = transactionRepository;
         this.transactionListService = transactionListService;
         this.userUsageReferralsService = userUsageReferralsService;
         this.voucherService = voucherService;
+        this.eventReviewService = eventReviewService;
         this.cloudinaryService = cloudinaryService;
         this.pointHistoryService = pointHistoryService;
     }
@@ -141,6 +145,7 @@ public class TransactionServiceImpl implements TransactionService {
             newTransaction.setEventName(transactionData.getEvents().getName());
             newTransaction.setEventDate(transactionData.getEvents().getEventDate());
             newTransaction.setTransactionId(transactionData.getId());
+            newTransaction.setCanReview(!eventReviewService.checkIfCanReview(userId,transactionData.getEvents().getId()));
             newTransaction.setEventImage(cloudinaryService.generateUrl(transactionData.getEvents().getEventImage()));
             if(!transactionData.getEvents().getEventDate().isAfter(currentDate)){
                 newTransaction.setIsDone(true);

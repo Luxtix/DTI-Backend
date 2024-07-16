@@ -20,4 +20,6 @@ public interface EventReviewService {
     ReviewEventResponseDto addNewReview(String email, ReviewEventRequestDto data);
 
     BigDecimal getAverageEventRating(long eventId, String dateFilter);
+
+    Boolean checkIfCanReview(long userId, long eventId);
 }

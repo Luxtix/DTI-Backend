@@ -31,7 +31,6 @@ public class TransactionList {
     private Tickets tickets;
 
     @Column(name = "price", nullable = false)
-    @Min(value = 1, message = "Price must be at least 1")
     private int price;
 
     @Column(name = "qty", nullable = false)

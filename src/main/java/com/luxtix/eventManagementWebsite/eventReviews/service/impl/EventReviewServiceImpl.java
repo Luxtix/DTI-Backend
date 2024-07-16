@@ -65,6 +65,10 @@ public class EventReviewServiceImpl implements EventReviewService {
         return reviewList;
     }
 
+    public Boolean checkIfCanReview(long userId, long eventId){
+        return eventReviewsRepository.findAll().stream().anyMatch(review -> review.getUsers().getId() == userId && review.getEvents().getId() == eventId);
+    }
+
     @Override
     public ReviewEventResponseDto addNewReview(String email, ReviewEventRequestDto data) {
         Users userData = userService.getUserByEmail(email);
