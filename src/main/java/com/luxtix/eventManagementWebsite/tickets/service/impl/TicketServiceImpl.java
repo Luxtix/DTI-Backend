@@ -1,10 +1,12 @@
 package com.luxtix.eventManagementWebsite.tickets.service.impl;
+import com.luxtix.eventManagementWebsite.dashboard.dto.DashboardEventDetailResponseDto;
 import com.luxtix.eventManagementWebsite.exceptions.DataNotFoundException;
 import com.luxtix.eventManagementWebsite.tickets.dao.TicketSummaryDao;
 import com.luxtix.eventManagementWebsite.tickets.dto.TicketDto;
 import com.luxtix.eventManagementWebsite.tickets.entity.Tickets;
 import com.luxtix.eventManagementWebsite.tickets.repository.TicketRepository;
 import com.luxtix.eventManagementWebsite.tickets.service.TicketService;
+import com.luxtix.eventManagementWebsite.vouchers.entity.Vouchers;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
@@ -26,6 +28,23 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public void createNewTicket(Tickets newTickets) {
         ticketRepository.save(newTickets);
+    }
+
+
+
+    @Override
+    public List<DashboardEventDetailResponseDto.TicketEventDetailDto> getAllTicketEvent(long id){
+        List<Tickets> tickets =  ticketRepository.findByEventsId(id);
+        List<DashboardEventDetailResponseDto.TicketEventDetailDto> ticketList = new ArrayList<>();
+        for(Tickets ticket : tickets){
+            DashboardEventDetailResponseDto.TicketEventDetailDto data = new DashboardEventDetailResponseDto.TicketEventDetailDto();
+            data.setId(ticket.getId());
+            data.setQty(ticket.getQty());
+            data.setPrice(ticket.getPrice());
+            data.setName(ticket.getName());
+            ticketList.add(data);
+        }
+        return ticketList;
     }
 
 

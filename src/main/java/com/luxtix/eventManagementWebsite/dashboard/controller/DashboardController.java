@@ -1,6 +1,7 @@
 package com.luxtix.eventManagementWebsite.dashboard.controller;
 
 import com.luxtix.eventManagementWebsite.auth.helpers.Claims;
+import com.luxtix.eventManagementWebsite.dashboard.dto.DashboardEventDetailResponseDto;
 import com.luxtix.eventManagementWebsite.dashboard.dto.DashboardEventResponseDto;
 import com.luxtix.eventManagementWebsite.dashboard.dto.DashboardEventSummaryResponseDto;
 import com.luxtix.eventManagementWebsite.dashboard.service.DashboardService;
@@ -42,4 +43,12 @@ public class DashboardController {
         var email = (String) claims.get("sub");
         return Response.successfulResponse("All organizer event fetched successfully", dashboardService.getOrganizerEvent(email));
     }
+
+    @GetMapping("/event/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_ORGANIZER')")
+    public ResponseEntity<Response<DashboardEventDetailResponseDto>> getAllOrganizerEventDetail(@PathVariable("id") long id){
+        return Response.successfulResponse("All organizer event fetched successfully", dashboardService.getOrganizerEventDetail(id));
+    }
+
+
 }
