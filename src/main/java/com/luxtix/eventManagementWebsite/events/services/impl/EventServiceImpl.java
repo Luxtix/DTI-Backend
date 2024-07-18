@@ -264,7 +264,7 @@ public class EventServiceImpl implements EventService {
         }
         eventRepository.save(updatedEvents);
         for(UpdateEventRequestDto.TicketEventUpdateDto ticketData : data.getTickets()){
-            if(ticketData.getId() == null){
+            if(ticketData.getId() == -1){
                 Tickets tickets = ticketData.toEntity();
                 tickets.setEvents(eventData);
                 ticketService.createNewTicket(tickets);
@@ -279,7 +279,7 @@ public class EventServiceImpl implements EventService {
 
         }
         for(UpdateEventRequestDto.VoucherEventUpdateDto voucherData : data.getVouchers()){
-            if(voucherData.getId() == null){
+            if(voucherData.getId() == -1){
                 Vouchers voucher = voucherData.toEntity();
                 voucher.setEvents(eventData);
                 voucherService.createNewVoucher(voucher);
