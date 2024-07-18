@@ -32,7 +32,7 @@ public class EventReviewsController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('SCOPE_ORGANIZER')")
-    public ResponseEntity<Response<List<EventReviewsDto>>> getEventReviewData(@PathVariable("id") long eventId,@RequestParam(defaultValue = "0",required = false) int page, @RequestParam(defaultValue = "10",required = false) int size){
+    public ResponseEntity<Response<List<EventReviewsDto>>> getEventReviewData(@PathVariable("id") long eventId,@RequestParam(defaultValue = "0",required = false) int page, @RequestParam(defaultValue = "5",required = false) int size){
         Page<EventReviews> reviewData = eventReviewService.getEventReviews(eventId,page,size);
         List<EventReviewsDto> resp = eventReviewService.convertAllEventReviewsToDto(reviewData);
         return Response.successfulResponseWithPage(HttpStatus.OK.value(), "All event review fetched successfully",resp,reviewData.getTotalPages(),reviewData.getTotalElements(),reviewData.getNumber());

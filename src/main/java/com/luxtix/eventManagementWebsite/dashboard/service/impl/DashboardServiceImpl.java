@@ -1,6 +1,7 @@
 package com.luxtix.eventManagementWebsite.dashboard.service.impl;
 
 import com.luxtix.eventManagementWebsite.Transactions.service.TransactionService;
+import com.luxtix.eventManagementWebsite.dashboard.dto.DashboardEventDetailResponseDto;
 import com.luxtix.eventManagementWebsite.dashboard.dto.DashboardEventResponseDto;
 import com.luxtix.eventManagementWebsite.dashboard.dto.DashboardEventSummaryResponseDto;
 import com.luxtix.eventManagementWebsite.dashboard.service.DashboardService;
@@ -8,9 +9,12 @@ import com.luxtix.eventManagementWebsite.eventReviews.service.EventReviewService
 import com.luxtix.eventManagementWebsite.events.entity.Events;
 import com.luxtix.eventManagementWebsite.events.services.EventService;
 import com.luxtix.eventManagementWebsite.tickets.dao.TicketSummaryDao;
+import com.luxtix.eventManagementWebsite.tickets.entity.Tickets;
 import com.luxtix.eventManagementWebsite.tickets.service.TicketService;
 import com.luxtix.eventManagementWebsite.users.entity.Users;
 import com.luxtix.eventManagementWebsite.users.service.UserService;
+import com.luxtix.eventManagementWebsite.vouchers.entity.Vouchers;
+import com.luxtix.eventManagementWebsite.vouchers.service.VoucherService;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -32,14 +36,17 @@ public class DashboardServiceImpl implements DashboardService {
 
     private final TransactionService transactionService;
 
+    private final VoucherService voucherService;
+
 
     private final EventReviewService eventReviewService;
 
-    public DashboardServiceImpl(TicketService ticketService, EventService eventService, UserService userService, TransactionService transactionService, EventReviewService eventReviewService) {
+    public DashboardServiceImpl(TicketService ticketService, EventService eventService, UserService userService, TransactionService transactionService, VoucherService voucherService, EventReviewService eventReviewService) {
         this.ticketService = ticketService;
         this.eventService = eventService;
         this.userService = userService;
         this.transactionService = transactionService;
+        this.voucherService = voucherService;
         this.eventReviewService = eventReviewService;
     }
 
@@ -56,6 +63,28 @@ public class DashboardServiceImpl implements DashboardService {
             list.add(resp);
         }
         return list;
+    }
+
+    @Override
+    public DashboardEventDetailResponseDto getOrganizerEventDetail(long id) {
+        Events event = eventService.getEventData(id);
+        DashboardEventDetailResponseDto data = new DashboardEventDetailResponseDto();
+        data.setName(event.getName());
+        data.setCategory(event.getCategories().getId());
+        data.setCity(event.getCities().getId());
+        data.setIsOnline(event.getIsOnline());
+        data.setEventDate(event.getEventDate());
+        data.setStartTime(event.getStartTime());
+        data.setEndTime(event.getEndTime());
+        data.setVenue(event.getVenueName());
+        data.setAddress(event.getAddress());
+        data.setDescription(event.getDescriptions());
+        data.setIsPaid(event.getIsPaid());
+        List<DashboardEventDetailResponseDto.TicketEventDetailDto> ticketList = ticketService.getAllTicketEvent(id);
+        data.setTickets(ticketList);
+        List<DashboardEventDetailResponseDto.VoucherEventDetailDto> voucherList = voucherService.getAllEventVoucher(id);
+        data.setVouchers(voucherList);
+        return data;
     }
 
     @Override

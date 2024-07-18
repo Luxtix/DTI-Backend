@@ -1,4 +1,5 @@
 package com.luxtix.eventManagementWebsite.tickets.service;
+import com.luxtix.eventManagementWebsite.dashboard.dto.DashboardEventDetailResponseDto;
 import com.luxtix.eventManagementWebsite.tickets.dao.TicketSummaryDao;
 import com.luxtix.eventManagementWebsite.tickets.dto.TicketDto;
 import com.luxtix.eventManagementWebsite.tickets.entity.Tickets;
@@ -19,6 +20,7 @@ public interface TicketService {
     int getTicketSoldQuantity(long eventId, String dateFilter);
 
     int getTotalTicketInEvent(long eventId);
+    List<DashboardEventDetailResponseDto.TicketEventDetailDto> getAllTicketEvent(long id);
 
     List<TicketSummaryDao> getTicketSummaryData(long userId, String dateType);
 }

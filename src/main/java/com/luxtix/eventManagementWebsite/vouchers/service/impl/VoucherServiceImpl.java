@@ -1,4 +1,5 @@
 package com.luxtix.eventManagementWebsite.vouchers.service.impl;
+import com.luxtix.eventManagementWebsite.dashboard.dto.DashboardEventDetailResponseDto;
 import com.luxtix.eventManagementWebsite.exceptions.DataNotFoundException;
 import com.luxtix.eventManagementWebsite.vouchers.dto.VoucherDto;
 import com.luxtix.eventManagementWebsite.vouchers.entity.Vouchers;
@@ -75,5 +76,23 @@ public class VoucherServiceImpl implements VoucherService {
             throw new DataNotFoundException("Voucher with id " + id + " is not found");
         }
         voucherRepository.deleteById(id);
+    }
+
+    @Override
+    public List<DashboardEventDetailResponseDto.VoucherEventDetailDto> getAllEventVoucher(long id) {
+        List<Vouchers> vouchers =  voucherRepository.findByEventsId(id);
+        List<DashboardEventDetailResponseDto.VoucherEventDetailDto> voucherList = new ArrayList<>();
+        for(Vouchers voucher : vouchers){
+            DashboardEventDetailResponseDto.VoucherEventDetailDto data = new DashboardEventDetailResponseDto.VoucherEventDetailDto();
+            data.setId(voucher.getId());
+            data.setQty(voucher.getVoucherLimit());
+            data.setRate(voucher.getRate());
+            data.setName(voucher.getName());
+            data.setStartDate(voucher.getStartDate());
+            data.setEndDate(voucher.getEndDate());
+            data.setReferralOnly(voucher.getReferralOnly());
+            voucherList.add(data);
+        }
+        return voucherList;
     }
 }

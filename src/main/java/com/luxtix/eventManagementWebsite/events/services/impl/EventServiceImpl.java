@@ -296,6 +296,7 @@ public class EventServiceImpl implements EventService {
     }
 
 
+
     public boolean isValidImageExtension(String fileName) {
         String extension = getFileExtension(fileName).toLowerCase();
         return ALLOWED_EXTENSIONS.contains(extension);

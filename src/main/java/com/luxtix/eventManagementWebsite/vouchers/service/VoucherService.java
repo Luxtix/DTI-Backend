@@ -1,5 +1,6 @@
 package com.luxtix.eventManagementWebsite.vouchers.service;
 
+import com.luxtix.eventManagementWebsite.dashboard.dto.DashboardEventDetailResponseDto;
 import com.luxtix.eventManagementWebsite.vouchers.dto.VoucherDto;
 import com.luxtix.eventManagementWebsite.vouchers.entity.Vouchers;
 
@@ -16,4 +17,6 @@ public interface VoucherService {
     void updateVoucher(Vouchers updatedVoucher);
 
     void deleteVoucherById(long id);
+
+    List<DashboardEventDetailResponseDto.VoucherEventDetailDto> getAllEventVoucher(long id);
 }
