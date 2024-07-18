@@ -5,6 +5,7 @@ import com.luxtix.eventManagementWebsite.city.entity.Cities;
 import com.luxtix.eventManagementWebsite.events.entity.Events;
 import com.luxtix.eventManagementWebsite.tickets.entity.Tickets;
 import com.luxtix.eventManagementWebsite.vouchers.entity.Vouchers;
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -60,8 +61,7 @@ public class UpdateEventRequestDto {
 
     @Data
     public static class TicketEventUpdateDto{
-
-        @NotNull(message = "Ticket ID is required")
+        
         private Long id;
 
         @NotNull(message = "Ticket name is required")
@@ -88,7 +88,6 @@ public class UpdateEventRequestDto {
     @Data
     public static class VoucherEventUpdateDto{
 
-        @NotNull(message = "Voucher ID is required")
         private Long id;
 
         @NotNull(message = "Voucher name is required")
@@ -123,7 +122,6 @@ public class UpdateEventRequestDto {
             voucher.setRate(rate);
             voucher.setStartDate(startDate);
             voucher.setEndDate(endDate);
-
             return voucher;
         }
     }
